@@ -1,0 +1,15 @@
+services:
+  api:
+    build:
+      context: ./api
+    ports:
+      - 8000:80
+    volumes:
+      - ./api:/var/www/html
+  app:
+    build:
+      context: ./app
+    ports:
+      - 5000:80
+    volumes:
+      - ./app/build/client:/var/www/html
