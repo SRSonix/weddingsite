@@ -7,14 +7,16 @@ _empty_line();
 
 $method = $_SERVER['REQUEST_METHOD'];
 $path = parse_url(url: $_SERVER['REQUEST_URI'], component: PHP_URL_PATH);
+$params = $_GET;
 
 $router = new Router();
-$router->add_route(pattern: '/health', callback: function(): array {
+
+$router->add_route(pattern: '/health', callback: function(...$args): array {
 	http_response_code(response_code: 200);
     	return ["status" => "up"];
     }
 );
-$router->add_route(pattern: '/auth/users/(.*)/token', callback: "AuthController\generate_session_token");
+$router->add_route(pattern: '/auth/users/(.*)/token', callback: "AuthController\\generate_session_token");
 $router->add_route(pattern: '/auth/session/(.*)/validate', callback: "AuthController\\validate");
 
-$router->route(path: $path);
+$router->route(path: $path, params: $params);
