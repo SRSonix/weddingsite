@@ -6,11 +6,23 @@ require_once "controllers/request.php";
 
 
 function create_user(\Request $request){
-    $user_name = $request->body["user_name"];
+    if ($request->user_role != "ADMIN") {
+        http_response_code(403);
+        return [];
+    }
 
-    _log("creating: user $user_name");
+    $user_name = $request->body["user_name"] ?? NULL;
+    $role = $request->body["role"] ?? NULL;
 
-    [$id, $token] = \UserService\create_user($user_name);
+    if ($role === NULL or $user_name === NULL){
+        _log("role or username was missing");
+        http_response_code(422);
+        return ["missing"=> "role or user_name"];
+    }
+
+    _log("creating: user $user_name / $role");
+
+    [$id, $token] = \UserService\create_user($user_name, $role);
 
 	return ["id"=>$id, "token"=>$token];
 }

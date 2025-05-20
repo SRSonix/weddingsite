@@ -30,7 +30,7 @@ function get_user_by_id($id) {
         return NULL;
     }
     
-    $stmt = $session->prepare("SELECT * FROM user WHERE id = :id ");
+    $stmt = $session->prepare("SELECT id, name, role FROM user WHERE id = :id ");
     $stmt->execute(["id" => $id]);
 
     $result = $stmt->fetchAll();
@@ -46,7 +46,7 @@ function get_user_by_id($id) {
 
     $session = null;
     
-    return new \User($result[0]["id"], $result[0]["name"], $result[0]["token"] );
+    return new \User($result[0]["id"], $result[0]["name"], $result[0]["role"] );
 }
 
 function get_user_token_by_id($id) {
@@ -75,7 +75,7 @@ function get_user_token_by_id($id) {
     return $result[0]["token"];
 }
 
-function create_user($name, $token) {
+function create_user($name, $role, $token) {
     $session = create_db_session();
 
     $stmt = $session->prepare("SELECT max(id) AS max_id FROM user");
@@ -86,8 +86,8 @@ function create_user($name, $token) {
 
     $id = $result[0] + 1;
 
-    $stmt = $session->prepare("INSERT INTO user VALUES ( :id, :name, :token);");
-    $stmt->execute(["id"=>$id, "name"=>$name,"token"=>$token]);
+    $stmt = $session->prepare("INSERT INTO user VALUES ( :id, :name, :token, :role);");
+    $stmt->execute(["id"=>$id, "name"=>$name,"token"=>$token, "role"=> $role]);
 
     $session = null;
 

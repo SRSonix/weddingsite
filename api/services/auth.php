@@ -83,10 +83,13 @@ function generate_session_token($user_id, $timeout_s = 3600){
     $now = time();
     $exp = $now + $timeout_s;
 
+    $user = \UserRepository\get_user_by_id($user_id);
+
     $payload = [
         "sub" => $user_id,
         "exp" => $exp,
         "iat" => $now,
+        "role"=> $user->role,
     ];
     return generate_jwt_token($payload);
 }
@@ -95,7 +98,7 @@ function validate_session($session_token) {
     $payload = decode_jwt_token($session_token);
     $now = time();
 
-    if ($payload === NULL or !array_key_exists("exp", $payload) or !array_key_exists("sub", $payload)) {
+    if ($payload === NULL or !array_key_exists("exp", $payload) or !array_key_exists("sub", $payload) or !array_key_exists("role", $payload)) {
         _log(msg: "session token invalid.");
         return NULL;
     }

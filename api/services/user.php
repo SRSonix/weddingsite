@@ -5,11 +5,10 @@ namespace UserService;
 require_once "repositories/user.php";
 require_once "services/auth.php";
 
-function create_user($user_name) {
-
+function create_user($user_name, $role) {
 	[$token, $token_hash] = \AuthService\generate_user_token();
 
-    $id = \UserRepository\create_user($user_name, $token_hash);
+    $id = \UserRepository\create_user($user_name, $role, $token_hash);
 
     return [$id, $token];
 }

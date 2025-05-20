@@ -11,6 +11,7 @@ class Request {
     public $headers;
     public $cookies;
     public $user_id;
+    public $user_role;
 
     public function __construct() {
         $this->path = parse_url(url: $_SERVER['REQUEST_URI'], component: PHP_URL_PATH);
@@ -25,5 +26,6 @@ class Request {
         $this->cookies = $_COOKIE;
 
         $this->user_id = null;
+        $this->user_role = null;
     }
 }

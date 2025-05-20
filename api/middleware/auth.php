@@ -21,6 +21,7 @@ function resolve_user(Request $request): Request {
     }
 
     $request->user_id = $payload["sub"];
+    $request->user_role = $payload["role"];
 
     _log("set user to $request->user_id");
 
