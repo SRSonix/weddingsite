@@ -2,6 +2,7 @@
 namespace AuthService;
 
 require_once "helper.php";
+require_once "repositories/user.php";
 
 function base64url_encode($data)
 {
@@ -44,7 +45,7 @@ function generate_jwt_token($payload){
 	return $header_enc . "." . $payload_enc  . "." . $signature_enc;
 }
 
-function decode_jwt_token($token): bool|array{
+function decode_jwt_token($token): null|array{
     $secret_key = get_secret();
 	
 	[$header_enc, $payload_enc, $signature_enc] = explode(".", $token);
@@ -58,27 +59,27 @@ function decode_jwt_token($token): bool|array{
     }
     catch (\Exception $e) {
         _log("invalid jwt token: ". $e->getMessage());
-        return false;
+        return NULL;
     }
 
     if ($header["typ"] != "JWT") {
         _log("invalid jwt token: type header invalid");
-        return false;
+        return NULL;
     }
     if ($header["alg"] != "HS256") {
         _log("jwt alg not supported: ". $header["alg"]);
-        return false;
+        return NULL;
     }
 
     if ($signature_verify != $signature) {
         _log("invalid jwt token: signature verification failed");
-        return false;
+        return NULL;
     }
 
     return $payload;
 }
 
-function generate_session_token($user_id, $timeout_s = 15){
+function generate_session_token($user_id, $timeout_s = 3600){
     $now = time();
     $exp = $now + $timeout_s;
 
@@ -94,15 +95,33 @@ function validate_session($session_token) {
     $payload = decode_jwt_token($session_token);
     $now = time();
 
-    if (!$payload or !array_key_exists("exp", $payload) or !array_key_exists("sub", $payload)) {
-        _log("session token invalid.");
-        return false;
+    if ($payload === NULL or !array_key_exists("exp", $payload) or !array_key_exists("sub", $payload)) {
+        _log(msg: "session token invalid.");
+        return NULL;
     }
 
     if ($payload["exp"] <= $now){
         _log("session token expired.");
+        return NULL;
+    }
+
+    return $payload;
+}
+
+function generate_user_token() {
+    $token = bin2hex(random_bytes(length: 36));
+    $token_hash = password_hash($token, PASSWORD_DEFAULT);
+
+    return [$token, $token_hash];
+}
+
+function validate_user_token($user_id, $token) {
+    $database_token = \UserRepository\get_user_token_by_id($user_id);
+
+    if (!$database_token) {
+        _log("no user with id $user_id");
         return false;
     }
 
-    return true;
+    return password_verify($token, $database_token);
 }

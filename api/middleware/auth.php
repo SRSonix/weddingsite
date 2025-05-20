@@ -1,0 +1,28 @@
+<?php
+
+require_once "controllers/request.php";
+require_once "services/auth.php";
+
+function resolve_user(Request $request): Request {
+    _log("running resolve_user_middleware");
+
+    $session_token = $request->cookies["session_token"] ?? NULL;
+
+    if ($session_token === NULL) {
+        _log("no session token provided;");
+        return $request;
+    }
+
+    $payload = AuthService\validate_session($session_token);
+
+    if ($payload === NULL) {
+        _log("session not valid!");
+        return $request;
+    }
+
+    $request->user_id = $payload["sub"];
+
+    _log("set user to $request->user_id");
+
+    return $request;
+}
