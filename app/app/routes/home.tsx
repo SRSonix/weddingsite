@@ -30,7 +30,7 @@ export default function Home() {
     <UserService.userContext.Provider value={user}>
       <div>
         <h1>Little Mexican Wedding</h1>
-        Hello {user ? user.username: "- you are not logged in."}!</div>
+        Hello {user ? user.username: "- you are not logged in"}!</div>
       {user?.role === "ADMIN" && 
         <p>Congrats you are admin. Go to the <Link to="/admin">admin site</Link>.</p>
       }

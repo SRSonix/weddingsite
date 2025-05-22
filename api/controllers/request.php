@@ -15,7 +15,8 @@ class Request {
     public $user_role;
 
     public function __construct() {
-        $this->origin = $_SERVER["HTTP_ORIGIN"];
+        $this->origin =array_key_exists("HTTP_ORIGIN", $_SERVER)? $this->origin = $_SERVER["HTTP_ORIGIN"]: [];
+
         $this->path = parse_url(url: $_SERVER['REQUEST_URI'], component: PHP_URL_PATH);
         $this->method = $_SERVER['REQUEST_METHOD'];
         $this->params = $_GET;

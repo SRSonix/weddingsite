@@ -31,7 +31,8 @@ class Router {
                 header(header: 'Content-Type: application/json');    
             	header('Access-Control-Allow-Credentials: true');
                
-                if (in_array($request->origin, ["http://localhost:5173", "http://127.0.0.1:5173", "litte-mexincan-wedding.info"])){
+                # TODO: move the allowed list of domains to config.php
+                if (in_array($request->origin, ["http://localhost:5173", "http://127.0.0.1:5173", "https://little-mexican-wedding.info"])){
                     header("Access-Control-Allow-Origin: $request->origin");
                     _log("known origin... setting CORS");
                 }
