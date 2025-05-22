@@ -28,7 +28,13 @@ class Router {
                 $request = $this->run_middleware_chain($request);
                 $args["request"] = $request;
 
-                header(header: 'Content-Type: application/json');
+                header(header: 'Content-Type: application/json');    
+            	header('Access-Control-Allow-Credentials: true');
+               
+                if (in_array($request->origin, ["http://localhost:5173", "http://127.0.0.1:5173", "litte-mexincan-wedding.info"])){
+                    header("Access-Control-Allow-Origin: $request->origin");
+                    _log("known origin... setting CORS");
+                }
                 echo json_encode(value: call_user_func_array(callback: $callback, args: $args));
                 exit;
             }
