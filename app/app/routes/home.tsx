@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import type { Route } from "./+types/home";
 import { User, UserService } from "~/services/userService";
-import { useSearchParams } from "react-router";
+import { useSearchParams, Link } from "react-router";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "Little Mexican Wedding" },
+    { name: "description", content: "Welcome to our little mexican wedding!" },
   ];
 }
 
@@ -15,10 +15,10 @@ export default function Home() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
-    const id = searchParams.get("id");
     const token = searchParams.get("token");
+    setSearchParams({});
 
-    UserService.login_and_fetch_user(id, token).then(
+    UserService.login_and_fetch_user(token).then(
       (newUser) => {
         console.log("setting user to "+newUser)
         setUser(newUser);
@@ -28,9 +28,13 @@ export default function Home() {
 
   return (
     <UserService.userContext.Provider value={user}>
-      <div>Hello</div>
-      <p>{import.meta.env.VITE_API_URL}</p>
-      <p>{user ? user.username: "no-user"}</p>
+      <div>
+        <h1>Little Mexican Wedding</h1>
+        Hello {user ? user.username: "- you are not logged in."}!</div>
+      {user?.role === "ADMIN" && 
+        <p>Congrats you are admin. Go to the <Link to="/admin">admin site</Link>.</p>
+      }
+
     </UserService.userContext.Provider>
   )
 }

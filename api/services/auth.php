@@ -111,20 +111,38 @@ function validate_session($session_token) {
     return $payload;
 }
 
-function generate_user_token() {
-    $token = bin2hex(random_bytes(length: 36));
-    $token_hash = password_hash($token, PASSWORD_DEFAULT);
+function generate_user_password(){
+    $password = bin2hex(random_bytes(length: 36));
+    $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
-    return [$token, $token_hash];
+    return [$password, $password_hash];
 }
 
-function validate_user_token($user_id, $token) {
-    $database_token = \UserRepository\get_user_token_by_id($user_id);
+function generate_user_token(int $user_id, $user_password) {
+    return generate_jwt_token(["sub"=> $user_id,"password"=> $user_password]);
+}
 
-    if (!$database_token) {
-        _log("no user with id $user_id");
-        return false;
+function validate_user_token($token): int | null {
+    $payload = decode_jwt_token($token);
+
+    if ($payload === NULL or !array_key_exists("password", $payload) or !array_key_exists("sub", $payload)) {
+        _log(msg: "user token invalid.");
+        return NULL;
     }
 
-    return password_verify($token, $database_token);
+    $password = $payload["password"];
+    $user_id = $payload["sub"];
+
+    $passwor_hash = \UserRepository\get_password_hash_by_id($user_id);
+
+    if ($passwor_hash === NULL) {
+        _log("no user with id $user_id");
+        return NULL;
+    }
+
+    if (!password_verify($password, $passwor_hash)){
+        return NULL;
+    }
+
+    return $user_id;
 }

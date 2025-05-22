@@ -1,7 +1,7 @@
 <?php
 
-define("GET", "GET");
-define("POST", "POST");
+const POST = "POST";
+const GET = "GET";
 
 class Request {
     public $origin;

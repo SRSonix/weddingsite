@@ -13,3 +13,17 @@ body {
     color-scheme: dark;
   }
 }
+
+h1 {
+  color: #a800c9;
+  font-size: x-large;
+}
+
+h2 {
+  color: #a800c9;
+  font-size: large;
+}
+
+a {
+  color: blue;
+}

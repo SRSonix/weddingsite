@@ -5,15 +5,14 @@ import { createContext } from "react";
 export class User {
   id: number;
   username: string;
+  role: string;
 
-  constructor(id: number, username: string){
+  constructor(id: number, username: string, role: string){
     this.id = id;
     this.username = username;
+    this.role = role;
   }
 }
-
-
-
 
 export class UserService  {
   static BASE_URL = `${import.meta.env.VITE_API_URL}/users`;
@@ -28,8 +27,8 @@ export class UserService  {
         return undefined;
       }
 
-      const {id, name } = data;
-      return new User(id, name);
+      const {id, name, role } = data;
+      return new User(id, name, role);
       
     } catch (error) {
       
@@ -39,24 +38,22 @@ export class UserService  {
     }
   }
 
-  static async login(user_id: string, token: string) {
+  static async login(token: string) {
     try{
-      const response = await fetch(
+      return fetch(
         `${import.meta.env.VITE_API_URL}/auth/login`, 
-        {method: "post", body: JSON.stringify({ user_id: user_id, token: token}), credentials: 'include'},
+        {method: "post", body: JSON.stringify({token: token}), credentials: 'include'},
       )
-      const data = await response.json()      
     } catch (error) {
       console.log(error);
     }
   }
 
-  static async login_and_fetch_user(id: string | null, token: string | null){
-    console.log(`id/token: ${id}/${token}`)
+  static async login_and_fetch_user(token: string | null){
+    console.log(`token: ${token}`)
 
-    if (id !== null && token !== null){
-      console.log("login try");  
-      await UserService.login(id, token)
+    if (token !== null){
+      await UserService.login(token)
     }
 
     return UserService.getUser()

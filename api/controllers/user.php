@@ -22,9 +22,14 @@ function create_user(\Request $request){
 
     _log("creating: user $user_name / $role");
 
-    [$id, $token] = \UserService\create_user($user_name, $role);
+    $token = \UserService\create_user($user_name, $role);
 
-	return ["id"=>$id, "token"=>$token];
+    if ($token === NULL) {        
+        http_response_code(422);
+        return [];
+    }
+
+	return ["token"=>$token];
 }
 
 function get_user(\Request $request){

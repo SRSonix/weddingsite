@@ -23,7 +23,7 @@ function create_db_session() {
     return $session;
 }
 
-function get_user_by_id($id) {
+function get_user_by_id($user_id) {
     $session = create_db_session();
     if ($session === null) {
         _log("failed to create session");
@@ -31,7 +31,7 @@ function get_user_by_id($id) {
     }
     
     $stmt = $session->prepare("SELECT id, name, role FROM user WHERE id = :id ");
-    $stmt->execute(["id" => $id]);
+    $stmt->execute(["id" => $user_id]);
 
     $result = $stmt->fetchAll();
     
@@ -41,7 +41,7 @@ function get_user_by_id($id) {
     }
     if (count($result) > 1){
         _log("multiple results found!");
-        throw new \ErrorException("multiple users with same id! id: $id");
+        throw new \ErrorException("multiple users with same id! id: $user_id");
     }
 
     $session = null;
@@ -49,15 +49,15 @@ function get_user_by_id($id) {
     return new \User($result[0]["id"], $result[0]["name"], $result[0]["role"] );
 }
 
-function get_user_token_by_id($id) {
+function get_password_hash_by_id($user_id) {
     $session = create_db_session();
     if ($session === null) {
         _log("failed to create session");
         return NULL;
     }
     
-    $stmt = $session->prepare("SELECT token FROM user WHERE id = :id ");
-    $stmt->execute(["id" => $id]);
+    $stmt = $session->prepare("SELECT password_hash FROM user WHERE id = :id ");
+    $stmt->execute(["id" => $user_id]);
 
     $result = $stmt->fetchAll();
     
@@ -67,17 +67,18 @@ function get_user_token_by_id($id) {
     }
     if (count($result) > 1){
         _log("multiple results found!");
-        throw new \ErrorException("multiple users with same id! id: $id");
+        throw new \ErrorException("multiple users with same id! id: $user_id");
     }
 
     $session = null;
     
-    return $result[0]["token"];
+    return $result[0]["password_hash"];
 }
 
-function create_user($name, $role, $token) {
+function create_user($name, $role, $password_hash) {
     $session = create_db_session();
 
+    // TODO use CTE instead
     $stmt = $session->prepare("SELECT max(id) AS max_id FROM user");
     $stmt->execute([]);
     $result = $stmt->fetch();
@@ -85,11 +86,16 @@ function create_user($name, $role, $token) {
     _log($result[0]);
 
     $id = $result[0] + 1;
-
-    $stmt = $session->prepare("INSERT INTO user VALUES ( :id, :name, :token, :role);");
-    $stmt->execute(["id"=>$id, "name"=>$name,"token"=>$token, "role"=> $role]);
+    try {
+        $stmt = $session->prepare("INSERT INTO user VALUES (:id, :password_hash, :role, :name);");
+        $stmt->execute(["id"=>$id, "password_hash"=>$password_hash, "role"=> $role, "name"=>$name]);
+    }
+    catch(\PDOException $e) 
+    {
+        $session = null;
+        return NULL;
+    }
 
     $session = null;
-
     return $id;
 }

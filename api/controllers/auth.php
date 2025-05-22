@@ -6,12 +6,11 @@ require_once "controllers/request.php";
 require_once "services/auth.php";
 
 function login(\Request $request){	
-	$user_id = $request->body["user_id"];
 	$token = $request->body["token"];
 
-	$token_valid = \AuthService\validate_user_token($user_id, $token);
+	$user_id = \AuthService\validate_user_token($token);
 
-	if(!$token_valid){
+	if($user_id === NULL){
 		_log("token is invalid");
 		http_response_code(response_code: 403);
 		return [];
