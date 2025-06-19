@@ -7,23 +7,11 @@
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
-
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
+  @apply bg-white;
 }
 
-h1 {
-  color: #a800c9;
-  font-size: x-large;
-}
-
-h2 {
-  color: #a800c9;
-  font-size: large;
-}
-
-a {
-  color: blue;
+h3 {
+  @apply text-xl;
+  @apply mb-2;
+  @apply mt-3;
 }

@@ -14,7 +14,7 @@ export class User {
   }
 }
 
-export class UserService  {
+export class UserService {
   static BASE_URL = `${import.meta.env.VITE_API_URL}/users`;
   static userContext = createContext<User|undefined>(undefined);
 

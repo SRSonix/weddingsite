@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import type { Route } from "./+types/home";
+import type { Route } from "./+types/admin";
 import { User, UserService } from "~/services/userService";
-import { useSearchParams, Link } from "react-router";
+import { useSearchParams } from "react-router";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -11,7 +11,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  const [user, setUser] = useState<User|undefined>(undefined)
+  const [user, setUser] = useState<User|undefined>(undefined);
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function Home() {
           </div>    
       }
       {(user===undefined || user.role !== "ADMIN") &&    
-        <div><p> UPS. you are not an admin!</p></div>    
+        <div><p> UPS. you are not an admin! Nothing to see here...</p></div>    
       }
       
     </UserService.userContext.Provider>

@@ -5,10 +5,16 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useSearchParams,
 } from "react-router";
+
+import {Header} from "./common/header";
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { Footer } from "./common/footer";
+import { useEffect, useState } from "react";
+import { UserService, type User } from "./services/userService";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -42,7 +48,30 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  const [user, setUser] = useState<User|undefined>(undefined)
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    const token = searchParams.get("token");
+    setSearchParams({});
+
+    UserService.login_and_fetch_user(token).then(
+      (newUser) => {
+        console.log("setting user to "+newUser)
+        setUser(newUser);
+      }
+    )
+  }, []);
+
+  return (
+    <UserService.userContext.Provider value={user}>
+      <Header />
+      <main className="h-full">
+        <Outlet />
+      </main>
+      <Footer />
+    </UserService.userContext.Provider>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
