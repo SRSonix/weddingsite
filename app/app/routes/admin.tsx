@@ -1,5 +1,7 @@
+import { useUser } from "~/providers/userProvider";
 import type { Route } from "./+types/admin";
-import { useUser } from "~/services/userProvider";
+import { useTranslation } from "react-i18next";
+
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -10,17 +12,18 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
   const {user} = useUser();
+  const {t} = useTranslation("admin");
 
   return (
     <>
       {user?.role === "ADMIN" &&    
         <div>
-          <h2> Admin Site</h2>
-            <p>nothing would show up if you were not logged in as admin.</p>
+          <h2>{t('admin site')}</h2>
+            <p>{t('nothing would show up if you were not logged in.')}</p>
           </div>    
       }
       {(user===undefined || user.role !== "ADMIN") &&    
-        <div><p> UPS. you are not an admin! Nothing to see here...</p></div>    
+        <div><p>{t('ups. you are not an admin. nothing to see here.')}</p></div>    
       }
     </>
   )

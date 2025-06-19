@@ -5,16 +5,34 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useSearchParams,
 } from "react-router";
+import Backend from 'i18next-http-backend';
+import detector from "i18next-browser-languagedetector";
 
 import {Header} from "./common/header";
 
 import type { Route } from "./+types/root";
 import "./app.css";
 import { Footer } from "./common/footer";
-import { createContext, useEffect, useState } from "react";
-import { UserProvider, type User } from "./services/userProvider";
+import { UserProvider, type User } from "./providers/userProvider";
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+
+i18n
+  .use(detector)
+  .use(Backend)
+  .use(initReactI18next)
+  .init({
+    debug: true,
+    backend: {
+      loadPath: 'translations/{{ns}}/{{lng}}.json'
+    },
+    ns: ['admin'],
+    fallbackLng: "en",
+    interpolation: {
+      escapeValue: false
+    }
+  });
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },

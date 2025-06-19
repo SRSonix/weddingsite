@@ -1,6 +1,6 @@
 import { useContext, useState, type FormEvent } from "react";
 import type { Route } from "./+types/user";
-import { useUser } from "~/services/userProvider";
+import { useUser } from "~/providers/userProvider";
 
 
 export function meta({}: Route.MetaArgs) {
