@@ -19,6 +19,7 @@ $router->add_route(pattern: '/health', method: GET, callback: function(...$args)
 $router->add_route(pattern: '/users', method: POST, callback: "UserController\\create_user");
 $router->add_route(pattern: "/users", method: GET, callback:"UserController\\get_user");
 $router->add_route(pattern: "/auth/login", method: POST, callback:"AuthController\\login");
+$router->add_route(pattern: "/auth/logout", method: POST, callback:"AuthController\\logout");
 
 $router->add_middleware("resolve_user");
 

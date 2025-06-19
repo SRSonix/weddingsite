@@ -25,3 +25,10 @@ function login(\Request $request){
 	_log("successful login");
 	return [];
 }
+
+
+function logout(\Request $request){	
+	setcookie("session_token", "", ["expires"=> time()-3600, "secure" => true, "httponly"=>true, "path"=>"/", "samesite"=> "None"]);
+
+	return [];
+}

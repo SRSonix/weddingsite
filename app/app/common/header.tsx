@@ -1,17 +1,17 @@
 import { useContext, useState } from "react"
-import { UserService } from "~/services/userService";
+import { useUser } from "~/services/userProvider";
 
 
 export function Header() {
     const [expandNav, setexpandNav] = useState<boolean>(false);
-    const user = useContext(UserService.userContext)
+    const {user} = useUser();
 
     function toggle_mobile_header(){
         setexpandNav(!expandNav);
     }
 
     return (
-        <header className="flex flex-wrap bg-yellow-700/70 text-white  p-6">
+        <header className="flex flex-wrap bg-yellow-700/70 text-white p-6">
             <div className="flex-grow font-semibold mr-6"><h1 className="text-3xl">Regina & Yannic ❤</h1></div>
             <div className="lg:hidden block">
                 <button className="px-3 py-2 border rounded text-yellow-200 border-yellow-200 hover:text-white hover:border-white" onClick={toggle_mobile_header}>
@@ -25,7 +25,7 @@ export function Header() {
                 {user?.role === "ADMIN" && 
                     <a href="/admin" className="block mr-4 lg:inline-block text-yellow-200 hover:text-white text-right mt-2 lg:mt-0">Admin</a>
                 }
-                <a href={user ? "/user" : "/login"} className="block mr-4 lg:inline-block text-yellow-200 hover:text-white text-right mt-2 lg:mt-0">🌝 {user?.username || "User"}</a>
+                <a href="/user" className="block mr-4 lg:inline-block text-yellow-200 hover:text-white text-right mt-2 lg:mt-0">🌝 {user?.username || "Login"}</a>
             </nav>
         </header>
     )

@@ -13,8 +13,8 @@ import {Header} from "./common/header";
 import type { Route } from "./+types/root";
 import "./app.css";
 import { Footer } from "./common/footer";
-import { useEffect, useState } from "react";
-import { UserService, type User } from "./services/userService";
+import { createContext, useEffect, useState } from "react";
+import { UserProvider, type User } from "./services/userProvider";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -48,31 +48,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const [user, setUser] = useState<User|undefined>(undefined)
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  useEffect(() => {
-    const token = searchParams.get("token");
-    setSearchParams({});
-
-    UserService.login_and_fetch_user(token).then(
-      (newUser) => {
-        console.log("setting user to "+newUser)
-        setUser(newUser);
-      }
-    )
-  }, []);
-
   return (
-    <UserService.userContext.Provider value={user}>
+    <UserProvider>
       <Header />
       <main className="h-full">
         <Outlet />
       </main>
       <Footer />
-    </UserService.userContext.Provider>
+    </UserProvider>
   );
 }
+
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let message = "Oops!";

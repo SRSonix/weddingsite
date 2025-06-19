@@ -1,6 +1,4 @@
-import { useContext } from "react";
 import type { Route } from "./+types/overview";
-import { UserService } from "~/services/userService";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -10,8 +8,6 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Overview() {
-  const user = useContext(UserService.userContext)
-
   return (
     <div>
       <div>

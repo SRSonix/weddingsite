@@ -1,7 +1,5 @@
-import { useEffect, useState } from "react";
 import type { Route } from "./+types/admin";
-import { User, UserService } from "~/services/userService";
-import { useSearchParams } from "react-router";
+import { useUser } from "~/services/userProvider";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -11,23 +9,10 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  const [user, setUser] = useState<User|undefined>(undefined);
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  useEffect(() => {
-    const token = searchParams.get("token");
-    setSearchParams({});
-
-    UserService.login_and_fetch_user(token).then(
-      (newUser) => {
-        console.log("setting user to "+newUser)
-        setUser(newUser);
-      }
-    )
-  }, []);
+  const {user} = useUser();
 
   return (
-    <UserService.userContext.Provider value={user}>
+    <>
       {user?.role === "ADMIN" &&    
         <div>
           <h2> Admin Site</h2>
@@ -37,7 +22,6 @@ export default function Home() {
       {(user===undefined || user.role !== "ADMIN") &&    
         <div><p> UPS. you are not an admin! Nothing to see here...</p></div>    
       }
-      
-    </UserService.userContext.Provider>
+    </>
   )
 }
