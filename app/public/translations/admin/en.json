@@ -1,5 +1,5 @@
 {
-  "admin site": "Admin Site",
-  "nothing would show up if you were not logged in.": "nothing would show up if you were not logged in.",
-  "ups. you are not an admin. nothing to see here.": "UPS. You are not an admin! Nothing to see here..."
+  "admin-site": "Admin Site",
+  "you-are-admin": "nothing would show up if you were not logged in.",
+  "nothing-to-see": "UPS. You are not an admin! Nothing to see here..."
 }

@@ -18,12 +18,12 @@ export default function Home() {
     <>
       {user?.role === "ADMIN" &&    
         <div>
-          <h2>{t('admin site')}</h2>
-            <p>{t('nothing would show up if you were not logged in.')}</p>
+          <h2>{t('admin-site')}</h2>
+            <p>{t('you-are-admin')}</p>
           </div>    
       }
       {(user===undefined || user.role !== "ADMIN") &&    
-        <div><p>{t('ups. you are not an admin. nothing to see here.')}</p></div>    
+        <div><p>{t('nothing-to-see')}</p></div>    
       }
     </>
   )

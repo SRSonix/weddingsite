@@ -9,9 +9,3 @@ html,
 body {
   @apply bg-white;
 }
-
-h3 {
-  @apply text-xl;
-  @apply mb-2;
-  @apply mt-3;
-}

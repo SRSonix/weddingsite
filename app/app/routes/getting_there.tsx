@@ -1,4 +1,6 @@
+import { ContentTile } from "~/common/content_tile";
 import type { Route } from "./+types/getting_there";
+import { useTranslation } from "react-i18next";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,24 +10,22 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function GettingThere() {
+  const {t} = useTranslation(["getting_there", "common"]);
+
   return (
     <div>
-      <div>
-        <h3>Cancun airport, bus</h3>
-        <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
-      </div>
-      <div>
-        <h3>CDMX airport, bus or plane</h3>
-        <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
-      </div>
-      <div>
-        <h3>Visa</h3>
-        <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
-      </div>
-      <div>
-        <h3>Vaccines</h3>
-        <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
-      </div>
+      <ContentTile header={t("cancun-airport")}>
+        <p>{t("placeholder-text", { ns: 'common' })}</p>
+      </ContentTile>
+      <ContentTile header={t("cdmx-airport")}>
+        <p>{t("placeholder-text", { ns: 'common' })}</p>
+      </ContentTile>
+      <ContentTile header={t("visa")}>
+        <p>{t("placeholder-text", { ns: 'common' })}</p>
+      </ContentTile>
+      <ContentTile header={t("vaccines")}>
+        <p>{t("placeholder-text", { ns: 'common' })}</p>
+      </ContentTile>
     </div>
   )
 }

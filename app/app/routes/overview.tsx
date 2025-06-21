@@ -1,4 +1,6 @@
+import { ContentTile } from "~/common/content_tile";
 import type { Route } from "./+types/overview";
+import { useTranslation } from "react-i18next";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,32 +10,22 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Overview() {
+  const {t} = useTranslation(["overview", "common"]);
+
   return (
     <div>
-      <div>
-        <h2>Breh</h2>
-        <ul>
-          <li>tip 1</li>
-          <li>tip 2</li>
-          <li>tip 3</li>
-        </ul>
-      </div>
-      <div>
-        <h3>Location</h3>
-        <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
-      </div>
-      <div>
-        <h3>Date</h3>
-        <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
-      </div>
-      <div>
-        <h3>Dress code</h3>
-        <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
-      </div>
-      <div>
-        <h3>Be safe</h3>
-        <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
-      </div>
+      <ContentTile header={t("location")}>
+        <p>{t("placeholder-text", { ns: 'common' })}</p>
+      </ContentTile>
+      <ContentTile header={t("date")}>
+        <p>{t("placeholder-text", { ns: 'common' })}</p>
+      </ContentTile>
+      <ContentTile header={t("dress-code")}>
+        <p>{t("placeholder-text", { ns: 'common' })}</p>
+      </ContentTile>
+      <ContentTile header={t("be-safe")}>
+        <p>{t("placeholder-text", { ns: 'common' })}</p>
+      </ContentTile>
     </div>
   )
 }
