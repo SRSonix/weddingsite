@@ -2,62 +2,93 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 
 export class User {
-  id: number;
+  id: number | undefined;
   username: string;
   role: string;
 
-  constructor(id: number, username: string, role: string){
+  constructor(id: number | undefined, username: string, role: string){
     this.id = id;
     this.username = username;
     this.role = role;
   }
 }
 
-const BASE_URL = `${import.meta.env.VITE_API_URL}/users`;
 
-async function getUser(): Promise<User | undefined>{
-  try{
-    const response = await fetch(`${BASE_URL}`, {method: "get", credentials: 'include'})
-    const data = await response.json()
+export class UserService{
+  static BASE_URL = `${import.meta.env.VITE_API_URL}/users`;
 
-    if (!response.ok){
-      return undefined;
+  static async getUser(): Promise<User | undefined>{
+    try{
+      const response = await fetch(`${UserService.BASE_URL}`, {method: "get", credentials: 'include'})
+      const data = await response.json()
+
+      if (!response.ok){
+        return undefined;
+      }
+
+      const {id, name, role } = data;
+      return new User(id, name, role);
+      
+    } catch (error) {
+      console.log("failed to get user");
+      console.log(error);
+      return undefined
     }
+  };
 
-    const {id, name, role } = data;
-    return new User(id, name, role);
-    
-  } catch (error) {
-    
-    console.log("failed to get user");
-    console.log(error);
-    return undefined
+  static async createUser(body: {user_name: string, role: string}){
+    try{
+      const response = await fetch(
+        `${UserService.BASE_URL}`, 
+        {method: "post", body: JSON.stringify(body), credentials: 'include'},
+      )
+
+      const data = await response.json()
+
+      if (!response.ok){
+        return undefined;
+      }
+
+      const {token} = data;
+
+      return token
+
+    }catch (error) {
+      console.log("failed to get user");
+      return undefined
+    }
+  }
+
+  static async showUsers(){
+
   }
 }
 
-async function login(token: string) {
-  try{
-    return fetch(
-      `${import.meta.env.VITE_API_URL}/auth/login`, 
-      {method: "post", body: JSON.stringify({token: token}), credentials: 'include'},
-    )
-  } catch (error) {
-    console.log(error);
-  }
-};
+class AuthService{
+  static BASE_URL = `${import.meta.env.VITE_API_URL}/auth`;
 
-async function logout() {
-  try{
-    return fetch(
-      `${import.meta.env.VITE_API_URL}/auth/logout`, 
-      {method: "post", body: JSON.stringify({}), credentials: 'include'},
-    )
-  } catch (error) {
-    console.log(error);
-  }
-};
+  static async login(token: string) {
+    try{
+      return fetch(
+        `${AuthService.BASE_URL}/login`, 
+        {method: "post", body: JSON.stringify({token: token}), credentials: 'include'},
+      )
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-
+  static async logout() {
+    try{
+      return fetch(
+        `${AuthService.BASE_URL}/logout`, 
+        {method: "post", body: JSON.stringify({}), credentials: 'include'},
+      )
+    } catch (error) {
+      console.log(error);
+    }
+  };
+}
 
 type UserContextType = {
   user: User | undefined;
@@ -75,9 +106,9 @@ export function UserProvider({ children }: {children: React.ReactNode}) {
     console.log(`token: ${token}`)
 
     if (token !== null){
-      login(token).then(
+      AuthService.login(token).then(
         () => {
-          getUser().then(
+          UserService.getUser().then(
             (newUser) => {
               console.log("setting user to "+newUser)
               setUser(newUser);
@@ -87,7 +118,7 @@ export function UserProvider({ children }: {children: React.ReactNode}) {
       )
     }
     else {
-      getUser().then(
+      UserService.getUser().then(
         (newUser) => {
           console.log("setting user to "+newUser)
           setUser(newUser);
@@ -104,7 +135,7 @@ export function UserProvider({ children }: {children: React.ReactNode}) {
   }, []);
 
   function logout_update_state(){
-    logout().then(
+    AuthService.logout().then(
       () => {
       console.log("logged out!")
       setUser(undefined);
