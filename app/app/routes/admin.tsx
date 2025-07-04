@@ -104,7 +104,7 @@ export default function Home() {
               <ul >
                 {allUsers.map((item: User, index) => (
                   <li key={index}>
-                    <div>{item.first_name} | {item.last_name} | {item.role} | {item.diet} | {item.mail} | {item.attendance} </div>
+                    <div>{item.first_name} | {item.last_name} | {item.role} | {item.diet || "diet not set"} | {item.mail || "mail not set"} | {item.attendance || "attendance not set"} </div>
                   </li>
                 ))}
               </ul>
