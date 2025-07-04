@@ -30,7 +30,7 @@ function get_user_by_id($user_id) {
         return NULL;
     }
     
-    $stmt = $session->prepare("SELECT id, name, role FROM user WHERE id = :id ");
+    $stmt = $session->prepare("SELECT * FROM user WHERE id = :id ");
     $stmt->execute(["id" => $user_id]);
 
     $result = $stmt->fetchAll();
@@ -46,7 +46,29 @@ function get_user_by_id($user_id) {
 
     $session = null;
     
-    return new \User($result[0]["id"], $result[0]["name"], $result[0]["role"] );
+    return \User::from_row($result[0]);
+}
+
+function get_all_users(){
+    $session = create_db_session();
+    if ($session === null) {
+        _log("failed to create session");
+        return NULL;
+    }
+
+    $stmt = $session->prepare("SELECT * FROM user;");
+    $stmt->execute([]);
+    
+    $result = $stmt->fetchAll();
+
+    $session = null;
+
+    $users = [];
+    foreach ($result as $row){
+        $users[] = \User::from_row($row);
+    }
+
+    return $users;
 }
 
 function get_password_hash_by_id($user_id) {
@@ -55,8 +77,7 @@ function get_password_hash_by_id($user_id) {
         _log("failed to create session");
         return NULL;
     }
-    
-    $stmt = $session->prepare("SELECT password_hash FROM user WHERE id = :id ");
+    $stmt = $session->prepare("SELECT password_hash FROM user_auth WHERE id = :id;");
     $stmt->execute(["id" => $user_id]);
 
     $result = $stmt->fetchAll();
@@ -75,11 +96,11 @@ function get_password_hash_by_id($user_id) {
     return $result[0]["password_hash"];
 }
 
-function create_user($name, $role, $password_hash) {
+function create_user($first_name, $last_name, $role, $password_hash) {
     $session = create_db_session();
 
     // TODO use CTE instead
-    $stmt = $session->prepare("SELECT max(id) AS max_id FROM user");
+    $stmt = $session->prepare("SELECT max(id) AS max_id FROM user;");
     $stmt->execute([]);
     $result = $stmt->fetch();
 
@@ -87,8 +108,8 @@ function create_user($name, $role, $password_hash) {
 
     $id = $result[0] + 1;
     try {
-        $stmt = $session->prepare("INSERT INTO user VALUES (:id, :password_hash, :role, :name);");
-        $stmt->execute(["id"=>$id, "password_hash"=>$password_hash, "role"=> $role, "name"=>$name]);
+        $stmt = $session->prepare("INSERT INTO user_auth(id, password_hash) VALUES (:id, :password_hash); INSERT INTO user (id, role, first_name, last_name) VALUES(:id, :role, :first_name, :last_name);");
+        $stmt->execute(["id"=>$id, "password_hash"=>$password_hash, "role"=> $role, "first_name"=>$first_name, "last_name"=>$last_name]);
     }
     catch(\PDOException $e) 
     {

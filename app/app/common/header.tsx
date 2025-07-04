@@ -36,7 +36,7 @@ export function Header() {
                 {user?.role === "ADMIN" && 
                     <a href="/admin" className="block mr-4 lg:inline-block text-yellow-200 hover:text-white text-right mt-2 lg:mt-0">Admin</a>
                 }
-                <a href="/user" className="block mr-4 lg:inline-block text-yellow-200 hover:text-white text-right mt-2 lg:mt-0">🌝 {user?.username || "Login"}</a>
+                <a href="/user" className="block mr-4 lg:inline-block text-yellow-200 hover:text-white text-right mt-2 lg:mt-0">🌝 {user?.first_name || "Login"}</a>
             </nav>
         </header>
     )

@@ -11,18 +11,19 @@ function create_user(\Request $request){
         return [];
     }
 
-    $user_name = $request->body["user_name"] ?? NULL;
+    $first_name = $request->body["first_name"] ?? NULL;
+    $last_name = $request->body["last_name"] ?? NULL;
     $role = $request->body["role"] ?? NULL;
 
-    if ($role === NULL or $user_name === NULL){
-        _log("role or username was missing");
+    if ($role === NULL or $first_name === NULL or $last_name === NULL){
+        _log("role, first_name or last_name was missing");
         http_response_code(422);
         return ["missing"=> "role or user_name"];
     }
 
-    _log("creating: user $user_name / $role");
+    _log("creating: user $first_name / $last_name / $role");
 
-    $token = \UserService\create_user($user_name, $role);
+    $token = \UserService\create_user($first_name, $last_name, $role);
 
     if ($token === NULL) {        
         http_response_code(422);
@@ -47,4 +48,13 @@ function get_user(\Request $request){
     }
 
     return $user;
+}
+
+function get_all_users(\Request $request){
+    if ($request->user_role != "ADMIN") {
+        http_response_code(403);
+        return [];
+    }
+
+    return \UserService\get_all_users();
 }

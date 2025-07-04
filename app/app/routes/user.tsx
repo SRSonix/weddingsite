@@ -27,7 +27,7 @@ export default function Traveling() {
   return (
     <>
       <div className="mt-8">
-        Hello {user ? user.username: "- you are not logged in"}!
+        Hello {user ? user.first_name: "- you are not logged in"}!
       </div>
       {user ? 
         <div>
@@ -35,8 +35,12 @@ export default function Traveling() {
             <h3>User Info</h3>
             <ul>
               <li>User-Id: {user?.id}</li>
-              <li>Username: {user?.username}</li>
               <li>Role: {user?.role}</li>
+              <li>First Name: {user?.first_name}</li>
+              <li>Last Name: {user?.last_name}</li>
+              <li>Diet: {user?.diet}</li>
+              <li>mail: {user?.mail}</li>
+              <li>attendance: {user?.attendance}</li>
             </ul>
           </div>
           <div >

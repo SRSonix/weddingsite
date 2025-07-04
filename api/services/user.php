@@ -5,10 +5,10 @@ namespace UserService;
 require_once "repositories/user.php";
 require_once "services/auth.php";
 
-function create_user($user_name, $role) {
+function create_user($first_name, $last_name, $role) {
 	[$password, $password_hash] = \AuthService\generate_user_password();
 
-    $user_id = \UserRepository\create_user($user_name, $role, $password_hash);
+    $user_id = \UserRepository\create_user($first_name, $last_name, $role, $password_hash);
 
     if ($user_id === NULL) {
         _log("unable to create user.");
@@ -20,4 +20,8 @@ function create_user($user_name, $role) {
 
 function get_user($user_id) {
     return \UserRepository\get_user_by_id($user_id);
+}
+
+function get_all_users(){
+    return \UserRepository\get_all_users();
 }

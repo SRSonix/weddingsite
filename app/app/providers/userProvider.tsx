@@ -3,19 +3,35 @@ import { useSearchParams } from "react-router";
 
 export class User {
   id: number | undefined;
-  username: string;
   role: string;
+  first_name: string;
+  last_name: string;
+  diet: string;
+  mail: string;
+  attendance: string;
 
-  constructor(id: number | undefined, username: string, role: string){
+  constructor(
+    id: number | undefined, 
+    role: string, 
+    first_name: string,
+    last_name: string,
+    diet: string,
+    mail: string,
+    attendance: string,
+  ){
     this.id = id;
-    this.username = username;
     this.role = role;
+    this.first_name = first_name;
+    this.last_name = last_name;
+    this.diet = diet;
+    this.mail = mail;
+    this.attendance = attendance;
   }
 }
 
 
 export class UserService{
-  static BASE_URL = `${import.meta.env.VITE_API_URL}/users`;
+  static BASE_URL = `${import.meta.env.VITE_API_URL}/user`;
 
   static async getUser(): Promise<User | undefined>{
     try{
@@ -26,8 +42,8 @@ export class UserService{
         return undefined;
       }
 
-      const {id, name, role } = data;
-      return new User(id, name, role);
+      const {id, role, first_name, last_name, diet, mail, attendance} = data;
+      return new User(id, role, first_name, last_name, diet, mail, attendance);
       
     } catch (error) {
       console.log("failed to get user");
@@ -36,7 +52,7 @@ export class UserService{
     }
   };
 
-  static async createUser(body: {user_name: string, role: string}){
+  static async createUser(body: {first_name: string, last_name: string, role: string}){
     try{
       const response = await fetch(
         `${UserService.BASE_URL}`, 
@@ -59,8 +75,31 @@ export class UserService{
     }
   }
 
-  static async showUsers(){
+  static async getAllUsers(){
+    try{
+      const response = await fetch(`${UserService.BASE_URL}s`, {method: "get", credentials: 'include'})
+      const data = await response.json()
 
+      if (!response.ok){
+        return [];
+      }
+
+      console.log(data)
+
+      let users: Array<User> = []
+      data.forEach((row: User) =>
+        {
+          const {id, role, first_name, last_name, diet, mail, attendance} = row;
+          users.push(new User(id, role, first_name, last_name, diet, mail, attendance));
+        }
+      )
+      return users
+      
+    } catch (error) {
+      console.log("failed to get user");
+      console.log(error);
+      return []
+    }
   }
 }
 
