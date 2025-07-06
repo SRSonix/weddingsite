@@ -5,7 +5,7 @@
 ```sh
 npm install 
 ```
-* Fill in VITE_API_URL with desired backend in app/.env (example env file provided).
+* Fill in VITE_API_URL with desired backend in app/.env.local (example env file provided).
 * run app locally (in app folder)
 ```sh
 npm run dev
@@ -20,13 +20,14 @@ docker-compose -f compose.yaml up --build
 ```
 
 # Deployment 
-
-## deploy app
 * install node dependencies for deployment: (in deployment folder)
 ```sh
 npm install 
 ```
 * Fill in FTP_HOST, WEBSITE_ADMIN_USE and WEBSITE_ADMIN_PW in deployment/.env (example env file provided).
+* Fill in VITE_API_URL with desired backend in app/.env.production (example env file provided).
+
+## deploy app
 * build app: (in app folder)
 ```sh
 npm run build
@@ -37,4 +38,7 @@ npm run deploy-app
 ```
 
 ## deploy api
-Currently only manual deployment available.
+* deploy previously build app: (in deployment folder)
+```sh
+npm run deploy-api
+```

@@ -18,7 +18,7 @@ function create_user(\Request $request){
     if ($role === NULL or $first_name === NULL or $last_name === NULL){
         _log("role, first_name or last_name was missing");
         http_response_code(422);
-        return ["missing"=> "role or user_name"];
+        return ["missing"=> "role, first_name or last_name"];
     }
 
     _log("creating: user $first_name / $last_name / $role");

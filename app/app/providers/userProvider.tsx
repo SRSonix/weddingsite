@@ -1,6 +1,12 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 
+export enum Attandance {
+  will_join = "will_join",
+  will_not_join="will_not_join",
+  undecided="undecided"
+}
+
 export class User {
   id: number | undefined;
   role: string;
@@ -8,7 +14,7 @@ export class User {
   last_name: string;
   diet: string;
   mail: string;
-  attendance: string;
+  attendance: Attandance;
 
   constructor(
     id: number | undefined, 
@@ -17,7 +23,7 @@ export class User {
     last_name: string,
     diet: string,
     mail: string,
-    attendance: string,
+    attendance: Attandance,
   ){
     this.id = id;
     this.role = role;
@@ -101,6 +107,27 @@ export class UserService{
       return []
     }
   }
+
+  static async updateUser(user_id: number, body:{diet: string | undefined, mail: string | undefined, attendance: Attandance | undefined}){
+   try{
+      const response = await fetch(
+        `${UserService.BASE_URL}/${user_id}`, 
+        {method: "put", body: JSON.stringify(body), credentials: 'include'},
+      )
+
+      const data = await response.json()
+
+      if (!response.ok){
+        return undefined;
+      }
+
+      const {id, role, first_name, last_name, diet, mail, attendance} = data;
+      return new User(id, role, first_name, last_name, diet, mail, attendance);
+    }catch (error) {
+      console.log("failed to get user");
+      return undefined
+    }
+  }
 }
 
 class AuthService{
@@ -133,6 +160,7 @@ type UserContextType = {
   user: User | undefined;
   login: (token: string | null) => void;
   logout: () => void;
+  updateUser: (user_id: number, body:{diet: string | undefined, mail: string | undefined, attendance: Attandance | undefined}) => void;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -181,8 +209,17 @@ export function UserProvider({ children }: {children: React.ReactNode}) {
     });
   }
 
+  function update_user(user_id: number, body:{diet: string | undefined, mail: string | undefined, attendance: Attandance | undefined}){
+    UserService.updateUser(user_id, body).then( 
+      (new_user) => {
+        if (new_user) setUser(new_user);
+        else console.log("something went wrong setting new user!");
+      }
+    );
+  }
+
   return (
-    <UserContext.Provider value={{user, "logout": logout_update_state, "login": login_and_fetch_user}}>
+    <UserContext.Provider value={{user, "logout": logout_update_state, "login": login_and_fetch_user, "updateUser": update_user}}>
       {children}
     </UserContext.Provider>
   );
