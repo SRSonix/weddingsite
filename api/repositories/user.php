@@ -97,7 +97,11 @@ function get_password_hash_by_id($user_id) {
 }
 
 function create_user($first_name, $last_name, $role, $password_hash) {
-    $session = create_db_session();
+    $session = create_db_session();    
+    if ($session === null) {
+        _log("failed to create session");
+        return NULL;
+    }
 
     // TODO use CTE instead
     $stmt = $session->prepare("SELECT max(id) AS max_id FROM user;");
@@ -113,10 +117,33 @@ function create_user($first_name, $last_name, $role, $password_hash) {
     }
     catch(\PDOException $e) 
     {
+        _log($e);
         $session = null;
         return NULL;
     }
 
     $session = null;
     return $id;
+}
+
+function update_user($user_id, $mail, $diet, $attendance){
+    $session = create_db_session();    if ($session === null) {
+    _log("failed to create session");
+        return NULL;
+    }
+
+    try {
+        $stmt = $session->prepare("UPDATE user SET mail = :mail, diet = :diet, attendance = :attendance WHERE id = :user_id;");
+        $stmt->execute(["user_id"=>$user_id, "mail"=>$mail, "diet"=> $diet, "attendance"=>$attendance]);
+    }
+    catch(\PDOException $e) 
+    {
+        _log($e);
+        $session = null;
+        return NULL;
+    }
+    
+    $session = null;
+
+    return get_user_by_id($user_id);
 }

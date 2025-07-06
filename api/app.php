@@ -11,16 +11,17 @@ _empty_line();
 $request = new Request();
 $router = new Router();
 
-$router->add_route(pattern: '/health', method: GET, callback: function(...$args): array {
+$router->add_route(pattern: '/health', method: GET, parameter_names: [], callback: function(...$args): array {
 		http_response_code(response_code: 200);
     	return ["status" => "up"];
     }
 );
-$router->add_route(pattern: '/user', method: POST, callback: "UserController\\create_user");
-$router->add_route(pattern: "/user", method: GET, callback:"UserController\\get_user");
-$router->add_route(pattern: "/users", method: GET, callback:"UserController\\get_all_users");
-$router->add_route(pattern: "/auth/login", method: POST, callback:"AuthController\\login");
-$router->add_route(pattern: "/auth/logout", method: POST, callback:"AuthController\\logout");
+$router->add_route(pattern: '/user', method: POST, parameter_names: [], callback: "UserController\\create_user");
+$router->add_route(pattern: "/user", method: GET, parameter_names: [], callback:"UserController\\get_user");
+$router->add_route(pattern: "/user\/(.+)", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user");
+$router->add_route(pattern: "/users", method: GET, parameter_names: [], callback:"UserController\\get_all_users");
+$router->add_route(pattern: "/auth/login", method: POST, parameter_names: [], callback:"AuthController\\login");
+$router->add_route(pattern: "/auth/logout", method: POST, parameter_names: [], callback:"AuthController\\logout");
 
 $router->add_middleware("resolve_user");
 

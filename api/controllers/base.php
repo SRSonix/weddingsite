@@ -9,8 +9,8 @@ class Router {
     private $routes = array();
     private $middlewares = array();
 
-    public function add_route($pattern, $method, $callback): void {
-        $this->routes[$method][$pattern] = $callback;
+    public function add_route($pattern, $method, Array $parameter_names, $callback): void {
+        $this->routes[$method][$pattern] = [$callback, $parameter_names];
     }
 
     public function add_middleware($callback): void {
@@ -20,15 +20,17 @@ class Router {
     public function route(Request $request): void {
         _log("ROUTING: ". $request->path);
 
-        foreach ($this->routes[$request->method] as $pattern => $callback) {
+        foreach ($this->routes[$request->method] as $pattern => [$callback, $parameter_names]) {
             if (preg_match(pattern: "#^$pattern$#", subject: $request->path, matches: $matches)) {
-                array_shift(array: $matches); // Remove the full match
-                $args = $matches;
+                for ($i = 0; $i < count($parameter_names); $i++) {
+                    _log($i.": ".$parameter_names[$i]."=".$matches[$i+1]);
+                    $request->path_params[$parameter_names[$i]] = $matches[$i+1]; # first element is the full match
+                }
 
                 $request = $this->run_middleware_chain($request);
                 $args["request"] = $request;
 
-                header(header: 'Content-Type: application/json');    
+                header('Content-Type: application/json');    
             	header('Access-Control-Allow-Credentials: true');
                
                 # TODO: move the allowed list of domains to config.php
