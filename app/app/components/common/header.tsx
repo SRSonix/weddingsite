@@ -1,6 +1,7 @@
-import { useContext, useState } from "react"
+import { useState } from "react"
 import i18n from "i18next";
 import { useUser } from "~/providers/userProvider";
+import { Link } from "react-router";
 
 
 export function Header() {
@@ -30,13 +31,13 @@ export function Header() {
                 </button>
             </div>
             <nav className={"w-full lg:flex lg:items-center lg:w-auto " + (!expandNav ? "max-lg:hidden " : "")}> 
-                <a href="/overview" className="block mr-4 lg:inline-block text-yellow-200 hover:text-white text-right mt-4 lg:mt-0">Overview</a>
-                <a href="/getting_there" className="block mr-4 lg:inline-block text-yellow-200 hover:text-white text-right mt-2 lg:mt-0">Getting there</a>
-                <a href="/traveling" className="block mr-4 lg:inline-block text-yellow-200 hover:text-white text-right mt-2 lg:mt-0">Traveling</a>
+                <Link to="/overview" className="block mr-4 lg:inline-block text-yellow-200 hover:text-white text-right mt-4 lg:mt-0">Overview</Link>
+                <Link to="/getting_there" className="block mr-4 lg:inline-block text-yellow-200 hover:text-white text-right mt-2 lg:mt-0">Getting there</Link>
+                <Link to="/traveling" className="block mr-4 lg:inline-block text-yellow-200 hover:text-white text-right mt-2 lg:mt-0">Traveling</Link>
                 {user?.role === "ADMIN" && 
-                    <a href="/admin" className="block mr-4 lg:inline-block text-yellow-200 hover:text-white text-right mt-2 lg:mt-0">Admin</a>
+                    <Link to="/admin" className="block mr-4 lg:inline-block text-yellow-200 hover:text-white text-right mt-2 lg:mt-0">Admin</Link>
                 }
-                <a href="/user" className="block mr-4 lg:inline-block text-yellow-200 hover:text-white text-right mt-2 lg:mt-0">🌝 {user?.first_name || "Login"}</a>
+                <Link to="/user" className="block mr-4 lg:inline-block text-yellow-200 hover:text-white text-right mt-2 lg:mt-0">🌝 {user?.first_name || "Login"}</Link>
             </nav>
         </header>
     )

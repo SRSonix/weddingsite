@@ -5,7 +5,35 @@
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-html,
-body {
-  @apply bg-white;
+@layer base {
+  html,
+  body {
+    @apply bg-white;
+  }
+
+  h2 {
+    @apply text-xl mt-2
+  }
+
+  h3 {
+    @apply text-xl mt-1
+  }
+}
+
+@layer components {
+  .btn {
+    @apply bg-transparent hover:bg-yellow-700/80 text-yellow-700/80 font-semibold hover:text-white py-2 px-4 border border-yellow-700/80 hover:border-transparent rounded
+  }
+
+  .input-inline {
+    @apply bg-gray-200 border border-gray-200 text-gray-700 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500
+  }
+
+  .input-block {
+    @apply bg-gray-200 border border-gray-200 text-gray-700 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 block py-3 px-4 
+  }
+
+  .input-label {
+    @apply block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2
+  }
 }

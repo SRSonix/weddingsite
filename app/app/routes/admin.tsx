@@ -64,21 +64,21 @@ export default function Home() {
       {user?.role === "ADMIN" ?  
         <div>
           <h2>User Management</h2>
-          <div>
-            <button onClick={() => setCreateUserHidden(!createUserHidden)} className="font-bolt py-2 px-4 rounded bg-gray-200 hover:bg-gray-400">create user</button>
+          <div className="mt-3">
+            <button onClick={() => setCreateUserHidden(!createUserHidden)} className="btn">create user</button>
             <div className={createUserHidden ? "hidden": "" +  "mt-2"}>
-              <form onSubmit={createUser} className="w-full max-w-lg flex flex-wrap">
+              <form onSubmit={createUser} className="w-full flex flex-wrap">
                 <div className="px-3">
-                  <label htmlFor="first_name" className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">username</label>
-                  <input id="first_name" type="text" placeholder="first name" onChange={handleChange} className="block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 focus:outline-none focus:bg-white focus:border-gray-500"></input>
+                  <label htmlFor="first_name" className="input-label">username</label>
+                  <input id="first_name" type="text" placeholder="first name" onChange={handleChange} className="input-block"></input>
                 </div>
                 <div className="px-3">
-                  <label htmlFor="last_name" className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">username</label>
-                  <input id="last_name" type="text" placeholder="last name" onChange={handleChange} className="block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 focus:outline-none focus:bg-white focus:border-gray-500"></input>
+                  <label htmlFor="last_name" className="input-label">username</label>
+                  <input id="last_name" type="text" placeholder="last name" onChange={handleChange} className="input-block"></input>
                 </div>
                 <div className="px-3">
-                  <label htmlFor="role" className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">role</label>
-                  <select id="role" defaultValue="USER" onChange={handleChange} className="block w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                  <label htmlFor="role" className="input-label">role</label>
+                  <select id="role" defaultValue="USER" onChange={handleChange} className="input-block">
                       <option value="USER">user</option>
                       <option value="ADMIN">admin</option>
                   </select>
@@ -98,10 +98,10 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div>
-            <button onClick={() => showUsers()}  className="font-bolt py-2 px-4 rounded bg-gray-200 hover:bg-gray-400">show all users</button>
+          <div className="mt-3">
+            <button onClick={() => showUsers()}  className="btn">show all users</button>
             <div>
-              <ul >
+              <ul>
                 {allUsers.map((item: User, index) => (
                   <li key={index}>
                     <div>{item.first_name} | {item.last_name} | {item.role} | {item.diet || "diet not set"} | {item.mail || "mail not set"} | {item.attendance || "attendance not set"} </div>

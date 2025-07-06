@@ -1,4 +1,4 @@
-import { ContentTile } from "~/common/content_tile";
+import { ContentTile } from "~/components/common/content_tile";
 import type { Route } from "./+types/getting_there";
 import { useTranslation } from "react-i18next";
 

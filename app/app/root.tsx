@@ -9,11 +9,11 @@ import {
 import Backend from 'i18next-http-backend';
 import detector from "i18next-browser-languagedetector";
 
-import {Header} from "./common/header";
+import {Header} from "./components/common/header";
 
 import type { Route } from "./+types/root";
 import "./app.css";
-import { Footer } from "./common/footer";
+import { Footer } from "./components/common/footer";
 import { UserProvider, type User } from "./providers/userProvider";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
@@ -27,7 +27,7 @@ i18n
     backend: {
       loadPath: 'translations/{{ns}}/{{lng}}.json'
     },
-    ns: ['admin'],
+    ns: ['common'],
     fallbackLng: "en",
     interpolation: {
       escapeValue: false
