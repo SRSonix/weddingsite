@@ -1,12 +1,14 @@
 <?php
 
 const POST = "POST";
+const PUT = "PUT";
 const GET = "GET";
 
 class Request {
     public $origin;
     public $path;
-    public $params;
+    public $query_params;
+    public $path_params;
     public $method;
     public $body;
     public $headers;
@@ -19,7 +21,7 @@ class Request {
 
         $this->path = parse_url(url: $_SERVER['REQUEST_URI'], component: PHP_URL_PATH);
         $this->method = $_SERVER['REQUEST_METHOD'];
-        $this->params = $_GET;
+        $this->query_params = $_GET;
 
         $json = file_get_contents('php://input');
         $this->body = json_decode($json, associative:true);
@@ -30,5 +32,6 @@ class Request {
 
         $this->user_id = null;
         $this->user_role = null;
+        $this->path_params = [];
     }
 }

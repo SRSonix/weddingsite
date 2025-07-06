@@ -65,7 +65,7 @@ export default function Home() {
         <div>
           <h2>User Management</h2>
           <div>
-            <button onClick={() => setCreateUserHidden(!createUserHidden)}  className="font-bolt py-2 px-4 rounded bg-gray-200 hover:bg-gray-400">create user</button>
+            <button onClick={() => setCreateUserHidden(!createUserHidden)} className="font-bolt py-2 px-4 rounded bg-gray-200 hover:bg-gray-400">create user</button>
             <div className={createUserHidden ? "hidden": "" +  "mt-2"}>
               <form onSubmit={createUser} className="w-full max-w-lg flex flex-wrap">
                 <div className="px-3">
@@ -109,7 +109,7 @@ export default function Home() {
                 ))}
               </ul>
             </div>
-          </div>
+          </div>          
         </div> 
       :
         <div><p>{t('nothing-to-see')}</p></div>    
