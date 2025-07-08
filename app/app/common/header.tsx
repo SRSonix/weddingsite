@@ -21,7 +21,7 @@ export function Header() {
             <div className="flex items-center">
                 <button onClick={() => changeLanguage('de')} className="text-yellow-200 hover:text-white mr-2">de</button>
                 <button onClick={() => changeLanguage('en')} className="text-yellow-200 hover:text-white mr-2">en</button>
-                <button onClick={() => changeLanguage('esp')} className="text-yellow-200 hover:text-white mr-2">esp</button>
+                <button onClick={() => changeLanguage('es')} className="text-yellow-200 hover:text-white mr-2">es</button>
                 <span className="text-yellow-200 mr-2 max-lg:hidden">|</span>
             </div>
             <div className="lg:hidden flex items-center ">
