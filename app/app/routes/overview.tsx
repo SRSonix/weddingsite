@@ -1,6 +1,7 @@
-import { ContentTile } from "~/common/content_tile";
+import { ContentTile } from "~/components/common/content_tile";
 import type { Route } from "./+types/overview";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
+import { Link } from "react-router";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -14,6 +15,12 @@ export default function Overview() {
 
   return (
     <div>
+      <ContentTile header={t("rsvp")}>
+        <p>{t("hey_there", {ns: 'common'})}</p> 
+        <p className="mt-2"><Trans i18nKey="overview:rsvp_help_us_with">text<Link to="/user" className="text-blue-600 hover:text-gray-300">text</Link>text</Trans></p>
+        <p className="mt-2">{t("rsvp_for_no_show")}</p>
+        <p className="mt-2">{t("rsvp_why_we_need")}</p>
+      </ContentTile>
       <ContentTile header={t("location")}>
         <p>{t("placeholder-text", { ns: 'common' })}</p>
       </ContentTile>

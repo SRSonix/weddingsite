@@ -79,7 +79,7 @@ function decode_jwt_token($token): null|array{
     return $payload;
 }
 
-function generate_session_token($user_id, $timeout_s = 3600){
+function generate_session_token($user_id, $timeout_s = 60*60*24*7){
     $now = time();
     $exp = $now + $timeout_s;
 

@@ -5,5 +5,6 @@
 api/config.php
 
 .env*
-
 !.env.example
+
+local_credentials.txt

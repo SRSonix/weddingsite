@@ -18,7 +18,7 @@ function create_user(\Request $request){
     if ($role === NULL or $first_name === NULL or $last_name === NULL){
         _log("role, first_name or last_name was missing");
         http_response_code(422);
-        return ["missing"=> "role or user_name"];
+        return ["missing"=> "role, first_name or last_name"];
     }
 
     _log("creating: user $first_name / $last_name / $role");
@@ -57,4 +57,21 @@ function get_all_users(\Request $request){
     }
 
     return \UserService\get_all_users();
+}
+
+
+function update_user(\Request $request){
+    $user_id = $request->path_params["user_id"];
+    _log("trying to update user ".$user_id);
+
+    if ($request->user_id != $user_id) {
+        http_response_code(403);
+        return [];
+    }
+
+    $mail = $request->body["mail"] ?? null;
+    $diet = $request->body["diet"] ?? null;
+    $attendance = $request->body["attendance"] ?? null;
+
+    return \UserService\update_user($user_id, $mail, $diet, $attendance);
 }

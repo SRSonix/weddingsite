@@ -1,6 +1,8 @@
-import { useContext, useState, type FormEvent } from "react";
+import { useContext, useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import type { Route } from "./+types/user";
-import { useUser } from "~/providers/userProvider";
+import { Attandance, UserService, useUser } from "~/providers/userProvider";
+import { useTranslation } from "react-i18next";
+import { Rsvp } from "~/components/user/rsvp";
 
 
 export function meta({}: Route.MetaArgs) {
@@ -10,7 +12,8 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Traveling() {
+export default function Users() {
+  const {t} = useTranslation(["user", "common"])
   const {user, logout, login} = useUser();
   const [userToken, setuserToken] = useState('');
 
@@ -29,38 +32,39 @@ export default function Traveling() {
       <div className="mt-8">
         Hello {user ? user.first_name: "- you are not logged in"}!
       </div>
+      {user?.role == "ADMIN" && <div className="text-red-900">You are admin!</div>}
       {user ? 
         <div>
           <div className="mt-8">
             <h3>User Info</h3>
             <ul>
-              <li>User-Id: {user?.id}</li>
-              <li>Role: {user?.role}</li>
-              <li>First Name: {user?.first_name}</li>
-              <li>Last Name: {user?.last_name}</li>
-              <li>Diet: {user?.diet}</li>
-              <li>mail: {user?.mail}</li>
-              <li>attendance: {user?.attendance}</li>
+              <li>First Name: <span>{user?.first_name}</span></li>
+              <li>Last Name: <span>{user?.last_name}</span></li>
             </ul>
           </div>
-          <div >
-            <button onClickCapture={logout} className="bg-transparent hover:bg-yellow-700/80 text-yellow-700/80 font-semibold hover:text-white py-2 px-4 border border-yellow-700/80 hover:border-transparent rounded">
+          <Rsvp></Rsvp>
+          <div>
+            <button onClickCapture={logout} className="btn px-3 mt-7">
                 logout
             </button>
           </div>
         </div>
         : <div>
-            <form onSubmit={handleFormSubmit}>
+            <form onSubmit={handleFormSubmit} className="w-full max-w-lg flex flex-wrap">
               <div>
-                <label htmlFor="userToken">Token:</label>
+                <label htmlFor="userToken" className="input-label">Token:</label>
                 <input
+                  className="input-block"
                   type="password"
                   id="userToken"
+                  placeholder="token"
                   value={userToken}
                   onChange={(e) => setuserToken(e.target.value)}
                 />
               </div>
-              <button type="submit">Log In</button>
+              <div className="px-3 mt-7">
+                <button type="submit" className="btn">Log In</button>
+              </div>
             </form>
         </div>
       }

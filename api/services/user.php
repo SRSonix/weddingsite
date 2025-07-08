@@ -25,3 +25,7 @@ function get_user($user_id) {
 function get_all_users(){
     return \UserRepository\get_all_users();
 }
+
+function update_user($user_id, $mail, $diet, $attendance){
+    return \UserRepository\update_user($user_id, $mail, $diet, $attendance);
+}

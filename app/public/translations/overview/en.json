@@ -2,5 +2,9 @@
   "location": "Location",
   "date": "Date",
   "dress-code": "Dress Code",
-  "be-safe": "Be Safe"
+  "be-safe": "Be Safe",
+  "rsvp": "Please fill out RSVP",
+  "rsvp_help_us_with": "To help us out to plan our wedding, please head over to the RSVP section in the <1>user page</1> and fill in the information.",
+  "rsvp_for_no_show": "Even if you are not plan to attend, leave your email and update your attendance. We are currently thinking about if and how we can make some virtual or hybrid way for the people who cannot make it to the wedding (yes it is a long travel) to take part in the wedding",
+  "rsvp_why_we_need": "Why do we need the information? Generally it helps us out to plan the wedding properly (e.g your dietary requrements or if you are planning to attend). In addition we would like to get your mail to keep you up to date when anything changes. Maybe there is a change in location or dress-code? Or just a new section on this website."
 }
