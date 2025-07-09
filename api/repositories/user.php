@@ -154,17 +154,23 @@ function update_user(
         $stmt = $session->prepare("DELETE FROM guest WHERE user_id = :user_id;");
         $stmt->execute(["user_id"=>$user_id]);
 
-        $stmt = $session->prepare("INSERT INTO guest (user_id, first_name, last_name, diet) values (:user_id, :first_name, :last_name, :diet);");
-
-        foreach ($guests as $guest){
-            $stmt->execute(["user_id"=>$user_id, "first_name"=>$guest["first_name"], "last_name"=>$guest["last_name"], "diet"=>$guest["diet"]]);
+        $stmt = $session->prepare("INSERT INTO guest (user_id, id, first_name, last_name, diet) values (:user_id, :id, :first_name, :last_name, :diet);");
+        
+        for ($i = 0; $i < count($guests); $i++) {
+            $guest = $guests[$i];
+            _log($user_id);
+            _log($i);
+            _log($guest["first_name"]);
+            _log($guest["last_name"]);
+            _log($guest["diet"]);
+            $stmt->execute(["user_id"=>$user_id, "id"=>$i, "first_name"=>$guest["first_name"], "last_name"=>$guest["last_name"], "diet"=>$guest["diet"]]);
         }
     }
     catch(\PDOException $e) 
     {
         _log($e);
         $session = null;
-        http_response_code(422);
+        http_response_code(response_code: 422);
         return ["msg"=>"error inserting user"];
     }
     

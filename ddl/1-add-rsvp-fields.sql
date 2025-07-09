@@ -4,11 +4,12 @@ ADD COLUMN arrival_date DATE,
 ADD COLUMN departure_date DATE;
 
 CREATE TABLE guest(
-  id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
   user_id INT NOT NULL,
+  id INT NOT NULL,
   first_name TEXT NOT NULL,
   last_name TEXT NOT NULL,
   diet TEXT,
+  PRIMARY KEY (user_id, id),
   FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
