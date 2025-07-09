@@ -7,32 +7,94 @@ export enum Attandance {
   undecided="undecided"
 }
 
-export class User {
-  id: number | undefined;
-  role: string;
+export enum Language {
+  en = "en",
+  de = "de",
+  es = "es"
+}
+
+export class Guest {
+  id: number;
   first_name: string;
   last_name: string;
   diet: string;
-  mail: string;
-  attendance: Attandance;
 
-  constructor(
-    id: number | undefined, 
-    role: string, 
+   constructor(
+    id: number, 
     first_name: string,
     last_name: string,
     diet: string,
-    mail: string,
-    attendance: Attandance,
   ){
+    this.id = id;
+    this.first_name = first_name;
+    this.last_name = last_name;
+    this.diet = diet;
+  }
+}
+
+export class RsvpInformation{
+  diet: string | undefined;
+  mail: string | undefined;
+  attendance: Attandance | undefined;
+  language: string | undefined;
+  arrival_date: string | undefined;
+  departure_date: string | undefined;
+  guests: Guest[] = [];
+
+  constructor(
+    diet: string | undefined,
+    mail: string | undefined,
+    attendance: Attandance | undefined,
+    language: string | undefined,
+    arrival_date: string | undefined,
+    departure_date: string | undefined,
+    guests: Guest[]
+  ){
+    this.diet = diet;
+    this.mail = mail;
+    this.attendance = attendance;
+    this.language = language;
+    this.arrival_date = arrival_date;
+    this.departure_date = departure_date;
+    this.guests = guests;
+  }
+
+  static getEmpty(){
+    return new RsvpInformation(undefined, undefined, undefined, undefined, undefined, undefined, []);
+  }
+}
+
+export class User extends RsvpInformation{
+  id: number;
+  role: string;
+  first_name: string;
+  last_name: string;
+
+  constructor(
+    id: number, 
+    role: string, 
+    first_name: string,
+    last_name: string,
+    diet: string | undefined,
+    mail: string | undefined,
+    attendance: Attandance | undefined,
+    language: string | undefined,
+    arrival_date: string | undefined,
+    departure_date: string | undefined,
+    guests: Guest[]
+  ){
+    super(diet, mail, attendance, language, arrival_date, departure_date, guests);
     this.id = id;
     this.role = role;
     this.first_name = first_name;
     this.last_name = last_name;
-    this.diet = diet;
-    this.mail = mail;
-    this.attendance = attendance;
+
+    console.log(this);
   }
+
+    public getRsvpInformation() {
+      return new RsvpInformation(this.diet, this.mail, this.attendance, this.language, this.arrival_date, this.departure_date, this.guests);
+    }
 }
 
 
@@ -48,9 +110,9 @@ export class UserService{
         return undefined;
       }
 
-      const {id, role, first_name, last_name, diet, mail, attendance} = data;
-      return new User(id, role, first_name, last_name, diet, mail, attendance);
-      
+      const {id, role, first_name, last_name, diet, mail, attendance, language, arrival_date, departure_date, guests} = data;
+      return new User(id, role, first_name, last_name, diet, mail, attendance, language, arrival_date, departure_date, guests);
+
     } catch (error) {
       console.log("failed to get user");
       console.log(error);
@@ -58,7 +120,7 @@ export class UserService{
     }
   };
 
-  static async createUser(body: {first_name: string, last_name: string, role: string}){
+  static async createUser(body: {first_name: string, last_name: string, role: string, language: string | undefined}){
     try{
       const response = await fetch(
         `${UserService.BASE_URL}`, 
@@ -95,8 +157,8 @@ export class UserService{
       let users: Array<User> = []
       data.forEach((row: User) =>
         {
-          const {id, role, first_name, last_name, diet, mail, attendance} = row;
-          users.push(new User(id, role, first_name, last_name, diet, mail, attendance));
+          const {id, role, first_name, last_name, diet, mail, attendance, language, arrival_date, departure_date, guests} = row;
+          users.push(new User(id, role, first_name, last_name, diet, mail, attendance, language, arrival_date, departure_date, guests));
         }
       )
       return users
@@ -108,7 +170,7 @@ export class UserService{
     }
   }
 
-  static async updateUser(user_id: number, body:{diet: string | undefined, mail: string | undefined, attendance: Attandance | undefined}){
+  static async updateUser(user_id: number, body:{diet: string | undefined, mail: string | undefined, attendance: Attandance | undefined, language: string | undefined, arrival_date: string | undefined, departure_date: string | undefined}){
    try{
       const response = await fetch(
         `${UserService.BASE_URL}/${user_id}`, 
@@ -121,8 +183,8 @@ export class UserService{
         return undefined;
       }
 
-      const {id, role, first_name, last_name, diet, mail, attendance} = data;
-      return new User(id, role, first_name, last_name, diet, mail, attendance);
+      const {id, role, first_name, last_name, diet, mail, attendance, language, arrival_date, departure_date, guests} = data;
+      return new User(id, role, first_name, last_name, diet, mail, attendance, language, arrival_date, departure_date, guests);
     }catch (error) {
       console.log("failed to get user");
       return undefined

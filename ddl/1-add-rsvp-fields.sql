@@ -12,5 +12,3 @@ CREATE TABLE guest(
   PRIMARY KEY (user_id, id),
   FOREIGN KEY (user_id) REFERENCES user(id)
 );
-
-ALTER TABLE guest ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES user(id);
