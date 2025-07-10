@@ -14,18 +14,15 @@ export enum Language {
 }
 
 export class Guest {
-  id: number;
   first_name: string;
   last_name: string;
   diet: string;
 
-   constructor(
-    id: number, 
+  constructor(
     first_name: string,
     last_name: string,
     diet: string,
   ){
-    this.id = id;
     this.first_name = first_name;
     this.last_name = last_name;
     this.diet = diet;
@@ -88,8 +85,6 @@ export class User extends RsvpInformation{
     this.role = role;
     this.first_name = first_name;
     this.last_name = last_name;
-
-    console.log(this);
   }
 
     public getRsvpInformation() {
@@ -114,8 +109,6 @@ export class UserService{
       return new User(id, role, first_name, last_name, diet, mail, attendance, language, arrival_date, departure_date, guests);
 
     } catch (error) {
-      console.log("failed to get user");
-      console.log(error);
       return undefined
     }
   };
@@ -138,7 +131,6 @@ export class UserService{
       return token
 
     }catch (error) {
-      console.log("failed to get user");
       return undefined
     }
   }
@@ -152,8 +144,6 @@ export class UserService{
         return [];
       }
 
-      console.log(data)
-
       let users: Array<User> = []
       data.forEach((row: User) =>
         {
@@ -164,8 +154,6 @@ export class UserService{
       return users
       
     } catch (error) {
-      console.log("failed to get user");
-      console.log(error);
       return []
     }
   }
@@ -186,7 +174,6 @@ export class UserService{
       const {id, role, first_name, last_name, diet, mail, attendance, language, arrival_date, departure_date, guests} = data;
       return new User(id, role, first_name, last_name, diet, mail, attendance, language, arrival_date, departure_date, guests);
     }catch (error) {
-      console.log("failed to get user");
       return undefined
     }
   }
@@ -202,7 +189,6 @@ class AuthService{
         {method: "post", body: JSON.stringify({token: token}), credentials: 'include'},
       )
     } catch (error) {
-      console.log(error);
     }
   };
 
@@ -212,9 +198,7 @@ class AuthService{
         `${AuthService.BASE_URL}/logout`, 
         {method: "post", body: JSON.stringify({}), credentials: 'include'},
       )
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 }
 
@@ -232,14 +216,11 @@ export function UserProvider({ children }: {children: React.ReactNode}) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   function login_and_fetch_user(token: string | null){
-    console.log(`token: ${token}`)
-
     if (token !== null){
       AuthService.login(token).then(
         () => {
           UserService.getUser().then(
             (newUser) => {
-              console.log("setting user to "+newUser)
               setUser(newUser);
             }
           )
@@ -249,7 +230,6 @@ export function UserProvider({ children }: {children: React.ReactNode}) {
     else {
       UserService.getUser().then(
         (newUser) => {
-          console.log("setting user to "+newUser)
           setUser(newUser);
         }
       )
@@ -266,12 +246,11 @@ export function UserProvider({ children }: {children: React.ReactNode}) {
   function logout_update_state(){
     AuthService.logout().then(
       () => {
-      console.log("logged out!")
       setUser(undefined);
     });
   }
 
-  function update_user(user_id: number, body:{diet: string | undefined, mail: string | undefined, attendance: Attandance | undefined}){
+  function update_user(user_id: number, body:{diet: string | undefined, mail: string | undefined, attendance: Attandance | undefined, language: string | undefined, arrival_date: string | undefined, departure_date: string | undefined}){
     UserService.updateUser(user_id, body).then( 
       (new_user) => {
         if (new_user) setUser(new_user);

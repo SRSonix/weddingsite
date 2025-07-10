@@ -40,11 +40,9 @@ export default function Home() {
     UserService.createUser({first_name:formData.first_name, last_name:formData.last_name, role:formData.role, language: formData.language}).then(
       (token) => {
         if (token !== undefined){
-          console.log("user was created");
           setNewUserToken(token);
         }
         else {
-          console.log("user creation failed!")
           setNewUserToken(undefined);
         }
       }
