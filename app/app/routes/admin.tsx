@@ -1,4 +1,4 @@
-import { User, UserService, useUser } from "~/providers/userProvider";
+import { Guest, Language, User, UserService, useUser } from "~/providers/userProvider";
 import type { Route } from "./+types/admin";
 import { useTranslation } from "react-i18next";
 import { useState, type ChangeEvent, type FormEvent} from "react";
@@ -12,7 +12,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  const [formData, setFormData] = useState({ first_name: undefined, last_name: undefined, role: "USER" });
+  const [formData, setFormData] = useState({first_name: undefined, last_name: undefined, role: "USER", language: undefined});
   const [newUserToken, setNewUserToken] = useState(undefined);
   const [createUserHidden, setCreateUserHidden] = useState(true)
   const [allUsers, setAllUsers] = useState<Array<User>>([])
@@ -37,14 +37,12 @@ export default function Home() {
       return;
     }
       
-    UserService.createUser({first_name:formData.first_name, last_name:formData.last_name, role:formData.role}).then(
+    UserService.createUser({first_name:formData.first_name, last_name:formData.last_name, role:formData.role, language: formData.language}).then(
       (token) => {
         if (token !== undefined){
-          console.log("user was created");
           setNewUserToken(token);
         }
         else {
-          console.log("user creation failed!")
           setNewUserToken(undefined);
         }
       }
@@ -83,6 +81,15 @@ export default function Home() {
                       <option value="ADMIN">admin</option>
                   </select>
                 </div>
+                <div className="px-3">
+                  <label htmlFor="language" className="input-label">language</label>
+                  <select id="language" defaultValue={undefined} onChange={handleChange} className="input-block">
+                      <option value={undefined}>Not set</option>
+                      <option value={Language.en}>{Language.en}</option>
+                      <option value={Language.de}>{Language.de}</option>
+                      <option value={Language.es}>{Language.es}</option>
+                  </select>
+                </div>
                 <div className="px-3 mt-7">
                   <button type="submit" className="font-bolt py-2 px-4 rounded bg-gray-200 hover:bg-gray-400">submit</button>
                 </div>
@@ -104,7 +111,7 @@ export default function Home() {
               <ul>
                 {allUsers.map((item: User, index) => (
                   <li key={index}>
-                    <div>{item.first_name} | {item.last_name} | {item.role} | {item.diet || "diet not set"} | {item.mail || "mail not set"} | {item.attendance || "attendance not set"} </div>
+                    <div>{item.first_name} | {item.last_name} | {item.role} | {item.diet || "diet not set"} | {item.mail || "mail not set"} | {item.attendance || "attendance not set"} | {item.language || "language not set"}  | {item.arrival_date || "arrival_date not set"}  | {item.departure_date || "departure_date not set"} | {item.departure_date || "departure_date not set"} | guests: {item.guests.map((guest: Guest, index) => (guest.first_name + "/" + guest.last_name  + "/" + guest.diet) + "|" )}  </div>
                   </li>
                 ))}
               </ul>

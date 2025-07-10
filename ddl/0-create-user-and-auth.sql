@@ -1,4 +1,3 @@
-DROP TABLE IF EXISTS user;
 CREATE TABLE user (
   id INT NOT NULL PRIMARY KEY,
   role ENUM('USER', 'ADMIN') NOT NULL,
@@ -9,7 +8,6 @@ CREATE TABLE user (
   attendance ENUM('will_join', 'will_not_join', 'undecided')
 );
 
-DROP TABLE IF EXISTS user_auth;
 CREATE TABLE user_auth (
   id INT NOT NULL PRIMARY KEY,
   password_hash varchar(72) NOT NULL

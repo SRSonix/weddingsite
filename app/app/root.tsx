@@ -23,7 +23,7 @@ i18n
   .use(Backend)
   .use(initReactI18next)
   .init({
-    debug: true,
+    debug: false,
     backend: {
       loadPath: 'translations/{{ns}}/{{lng}}.json'
     },
