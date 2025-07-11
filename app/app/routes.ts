@@ -6,5 +6,6 @@ export default [
     route("/getting_there", "routes/getting_there.tsx"),
     route("/traveling", "routes/traveling.tsx"),
     route("/user", "routes/user.tsx"),
-    route("/admin", "routes/admin.tsx")
+    route("/admin", "routes/admin.tsx"),
+    route("/imprint", "routes/imprint.tsx")
 ] satisfies RouteConfig;
