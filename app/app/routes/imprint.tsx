@@ -11,7 +11,7 @@ export default function Imprint(){
     return (
         <div>
             <div>
-                <h2 className="imprint">Imprint</h2>
+                <h2 id="imprint">Imprint</h2>
                 <p>Responsible for the content of this website according to §5 TMG:</p>
                 
                 <h3>Name:</h3>
@@ -30,7 +30,7 @@ export default function Imprint(){
                 <h3>Data Protection:</h3>
                 <p>Please refer to our Privacy Policy for information on how we handle your personal data.</p>
             </div>
-            <div className="policies">
+            <div id="policies">
                 <h2>Session and Privacy Policy for Wedding website</h2>
                 <h3>Introduction</h3>
                 <p>This policy explains how your personal data is processed and how session management works on this website, in compliance with the EU General Data Protection Regulation (GDPR) and German data protection law (BDSG).</p>
