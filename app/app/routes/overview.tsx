@@ -2,6 +2,10 @@ import { ContentTile } from "~/components/common/content_tile";
 import type { Route } from "./+types/overview";
 import { Trans, useTranslation } from "react-i18next";
 import { Link } from "react-router";
+import { useUser } from "~/providers/userProvider";
+import { EmptyState } from "~/components/common/empty_state";
+import { InfoService, OverviewInfo } from "~/providers/infoService";
+import { useEffect, useState } from "react";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -12,8 +16,24 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Overview() {
   const {t} = useTranslation(["overview", "common"]);
+  const {user} = useUser();
+
+  const [overviewInfo, setOverviewInfo] = useState<OverviewInfo | undefined>(undefined);
+
+  useEffect(() => {
+    if (user != undefined) InfoService.getOverviewInfo().then(
+      (overviewInfo) => {
+        setOverviewInfo(overviewInfo);
+
+        
+
+      });
+  }, [user]);
+
 
   return (
+   <>
+    {user !== undefined ? 
     <div>
       <ContentTile header={t("rsvp")}>
         <p>{t("hey_there", {ns: 'common'})}</p> 
@@ -21,18 +41,26 @@ export default function Overview() {
         <p className="mt-2">{t("rsvp_for_no_show")}</p>
         <p className="mt-2">{t("rsvp_why_we_need")}</p>
       </ContentTile>
-      <ContentTile header={t("location")}>
-        <p>{t("placeholder-text", { ns: 'common' })}</p>
-      </ContentTile>
-      <ContentTile header={t("date")}>
-        <p>{t("placeholder-text", { ns: 'common' })}</p>
-      </ContentTile>
-      <ContentTile header={t("dress-code")}>
-        <p>{t("placeholder-text", { ns: 'common' })}</p>
-      </ContentTile>
-      <ContentTile header={t("be-safe")}>
-        <p>{t("placeholder-text", { ns: 'common' })}</p>
+      <ContentTile header={t("need_to_know")}>
+        <div>
+          <ul>
+            <li><p><span>Date and Time</span>: {overviewInfo?.date}, arrival {overviewInfo?.arrival_time}</p></li>
+            <li><p><span>Location</span>: {overviewInfo?.location}.</p></li>
+            <li><p><span>Dress code</span>: What makes you feel elegant - and not too hot!</p></li>
+            <li><p><span>Climate</span>: 30ºC by day, 20 by night, humid</p></li>
+            <li><p><span>Getting there</span>: {overviewInfo?.car_minutes} minutes by car from {overviewInfo?.car_from}</p></li>
+            <li><p><span>Parking</span>: not available, please use Uber or Taxi</p></li>
+            <li><p><span>Gifts</span>: We have small suitcases, a donation or experience is great!</p></li>
+            <li><p><span>Post-wedding</span>: feel free to join us at the {overviewInfo?.post_wedding_location} on {overviewInfo?.post_wedding_day} ❤️</p></li>
+            <li><p><span>WhatsApp</span>: {
+              Object.entries(overviewInfo?.whatsapp || []).map(([key, value]) => <span>{key}: {value}</span>)
+            }</p></li>
+          </ul>
+        </div>
       </ContentTile>
     </div>
+    : <EmptyState></EmptyState>
+    }
+    </>
   )
 }

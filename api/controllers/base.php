@@ -3,6 +3,7 @@
 require_once "helper.php";
 require_once 'controllers/auth.php';
 require_once 'controllers/request.php';
+require_once 'controllers/info.php';
 require_once 'middleware/auth.php';
 
 class Router {
