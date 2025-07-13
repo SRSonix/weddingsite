@@ -42,3 +42,27 @@ npm run deploy-app
 ```sh
 npm run deploy-api
 ```
+
+
+# Tools
+## setup
+* install python (e.g. on ubuntu)
+```sh
+sudo apt-get update && sudo apt install python3 python3-pip
+```
+or download for mac [python downloads](https://www.python.org/downloads/macos/)
+* set up local environment
+```sh
+python -m venv .venv
+```
+* install jupyterlab
+```sh
+. .venv/bin/activate && pip install jupyterlab
+```
+
+# ussage
+* run jupyter lab
+```sh
+. .venv/bin/activate && jupyter lab  --notebook-dir="tools"
+```
+* upen provided link with token in url

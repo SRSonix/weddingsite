@@ -12,6 +12,3 @@ CREATE TABLE user_auth (
   id INT NOT NULL PRIMARY KEY,
   password_hash varchar(72) NOT NULL
 );
-
-INSERT INTO user_auth(id, password_hash)  VALUES (1, '$2y$12$kjWYp.knjDugDqYCA0IQWe6gDmkr5NNlXWbKVxGbkMkPWDHl8lTLm');
-INSERT INTO user(id, role, first_name, last_name) VALUES (1, 'ADMIN', 'ADMIN', 'ADMINIUS');

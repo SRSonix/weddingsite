@@ -108,16 +108,12 @@ function create_user($first_name, $last_name, $role, $password_hash, $language) 
         return NULL;
     }
 
-    $stmt = $session->prepare("SELECT max(id) AS max_id FROM user;");
-    $stmt->execute([]);
-    $result = $stmt->fetch();
-
-    _log($result[0]);
-
-    $id = $result[0] + 1;
     try {
-        $stmt = $session->prepare("INSERT INTO user_auth(id, password_hash) VALUES (:id, :password_hash); INSERT INTO user (id, role, first_name, last_name, language) VALUES(:id, :role, :first_name, :last_name, :language);");
-        $stmt->execute(["id"=>$id, "password_hash"=>$password_hash, "role"=> $role, "first_name"=>$first_name, "last_name"=>$last_name, "language"=>$language]);
+        $stmt = $session->prepare("INSERT INTO user_auth(password_hash) VALUES (:password_hash);");       
+        $stmt->execute(["password_hash"=>$password_hash]);
+        $lastInsertId = $session->lastInsertId();
+        $stmt = $session->prepare("INSERT INTO user (id, role, first_name, last_name, language) VALUES(:id, :role, :first_name, :last_name, :language);");
+        $stmt->execute(["id"=>$lastInsertId, "role"=> $role, "first_name"=>$first_name, "last_name"=>$last_name, "language"=>$language]);
     }
     catch(\PDOException $e) 
     {
@@ -127,7 +123,7 @@ function create_user($first_name, $last_name, $role, $password_hash, $language) 
     }
 
     $session = null;
-    return $id;
+    return $lastInsertId;
 }
 
 function update_user(

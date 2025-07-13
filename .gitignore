@@ -8,3 +8,5 @@ api/config.php
 !.env.example
 
 local_credentials.txt
+
+.venv*
