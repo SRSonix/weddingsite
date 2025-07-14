@@ -20,7 +20,7 @@ function login(\Request $request){
 
 	$session_token = \AuthService\generate_session_token($user_id);
 
-	setcookie("session_token", $session_token, ["secure" => true, "httponly"=>true, "path"=>"/", "samesite"=> "None"]);
+	setcookie("session_token", $session_token, ["secure" => true, "httponly"=>true, "path"=>"/", "samesite"=> "Strict"]);
 
 	_log("successful login");
 	return [];
