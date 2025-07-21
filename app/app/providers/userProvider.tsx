@@ -92,7 +92,7 @@ export class User extends RsvpInformation{
     }
 }
 
-
+// TODO: move UserService to a dedicated file
 export class UserService{
   static BASE_URL = `${import.meta.env.VITE_API_URL}/user`;
 
@@ -179,16 +179,20 @@ export class UserService{
   }
 }
 
+// TODO: move AuthService to a dedicated file
 class AuthService{
   static BASE_URL = `${import.meta.env.VITE_API_URL}/auth`;
 
   static async login(token: string) {
     try{
-      return fetch(
+      const response = await fetch(
         `${AuthService.BASE_URL}/login`, 
         {method: "post", body: JSON.stringify({token: token}), credentials: 'include'},
       )
+      
+      return response.ok
     } catch (error) {
+      return false;
     }
   };
 
@@ -204,9 +208,9 @@ class AuthService{
 
 type UserContextType = {
   user: User | undefined;
-  login: (token: string | null) => void;
+  login: (token: string | null) => Promise<boolean>;
   logout: () => void;
-  updateUser: (user_id: number, body:{diet: string | undefined, mail: string | undefined, attendance: Attandance | undefined}) => void;
+  updateUser: (user_id: number, body:{diet: string | undefined, mail: string | undefined, attendance: Attandance | undefined, language: string | undefined, arrival_date: string | undefined, departure_date: string | undefined}) => void;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -215,40 +219,39 @@ export function UserProvider({ children }: {children: React.ReactNode}) {
   const [user, setUser] = useState<User| undefined>(undefined);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  function login_and_fetch_user(token: string | null){
-    if (token !== null){
-      AuthService.login(token).then(
-        () => {
-          UserService.getUser().then(
-            (newUser) => {
-              setUser(newUser);
-            }
-          )
-        }
-      )
-    }
-    else {
-      UserService.getUser().then(
-        (newUser) => {
-          setUser(newUser);
-        }
-      )
-    }
+  async function login_and_fetch_user(token: string | null){
+    if (token === null) return false;
+
+    const loginSuccess = await AuthService.login(token)
+
+    if(!loginSuccess) return false;
+
+    fetch_user();
+    return true;
   };
 
-  useEffect(() => {
-    const token = searchParams.get("token");
-    setSearchParams({});
+  function fetch_user(){
+    UserService.getUser().then(
+      (newUser) => {
+        setUser(newUser);
+      }
+    );
+  }
 
-    login_and_fetch_user(token);
-  }, []);
-
-  function logout_update_state(){
+  function logout_reset_user(){
     AuthService.logout().then(
       () => {
       setUser(undefined);
     });
   }
+
+  useEffect(() => {
+    const token = searchParams.get("token");
+    setSearchParams({});
+
+    if (token) login_and_fetch_user(token);
+    else fetch_user();
+  }, []);
 
   function update_user(user_id: number, body:{diet: string | undefined, mail: string | undefined, attendance: Attandance | undefined, language: string | undefined, arrival_date: string | undefined, departure_date: string | undefined}){
     UserService.updateUser(user_id, body).then( 
@@ -260,7 +263,7 @@ export function UserProvider({ children }: {children: React.ReactNode}) {
   }
 
   return (
-    <UserContext.Provider value={{user, "logout": logout_update_state, "login": login_and_fetch_user, "updateUser": update_user}}>
+    <UserContext.Provider value={{user, "logout": logout_reset_user, "login": login_and_fetch_user, "updateUser": update_user}}>
       {children}
     </UserContext.Provider>
   );

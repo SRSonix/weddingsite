@@ -3,6 +3,7 @@ import type { Route } from "./+types/user";
 import { Attandance, UserService, useUser } from "~/providers/userProvider";
 import { useTranslation } from "react-i18next";
 import { Rsvp } from "~/components/user/rsvp";
+import { UserLogin } from "~/components/user/login";
 
 
 export function meta({}: Route.MetaArgs) {
@@ -14,18 +15,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Users() {
   const {t} = useTranslation(["user", "common"])
-  const {user, logout, login} = useUser();
-  const [userToken, setuserToken] = useState('');
-
-  const handleFormSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    if (!userToken) {
-      alert('Please fill in token.');
-      return;
-    }
-
-    login(userToken);
-  };
+  const {user, logout } = useUser();
 
   return (
     <>
@@ -49,24 +39,7 @@ export default function Users() {
             </button>
           </div>
         </div>
-        : <div>
-            <form onSubmit={handleFormSubmit} className="w-full max-w-lg flex flex-wrap">
-              <div>
-                <label htmlFor="userToken" className="input-label">Token:</label>
-                <input
-                  className="input-block"
-                  type="password"
-                  id="userToken"
-                  placeholder="token"
-                  value={userToken}
-                  onChange={(e) => setuserToken(e.target.value)}
-                />
-              </div>
-              <div className="px-3 mt-7">
-                <button type="submit" className="btn">Log In</button>
-              </div>
-            </form>
-        </div>
+        : <UserLogin></UserLogin>
       }
     </>
   )

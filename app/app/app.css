@@ -12,7 +12,7 @@
   }
 
   h2 {
-    @apply text-xl mt-2
+    @apply text-2xl mt-2 text-yellow-800/80
   }
 
   h3 {

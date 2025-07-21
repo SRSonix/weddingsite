@@ -4,3 +4,4 @@ define ("DB_SERVER","database");
 define ("DB_USER","test");
 define ("DB_PASSWORD","test");
 define ("DB_NAME","weddingsite_db");
+define ("ALLOWED_ORIGINS", ["https://little-mexican-wedding.info"]);

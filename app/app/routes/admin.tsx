@@ -108,10 +108,10 @@ export default function Home() {
           <div className="mt-3">
             <button onClick={() => showUsers()}  className="btn">show all users</button>
             <div>
-              <ul>
+              <ul className="list-disc list-inside">
                 {allUsers.map((item: User, index) => (
                   <li key={index}>
-                    <div>{item.first_name} | {item.last_name} | {item.role} | {item.diet || "diet not set"} | {item.mail || "mail not set"} | {item.attendance || "attendance not set"} | {item.language || "language not set"}  | {item.arrival_date || "arrival_date not set"}  | {item.departure_date || "departure_date not set"} | {item.departure_date || "departure_date not set"} | guests: {item.guests.map((guest: Guest, index) => (guest.first_name + "/" + guest.last_name  + "/" + guest.diet) + "|" )}  </div>
+                    <div className="inline">{item.first_name} | {item.last_name} | {item.role} | {item.diet || "diet not set"} | {item.mail || "mail not set"} | {item.attendance || "attendance not set"} | {item.language || "language not set"}  | {item.arrival_date || "arrival_date not set"}  | {item.departure_date || "departure_date not set"} | {item.departure_date || "departure_date not set"} | guests: {item.guests.map((guest: Guest, index) => (guest.first_name + "/" + guest.last_name  + "/" + guest.diet) + "|" )}  </div>
                   </li>
                 ))}
               </ul>

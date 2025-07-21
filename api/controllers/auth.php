@@ -12,7 +12,7 @@ function login(\Request $request){
 
 	if($user_id === NULL){
 		_log("token is invalid");
-		http_response_code(response_code: 403);
+		http_response_code(response_code: 401);
 		return [];
 	}
 

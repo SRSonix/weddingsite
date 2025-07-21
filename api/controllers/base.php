@@ -5,6 +5,7 @@ require_once 'controllers/auth.php';
 require_once 'controllers/request.php';
 require_once 'controllers/info.php';
 require_once 'middleware/auth.php';
+require_once "config.php";
 
 class Router {
     private $routes = array();
@@ -21,8 +22,7 @@ class Router {
     public function route(Request $request): void {
         _log("ROUTING: ". $request->path);
 
-        # TODO: move the allowed list of domains to config.php
-        if (in_array($request->origin, ["https://little-mexican-wedding.info"])){
+        if (in_array($request->origin, ALLOWED_ORIGINS)){
             header('Access-Control-Allow-Credentials: true');
             header("Access-Control-Allow-Origin: $request->origin");
             _log("known origin... setting CORS");
