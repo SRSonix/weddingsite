@@ -18,9 +18,10 @@ function login(\Request $request){
 
 	_log("token is valid. generating session.");
 
-	$session_token = \AuthService\generate_session_token($user_id);
+	$timeout_s =  60*60*24*7;
 
-	setcookie("session_token", $session_token, ["secure" => true, "httponly"=>true, "path"=>"/", "samesite"=> "Strict"]);
+	$session_token = \AuthService\generate_session_token($user_id, $timeout_s);
+	setcookie("session_token", $session_token, ["expires"=> time()+$timeout_s, "secure" => true, "httponly"=>true, "path"=>"/", "samesite"=> "Strict"]);
 
 	_log("successful login");
 	return [];
