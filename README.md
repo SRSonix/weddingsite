@@ -61,8 +61,8 @@ python -m venv .venv
 ```
 
 # ussage
-* run jupyter lab
+* in tools folder: run jupyter lab
 ```sh
-. .venv/bin/activate && jupyter lab  --notebook-dir="tools"
+. .venv/bin/activate && jupyter lab
 ```
 * upen provided link with token in url
