@@ -47,6 +47,7 @@ export function Rsvp() {
 
     return (
         <div>
+            {edit && <p className="text-l/4 text-red-900 pb-3">Please note that no changes (editing info / adding or deleting guests) will be saved until you press submit!</p> }
             <ul>
                 <li>Diet: <input disabled={!edit} placeholder="diet" value={formData.diet == undefined ? "": formData.diet} id="diet" onChange={handleChange} className={edit ? "input-inline" : ""}></input></li>
                 <li>Mail: <input disabled={!edit} placeholder="mail" value={formData.mail == undefined ? "": formData.mail} id="mail" onChange={handleChange} className={edit ? "input-inline" : ""}></input></li>
@@ -84,7 +85,6 @@ export function Rsvp() {
                 {!edit && <button onClickCapture={() => setEdit(true)} className="btn">
                     edit RSVP
                 </button>} 
-                {edit && <p>Please note that no changes (editing info / adding or deleting guests will be saved until you press submit!</p> }
                 {edit && <button onClickCapture={submitRsvp} className="btn btn-green mr-2">
                     submit
                 </button>}
