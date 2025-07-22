@@ -18,11 +18,11 @@ export function Header() {
 
     return (
         <header className="flex flex-wrap bg-yellow-700/70 text-white p-6">
-            <div className="flex-grow font-semibold mr-6"><h1 className="text-3xl">Regina & Yannic ❤</h1></div>
+            <div className="flex-grow font-semibold mr-6"><h1 className="text-3xl text-white">Regina & Yannic ❤</h1></div>
             <div className="flex items-center">
-                <button onClick={() => changeLanguage('de')} className="text-yellow-200 hover:text-white mr-2">de</button>
-                <button onClick={() => changeLanguage('en')} className="text-yellow-200 hover:text-white mr-2">en</button>
-                <button onClick={() => changeLanguage('es')} className="text-yellow-200 hover:text-white mr-2">es</button>
+                <button onClick={() => changeLanguage('de')} className="hover:text-yellow-200 text-white mr-2">de</button>
+                <button onClick={() => changeLanguage('en')} className="hover:text-yellow-200 text-white mr-2">en</button>
+                <button onClick={() => changeLanguage('es')} className="hover:text-yellow-200 text-white mr-2">es</button>
                 <span className="text-yellow-200 mr-2 max-lg:hidden">|</span>
             </div>
             <div className="lg:hidden flex items-center ">
@@ -31,13 +31,13 @@ export function Header() {
                 </button>
             </div>
             <nav className={"w-full lg:flex lg:items-center lg:w-auto " + (!expandNav ? "max-lg:hidden " : "")}> 
-                <Link to="/overview" className="block mr-4 lg:inline-block text-yellow-200 hover:text-white text-right mt-4 lg:mt-0">Overview</Link>
-                <Link to="/getting_there" className="block mr-4 lg:inline-block text-yellow-200 hover:text-white text-right mt-2 lg:mt-0">Getting there</Link>
-                <Link to="/traveling" className="block mr-4 lg:inline-block text-yellow-200 hover:text-white text-right mt-2 lg:mt-0">Traveling</Link>
+                <Link to="/overview" className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-4 lg:mt-0">Overview</Link>
+                <Link to="/getting_there" className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">Getting there</Link>
+                <Link to="/traveling" className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">Traveling</Link>
                 {user?.role === "ADMIN" && 
-                    <Link to="/admin" className="block mr-4 lg:inline-block text-yellow-200 hover:text-white text-right mt-2 lg:mt-0">Admin</Link>
+                    <Link to="/admin" className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">Admin</Link>
                 }
-                <Link to="/user" className="block mr-4 lg:inline-block text-yellow-200 hover:text-white text-right mt-2 lg:mt-0">🌝 {user?.first_name || "Login"}</Link>
+                <Link to="/user" className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">🌝 {user?.first_name || "Login"}</Link>
             </nav>
         </header>
     )

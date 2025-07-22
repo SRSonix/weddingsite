@@ -11,6 +11,10 @@
     @apply bg-white;
   }
 
+  h1, h2, h3 {
+    @apply  text-yellow-800/80
+  }
+
   h2 {
     @apply text-2xl mt-2 text-yellow-800/80
   }
@@ -25,6 +29,18 @@
     @apply bg-transparent hover:bg-yellow-700/80 text-yellow-700/80 font-semibold hover:text-white py-2 px-4 border border-yellow-700/80 hover:border-transparent rounded
   }
 
+  .btn-small {
+    @apply  py-0
+  }
+
+  .btn-red {
+    @apply hover:bg-red-700/80 text-red-700/80 border-red-700/80
+  }
+
+  .btn-green {
+    @apply hover:bg-green-700/80 text-green-700/80 border-green-700/80
+  }
+
   .input-inline {
     @apply bg-gray-200 border border-gray-200 text-gray-700 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500
   }
@@ -35,5 +51,9 @@
 
   .input-label {
     @apply block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2
+  }
+
+  .content-tile-wrap {
+    @apply p-3 flex flex-wrap
   }
 }

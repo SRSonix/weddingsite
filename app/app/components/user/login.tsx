@@ -26,12 +26,11 @@ export function UserLogin(){
 
     return (
         <div>
+          <h3>Login</h3>
+          <p>please log in to see the content of this website.</p>
             { errorMessage &&  <div>
                 <p className="text-red-700">{errorMessage}</p>
             </div>}
-            {
-
-            }
             <form onSubmit={handleFormSubmit} className="w-full max-w-lg flex flex-wrap">
               <div>
                 <label htmlFor="userToken" className="input-label">Token:</label>

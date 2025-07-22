@@ -1,9 +1,17 @@
-import { Link } from "react-router";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router";
 import { useUser } from "~/providers/userProvider";
 
 export function EmptyState({children}: {children: React.ReactNode})
 {
+    const navigate = useNavigate();
     const {user} = useUser();
+        
+    useEffect(() => {
+        if (user == undefined) {
+        navigate("/user")
+        }
+    }, [navigate]);
 
     return (
         <>

@@ -47,7 +47,6 @@ export function Rsvp() {
 
     return (
         <div>
-            <h3>RSVP</h3>
             <ul>
                 <li>Diet: <input disabled={!edit} placeholder="diet" value={formData.diet == undefined ? "": formData.diet} id="diet" onChange={handleChange} className={edit ? "input-inline" : ""}></input></li>
                 <li>Mail: <input disabled={!edit} placeholder="mail" value={formData.mail == undefined ? "": formData.mail} id="mail" onChange={handleChange} className={edit ? "input-inline" : ""}></input></li>
@@ -70,25 +69,29 @@ export function Rsvp() {
                 <li>arrival: <input disabled={!edit} type="date" placeholder="arrival date" value={formData.arrival_date == undefined ? "": formData.arrival_date} id="arrival_date" onChange={handleChange} className={edit ? "input-inline" : ""}></input></li>
                 <li>departure: <input disabled={!edit} type="date" placeholder="departure date" value={formData.departure_date == undefined ? "": formData.departure_date} id="departure_date" onChange={handleChange} className={edit ? "input-inline" : ""}></input></li>
                 <li>Guests:
-                    <ul>
+                    <p className="text-[0.8rem]/4 text-gray-700">Due to limited venue capacity, we may not be able to accommodate all guests.<br/>Please list any guests you'd like to bring — we'll let you know who can be accommodated.<br/>One guest is guaranteed for those traveling from abroad.</p>
+                    <ul className="">
                     {formData.guests.map((guest: Guest, index: number) => (
-                        <li key = {index}>
+                        <li key = {index} className={index > 0  ? "pt-2" : ""}>
                         <GuestTile edit={edit} guest={guest} onChange={(newGuest) => handleGuestChange(index, newGuest)} onDelete={() => deleteGuest(index)}></GuestTile>
                         </li>
                     ))}
                     </ul>
-                    {edit && <button onClick={addGuest} className="btn"> add guest</button>}
+                    {edit && <button onClick={addGuest} className="btn btn-small"> add guest</button>}
                 </li>
             </ul>
-            {!edit && <button onClickCapture={() => setEdit(true)} className="btn">
-                 edit RSVP
-            </button>}
-            {edit && <button onClickCapture={submitRsvp} className="btn">
-                 submit
-            </button>}
-            {edit && <button onClickCapture={resetRsvp} className="btn">
-                 cancel
-            </button>}
+            <div className="pt-3">
+                {!edit && <button onClickCapture={() => setEdit(true)} className="btn">
+                    edit RSVP
+                </button>} 
+                {edit && <p>Please note that no changes (editing info / adding or deleting guests will be saved until you press submit!</p> }
+                {edit && <button onClickCapture={submitRsvp} className="btn btn-green mr-2">
+                    submit
+                </button>}
+                {edit && <button onClickCapture={resetRsvp} className="btn btn-red">
+                    cancel
+                </button>}
+            </div>
         </div>
     )
 }
