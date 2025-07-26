@@ -77,7 +77,7 @@ export function Rsvp() {
                         </li>
                     ))}
                     </ul>
-                    {edit && <button onClick={addGuest} className="btn btn-small"> add guest</button>}
+                    {edit && <button onClick={addGuest} className="btn btn-small">additional guest</button>}
                 </li>
             </ul>
             <div className="pt-3">

@@ -15,7 +15,7 @@ export function GuestTile({guest, edit, onDelete, onChange}: {guest: Guest, edit
                 <li>last_name: <input disabled={!edit} placeholder="last_name" id="last_name" value={guest.last_name} onChange={handleChange} className={edit ? "input-inline" : ""}></input></li>
                 <li>diet: <input disabled={!edit} placeholder="diet" id="diet" value={guest.diet} onChange={handleChange} className={edit ? "input-inline" : ""}></input></li>
             </ul>
-            {edit && <button onClick={onDelete} className="btn btn-red btn-small">delete guest</button>}
+            {edit && <button onClick={onDelete} className="btn btn-small">remove guest</button>}
         </div>
     );
 }
