@@ -2,7 +2,7 @@
 
 namespace UserRepository;
 
-require_once "config.php";
+require_once "secrets/config.php";
 require_once "services/models.php";
 
 const GET_USER_QUERY = <<<EOD

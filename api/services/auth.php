@@ -19,7 +19,7 @@ function base64url_decode($data, $strict = false)
 }
 
 function get_secret(): string{
-    $secret = file_get_contents("secret.txt");
+    $secret = file_get_contents("secrets/secret.txt");
 
     if (!$secret) throw new \ErrorException("failed to load secret");
 

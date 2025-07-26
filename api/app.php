@@ -23,6 +23,7 @@ $router->add_route(pattern: "/users", method: GET, parameter_names: [], callback
 $router->add_route(pattern: "/auth/login", method: POST, parameter_names: [], callback:"AuthController\\login");
 $router->add_route(pattern: "/auth/logout", method: POST, parameter_names: [], callback:"AuthController\\logout");
 $router->add_route(pattern: "/info/overview", method: GET, parameter_names: [], callback:"InfoController\\get_overview");
+$router->add_route(pattern: "/image\/(.+)", method: GET, parameter_names: ["image_path"], callback:"ImageController\\get_image");
 
 $router->add_middleware("resolve_user");
 
