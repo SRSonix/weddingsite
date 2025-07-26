@@ -136,12 +136,11 @@ function update_user(
     $departure_date,
     $guests
     ){
-    $session = create_db_session();    if ($session === null) {
-    _log("failed to create session");
+    $session = create_db_session();    
+    if ($session === null) {
+        _log("failed to create session");
         return NULL;
     }
-
-    _log($diet);
 
     try {
         $stmt = $session->prepare("UPDATE user SET mail = :mail, diet = :diet, attendance = :attendance, language = :language, arrival_date = :arrival_date, departure_date = :departure_date WHERE id = :user_id;");
@@ -173,4 +172,19 @@ function update_user(
     $session = null;
 
     return get_user_by_id($user_id);
+}
+
+function update_last_visited(int $user_id): void {
+    $session = create_db_session();   
+     if ($session === null) {
+        _log("failed to create session");
+        return;
+    }
+
+    $stmt = $session->prepare(
+        "UPDATE user SET last_visit = FROM_UNIXTIME(:last_visited) WHERE id = :user_id;"
+    );
+    $stmt->execute(["last_visited" => time(), "user_id" => $user_id]);
+
+    $session = null;
 }
