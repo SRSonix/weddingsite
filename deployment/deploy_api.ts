@@ -18,14 +18,14 @@ async function upload_weddingsite() {
             password: FDP_PW,
             secure: false // set to true if using FTPS
         })
-        for (const file_name of ["app.php", "helper.php", ".htaccess"]){
+        for (const file_name of ["app.php", "helper.php", ".htaccess", "secrets/.htaccess"]){
             console.log("Uploading file " + file_name)
 
             await client.remove(file_name, true)
             await client.uploadFrom(SRC_BASE_PATH + file_name, "/"+ file_name)
         }
 
-        for (const directory_name of ["controllers", "middleware", "repositories", "services"]){
+        for (const directory_name of ["controllers", "middleware", "repositories", "services", "images"]){
             console.log("Uploading directory " + directory_name)
 
             await client.removeDir(directory_name)
