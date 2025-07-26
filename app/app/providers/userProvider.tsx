@@ -14,47 +14,23 @@ export enum Language {
 }
 
 export class Guest {
-  first_name: string;
-  last_name: string;
-  diet: string;
-
   constructor(
-    first_name: string,
-    last_name: string,
-    diet: string,
-  ){
-    this.first_name = first_name;
-    this.last_name = last_name;
-    this.diet = diet;
-  }
+    public first_name: string,
+    public last_name: string,
+    public diet: string,
+  ){}
 }
 
 export class RsvpInformation{
-  diet: string | undefined;
-  mail: string | undefined;
-  attendance: Attandance | undefined;
-  language: string | undefined;
-  arrival_date: string | undefined;
-  departure_date: string | undefined;
-  guests: Guest[] = [];
-
   constructor(
-    diet: string | undefined,
-    mail: string | undefined,
-    attendance: Attandance | undefined,
-    language: string | undefined,
-    arrival_date: string | undefined,
-    departure_date: string | undefined,
-    guests: Guest[]
-  ){
-    this.diet = diet;
-    this.mail = mail;
-    this.attendance = attendance;
-    this.language = language;
-    this.arrival_date = arrival_date;
-    this.departure_date = departure_date;
-    this.guests = guests;
-  }
+    public diet: string | undefined,
+    public mail: string | undefined,
+    public attendance: Attandance | undefined,
+    public language: string | undefined,
+    public arrival_date: string | undefined,
+    public departure_date: string | undefined,
+    public guests: Guest[]
+  ){}
 
   static getEmpty(){
     return new RsvpInformation(undefined, undefined, undefined, undefined, undefined, undefined, []);
@@ -62,34 +38,26 @@ export class RsvpInformation{
 }
 
 export class User extends RsvpInformation{
-  id: number;
-  role: string;
-  first_name: string;
-  last_name: string;
-
   constructor(
-    id: number, 
-    role: string, 
-    first_name: string,
-    last_name: string,
+    public id: number, 
+    public role: string, 
+    public first_name: string,
+    public last_name: string,
     diet: string | undefined,
     mail: string | undefined,
     attendance: Attandance | undefined,
     language: string | undefined,
     arrival_date: string | undefined,
     departure_date: string | undefined,
-    guests: Guest[]
+    guests: Guest[],
+    public last_visit: string
   ){
     super(diet, mail, attendance, language, arrival_date, departure_date, guests);
-    this.id = id;
-    this.role = role;
-    this.first_name = first_name;
-    this.last_name = last_name;
   }
 
-    public getRsvpInformation() {
-      return new RsvpInformation(this.diet, this.mail, this.attendance, this.language, this.arrival_date, this.departure_date, this.guests);
-    }
+  public getRsvpInformation() {
+    return new RsvpInformation(this.diet, this.mail, this.attendance, this.language, this.arrival_date, this.departure_date, this.guests);
+  }
 }
 
 // TODO: move UserService to a dedicated file
@@ -105,8 +73,7 @@ export class UserService{
         return undefined;
       }
 
-      const {id, role, first_name, last_name, diet, mail, attendance, language, arrival_date, departure_date, guests} = data;
-      return new User(id, role, first_name, last_name, diet, mail, attendance, language, arrival_date, departure_date, guests);
+      return new User(data.id, data.role, data.first_name, data.last_name, data.diet, data.mail, data.attendance, data.language, data.arrival_date, data.departure_date, data.guests, data.last_visit);
 
     } catch (error) {
       return undefined
@@ -145,10 +112,9 @@ export class UserService{
       }
 
       let users: Array<User> = []
-      data.forEach((row: User) =>
+      data.forEach((row: any) =>
         {
-          const {id, role, first_name, last_name, diet, mail, attendance, language, arrival_date, departure_date, guests} = row;
-          users.push(new User(id, role, first_name, last_name, diet, mail, attendance, language, arrival_date, departure_date, guests));
+          users.push(new User(row.id, row.role, row.first_name, row.last_name, row.diet, row.mail, row.attendance, row.language, row.arrival_date, row.departure_date, row.guests, row.last_visit));
         }
       )
       return users
@@ -170,9 +136,7 @@ export class UserService{
       if (!response.ok){
         return undefined;
       }
-
-      const {id, role, first_name, last_name, diet, mail, attendance, language, arrival_date, departure_date, guests} = data;
-      return new User(id, role, first_name, last_name, diet, mail, attendance, language, arrival_date, departure_date, guests);
+      return new User(data.id, data.role, data.first_name, data.last_name, data.diet, data.mail, data.attendance, data.language, data.arrival_date, data.departure_date, data.guests, data.last_visit);
     }catch (error) {
       return undefined
     }

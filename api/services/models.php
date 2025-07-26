@@ -12,6 +12,7 @@ class User{
     public $arrival_date;
     public $departure_date;
     public $guests;
+    public $last_visit;
 
     public function __construct(
             $id, 
@@ -23,7 +24,8 @@ class User{
             $language, 
             $arrival_date, 
             $departure_date,
-            $guests
+            $guests,
+            $last_visit
         ){
         $this->id = $id;
         $this->role = $role;
@@ -36,6 +38,7 @@ class User{
         $this->arrival_date = $arrival_date;
         $this->departure_date = $departure_date;
         $this->guests = $guests;
+        $this->last_visit = $last_visit;
     }
 
     static public function from_row($row){
@@ -51,6 +54,7 @@ class User{
             arrival_date: $row["arrival_date"] , 
             departure_date: $row["departure_date"],
             guests: json_decode($row["guests"]) ?? [],
+            last_visit: $row["last_visit"]
         );
     }
 }

@@ -19,6 +19,7 @@ function create_user($first_name, $last_name, $role, $language) {
 }
 
 function get_user($user_id) {
+    \UserRepository\update_last_visited($user_id);
     return \UserRepository\get_user_by_id($user_id);
 }
 
