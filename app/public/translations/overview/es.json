@@ -1,4 +1,8 @@
 
 {
-  "rsvp": "Por favor, rellene el formulario RSVP"
+  "rsvp": "Por favor, rellene el formulario RSVP",
+  "need_to_know": "Información importante",
+  "rsvp_help_us_with": "Para ayudarnos a planificar nuestra boda, por favor dirígete a la sección de RSVP en la <1>página de usuario</1> y rellena la información.",
+  "rsvp_for_no_show": "Aunque no planees asistir, deja tu correo electrónico y actualiza tu asistencia. Actualmente estamos pensando en si y cómo podríamos hacer una opción virtual o híbrida para que las personas que no puedan asistir a la boda (sí, es un viaje largo) puedan participar en la celebración.",
+  "rsvp_why_we_need": "¿Por qué necesitamos la información? En general, nos ayuda a planificar la boda correctamente (por ejemplo, tus requisitos alimenticios o si planeas asistir). Además, nos gustaría obtener tu correo para mantenerte informado si hay algún cambio. ¿Quizás un cambio de lugar o código de vestimenta? ¿O simplemente una nueva sección en este sitio web?"
 }

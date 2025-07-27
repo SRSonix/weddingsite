@@ -54,8 +54,6 @@ export default function Overview() {
                 }</div>
               </li>
             </ul>
-
-
           </div>
         </ContentTile>
       </div>
