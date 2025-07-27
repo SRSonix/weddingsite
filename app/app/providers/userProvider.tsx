@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
+import i18n from "i18next";
 
 export enum Attandance {
   will_join = "will_join",
@@ -216,6 +217,12 @@ export function UserProvider({ children }: {children: React.ReactNode}) {
     if (token) login_and_fetch_user(token);
     else fetch_user();
   }, []);
+
+  useEffect(() => {
+    if (user?.language != undefined) {
+      i18n.changeLanguage(user.language);
+    }
+  }, [user])
 
   function update_user(user_id: number, body:{diet: string | undefined, mail: string | undefined, attendance: Attandance | undefined, language: string | undefined, arrival_date: string | undefined, departure_date: string | undefined}){
     UserService.updateUser(user_id, body).then( 
