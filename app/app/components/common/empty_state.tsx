@@ -9,12 +9,9 @@ export function EmptyState({children}: {children: React.ReactNode})
         
     useEffect(() => {
         if (user == undefined) {
-            // workaround: on the index page, the navigate might not be fully initalized
-            setTimeout(() => {
-                navigate("/user", { replace: true });
-            }, 10); 
+            navigate("/user", { replace: true });
         }
-    }, [navigate]);
+    }, [navigate, user]);
 
     return (
         <>
