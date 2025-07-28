@@ -14,7 +14,7 @@ import {Header} from "./components/common/header";
 import type { Route } from "./+types/root";
 import "./app.css";
 import { Footer } from "./components/common/footer";
-import { UserProvider, type User } from "./providers/userProvider";
+import { UserProvider } from "./providers/userProvider";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 

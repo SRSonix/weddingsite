@@ -1,10 +1,10 @@
 import { ContentTile } from "~/components/common/content_tile";
 import type { Route } from "./+types/overview";
 import { Trans, useTranslation } from "react-i18next";
-import { Link, Router, useNavigate } from "react-router";
+import { Link } from "react-router";
 import { useUser } from "~/providers/userProvider";
 import { EmptyState } from "~/components/common/empty_state";
-import { InfoService, OverviewInfo } from "~/providers/infoService";
+import { InfoService, OverviewInfo } from "~/services/infoService";
 import { useEffect, useState } from "react";
 
 export function meta({}: Route.MetaArgs) {

@@ -1,4 +1,3 @@
-import { ContentTile } from "~/components/common/content_tile";
 import type { Route } from "./+types/traveling";
 import { useTranslation } from "react-i18next";
 import { EmptyState } from "~/components/common/empty_state";

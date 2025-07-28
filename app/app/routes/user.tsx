@@ -1,11 +1,9 @@
-import { useContext, useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import type { Route } from "./+types/user";
-import { Attandance, UserService, useUser } from "~/providers/userProvider";
+import { useUser } from "~/providers/userProvider";
 import { useTranslation } from "react-i18next";
 import { Rsvp } from "~/components/user/rsvp";
 import { UserLogin } from "~/components/user/login";
 import { ContentTile } from "~/components/common/content_tile";
-
 
 export function meta({}: Route.MetaArgs) {
   return [

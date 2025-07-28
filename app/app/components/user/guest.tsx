@@ -1,5 +1,5 @@
 import type { ChangeEvent } from "react";
-import { type Guest } from "~/providers/userProvider";
+import type { Guest } from "~/services/userService";
 
 export function GuestTile({guest, edit, onDelete, onChange}: {guest: Guest, edit: boolean, onDelete: () => void, onChange: (updatedGuest: Guest) => void}) {
     function handleChange(e: ChangeEvent<HTMLInputElement>){

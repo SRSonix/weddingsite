@@ -8,14 +8,16 @@ export function EmptyState({children}: {children: React.ReactNode})
     const {user} = useUser();
         
     useEffect(() => {
-        if (user == undefined) {
+        console.log(user)
+        if (user == null) {
             navigate("/user", { replace: true });
         }
     }, [navigate, user]);
 
+
     return (
         <>
-            {user === undefined ? 
+            {(user === undefined) || (user === null) ? 
             <div>
                 Please log in <Link className="text-blue-600" to="/user">here</Link> to see content.
             </div>

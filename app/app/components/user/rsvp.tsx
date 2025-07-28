@@ -1,7 +1,8 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Attandance, Guest, Language, RsvpInformation, useUser } from "~/providers/userProvider";
+import { useUser } from "~/providers/userProvider";
 import { GuestTile } from "./guest";
+import { Attandance, Guest, Language, RsvpInformation } from "~/services/userService";
 
 export function Rsvp() {
     const {t} = useTranslation(["user", "common"])

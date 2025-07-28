@@ -1,5 +1,3 @@
-
-
 export class OverviewInfo{
     constructor(
         public date: string,
@@ -31,4 +29,4 @@ export class InfoService{
       return undefined
     }
   };
-}
+};
