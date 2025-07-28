@@ -21,17 +21,17 @@ export default function Users() {
       
       {user ? 
         <div className="content-tile-wrap">
-          <ContentTile header="User Info">
+          <ContentTile header={t("user_info")}>
           <ul>
-            <li>First Name: <span>{user?.first_name}</span></li>
-            <li>Last Name: <span>{user?.last_name}</span></li>
+            <li>{t("first_name")}: <span>{user?.first_name}</span></li>
+            <li>{t("last_name")}: <span>{user?.last_name}</span></li>
             {user?.role == "ADMIN" && <li className="text-red-900">You are admin!</li>}
           </ul>
           <button onClickCapture={logout} className="btn px-3 mt-7">
-                logout
+                {t("logout")}
             </button>
           </ContentTile>
-          <ContentTile header="RSVP"><Rsvp></Rsvp></ContentTile>
+          <ContentTile header={t("rsvp")}><Rsvp></Rsvp></ContentTile>
         </div>
         : <UserLogin></UserLogin>
       }

@@ -1,5 +1,5 @@
 import { useEffect, useState, type ChangeEvent } from "react";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { useUser } from "~/providers/userProvider";
 import { GuestTile } from "./guest";
 import { Attandance, Guest, Language, RsvpInformation } from "~/services/userService";
@@ -11,9 +11,8 @@ export function Rsvp() {
     const [formData, setFormData] = useState<RsvpInformation>(RsvpInformation.getEmpty());
 
     useEffect(() => {
-        // This code runs every time 'count' changes
         if (user != undefined) setFormData(user.getRsvpInformation())
-    }, [user]); // <-- 'count' is the dependency
+    }, [user]);
 
     function handleChange(e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>){
         const id = e.target.id
@@ -48,30 +47,30 @@ export function Rsvp() {
 
     return (
         <div>
-            {edit && <p className="text-l/4 text-red-900 pb-3">Please note that no changes (editing info / adding or deleting guests) will be saved until you press submit!</p> }
+            {edit && <p className="text-l/4 text-red-900 pb-3">{t("save_reminder")}</p> }
             <ul>
-                <li>Diet: <input disabled={!edit} placeholder="diet" value={formData.diet == undefined ? "": formData.diet} id="diet" onChange={handleChange} className={edit ? "input-inline" : ""}></input></li>
-                <li>Mail: <input disabled={!edit} placeholder="mail" value={formData.mail == undefined ? "": formData.mail} id="mail" onChange={handleChange} className={edit ? "input-inline" : ""}></input></li>
-                <li>Attendance:
+                <li>{t("diet")}: <input disabled={!edit} placeholder={t("diet")} value={formData.diet == undefined ? "": formData.diet} id="diet" onChange={handleChange} className={edit ? "input-inline" : ""}></input></li>
+                <li>{t("mail")}: <input disabled={!edit} placeholder={t("mail")} value={formData.mail == undefined ? "": formData.mail} id="mail" onChange={handleChange} className={edit ? "input-inline" : ""}></input></li>
+                <li>{t("attendance")}:&nbsp;
                     <select disabled={!edit} value={formData.attendance == undefined ? "": formData.attendance} id="attendance" onChange={handleChange} className={edit ? "input-inline" : "appearance-none"}>
-                        <option value={""}>Not set</option>
+                        <option value={""}>{t("not_set")}</option>
                         <option value={Attandance.undecided}>{t(Attandance.undecided)}</option>
                         <option value={Attandance.will_join}>{t(Attandance.will_join)}</option>
                         <option value={Attandance.will_not_join}>{t(Attandance.will_not_join)}</option>
                     </select>
                 </li>
-                <li>Language:
+                <li>{t("language")}:&nbsp;
                     <select disabled={!edit} value={formData.language == undefined ? "": formData.language} id="language" onChange={handleChange} className={edit ? "input-inline" : "appearance-none"}>
-                        <option value={""}>Not set</option>
+                        <option value={""}>{t("not_set")}</option>
                         <option value={Language.en}>{t(Language.en)}</option>
                         <option value={Language.de}>{t(Language.de)}</option>
                         <option value={Language.es}>{t(Language.es)}</option>
                     </select>
                 </li>
-                <li>arrival: <input disabled={!edit} type="date" placeholder="arrival date" value={formData.arrival_date == undefined ? "": formData.arrival_date} id="arrival_date" onChange={handleChange} className={edit ? "input-inline" : ""}></input></li>
-                <li>departure: <input disabled={!edit} type="date" placeholder="departure date" value={formData.departure_date == undefined ? "": formData.departure_date} id="departure_date" onChange={handleChange} className={edit ? "input-inline" : ""}></input></li>
-                <li>Guests:
-                    <p className="text-[0.8rem]/4 text-gray-700">Due to limited venue capacity, we may not be able to accommodate all guests.<br/>Please list any guests you'd like to bring — we'll let you know who can be accommodated.<br/>One guest is guaranteed for those traveling from abroad.</p>
+                <li>{t("arrival")}: <input disabled={!edit} type="date" value={formData.arrival_date == undefined ? "": formData.arrival_date} id="arrival_date" onChange={handleChange} className={edit ? "input-inline" : ""}></input></li>
+                <li>{t("departure")}: <input disabled={!edit} type="date" value={formData.departure_date == undefined ? "": formData.departure_date} id="departure_date" onChange={handleChange} className={edit ? "input-inline" : ""}></input></li>
+                <li>{t("guests")}:
+                    <p className="text-[0.8rem]/4 text-gray-700"><Trans i18nKey="user:guests_disclaimer"></Trans></p>
                     <ul className="">
                     {formData.guests.map((guest: Guest, index: number) => (
                         <li key = {index} className={index > 0  ? "pt-2" : ""}>
@@ -79,18 +78,18 @@ export function Rsvp() {
                         </li>
                     ))}
                     </ul>
-                    {edit && <button onClick={addGuest} className="btn btn-small">additional guest</button>}
+                    {edit && <button onClick={addGuest} className="btn btn-small">{t("additional_guest")}</button>}
                 </li>
             </ul>
             <div className="pt-3">
                 {!edit && <button onClickCapture={() => setEdit(true)} className="btn">
-                    edit RSVP
+                    {t("edit_rsvp")}
                 </button>} 
                 {edit && <button onClickCapture={submitRsvp} className="btn btn-green mr-2">
-                    submit
+                    {t("submit")}
                 </button>}
                 {edit && <button onClickCapture={resetRsvp} className="btn btn-red">
-                    cancel
+                    {t("cancel")}
                 </button>}
             </div>
         </div>

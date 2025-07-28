@@ -26,8 +26,8 @@ export function UserLogin(){
 
     return (
         <div>
-          <h3>Login</h3>
-          <p>please log in to see the content of this website.</p>
+          <h3>{t("login")}</h3>
+          <p>{t("please_log_in")}</p>
             { errorMessage &&  <div>
                 <p className="text-red-700">{errorMessage}</p>
             </div>}
@@ -44,7 +44,7 @@ export function UserLogin(){
                 />
               </div>
               <div className="px-3 mt-7">
-                <button type="submit" className="btn">Log In</button>
+                <button type="submit" className="btn">{t("login")}</button>
               </div>
             </form>
         </div>
