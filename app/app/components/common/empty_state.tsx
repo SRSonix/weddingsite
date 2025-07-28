@@ -8,7 +8,6 @@ export function EmptyState({children}: {children: React.ReactNode})
     const {user} = useUser();
         
     useEffect(() => {
-        console.log(user)
         if (user == null) {
             navigate("/user", { replace: true });
         }
