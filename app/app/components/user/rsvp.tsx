@@ -41,7 +41,7 @@ export function Rsvp() {
     }
 
     function resetRsvp(){
-        if (user !== undefined) setFormData(() => (user.getRsvpInformation()));
+        if (user !== null && user !== undefined) setFormData(() => (user.getRsvpInformation()));
         else setFormData(() => (RsvpInformation.getEmpty()));
         setEdit(false);
     }
