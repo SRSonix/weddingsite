@@ -36,7 +36,6 @@ export function Header() {
                 <button onClick={() => changeLanguage('es')} className="hover:text-yellow-200 text-white px-2 h-5 pt-1">
                     <ReactCountryFlag countryCode="ES" svg style={{width: '1.5rem', height: '1.5rem'}} title="German"></ReactCountryFlag>
                 </button>
-                <span className="text-yellow-200 mr-2 max-lg:hidden"></span>
             </div>
             <div className="lg:hidden flex items-center">
                 <button className="px-3 py-2 border rounded hover:text-yellow-200 hover:border-yellow-200 text-white border-white" onClick={toggle_mobile_header}>
