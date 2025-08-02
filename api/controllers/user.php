@@ -76,6 +76,7 @@ function update_user(\Request $request){
     $language = $request->body["language"] ?? null;
     $arrival_date = $request->body["arrival_date"] ?? null;
     $departure_date = $request->body["departure_date"] ?? null;
+    $seating_preference = $request->body["seating_preference"] ?? null;
     $guests = $request->body["guests"] ?? null;
 
     return \UserService\update_user(
@@ -86,6 +87,7 @@ function update_user(\Request $request){
         $language, 
         $arrival_date, 
         $departure_date,
+        $seating_preference,
         $guests
     );
 }

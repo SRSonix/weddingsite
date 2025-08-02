@@ -35,7 +35,9 @@ function update_user(
     $language, 
     $arrival_date, 
     $departure_date,
-    $guests){
+    $seating_preference,
+    $guests
+    ){
 
     return \UserRepository\update_user(
         $user_id, 
@@ -45,6 +47,7 @@ function update_user(
         $language, 
         $arrival_date, 
         $departure_date,
+        $seating_preference,
         $guests
     );
 }

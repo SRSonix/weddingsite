@@ -26,5 +26,7 @@
     "cancel": "Abbrechen",
     "en": "Englisch",
     "de": "Deutsch", 
-    "es": "Spanisch"
+    "es": "Spanisch",
+    "seating_preference_info": "Wenn Sie Sitzplatzwünsche haben (zum Beispiel, wenn Sie in der Nähe bestimmter Personen oder weiter entfernt von anderen sitzen möchten), geben Sie Ihre Wünsche bitte unten im Textfeld an.",
+    "seating_preference": "Sitzplatzwünsche"
 }

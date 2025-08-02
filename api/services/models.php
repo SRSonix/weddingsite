@@ -11,6 +11,7 @@ class User{
     public $language;
     public $arrival_date;
     public $departure_date;
+    public $seating_preference;
     public $guests;
     public $last_visit;
 
@@ -25,7 +26,8 @@ class User{
             $arrival_date, 
             $departure_date,
             $guests,
-            $last_visit
+            $last_visit,
+            $seating_preference
         ){
         $this->id = $id;
         $this->role = $role;
@@ -37,6 +39,7 @@ class User{
         $this->language = $language;
         $this->arrival_date = $arrival_date;
         $this->departure_date = $departure_date;
+        $this->seating_preference = $seating_preference;
         $this->guests = $guests;
         $this->last_visit = $last_visit;
     }
@@ -53,6 +56,7 @@ class User{
             language: $row["language"] , 
             arrival_date: $row["arrival_date"] , 
             departure_date: $row["departure_date"],
+            seating_preference: $row["seating_preference"],
             guests: json_decode($row["guests"]) ?? [],
             last_visit: $row["last_visit"]
         );

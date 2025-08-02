@@ -1,14 +1,14 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import i18n from "i18next";
-import { UserService, type Attandance, type User } from "~/services/userService";
+import { RsvpInformation, UserService, type Attandance, type User } from "~/services/userService";
 import { AuthService } from "~/services/authService";
 
 type UserContextType = {
   user: User | undefined | null;
   login: (token: string | null) => Promise<boolean>;
   logout: () => void;
-  updateUser: (user_id: number, body:{diet: string | undefined, mail: string | undefined, attendance: Attandance | undefined, language: string | undefined, arrival_date: string | undefined, departure_date: string | undefined}) => void;
+  updateUser: (user_id: number, body: RsvpInformation) => void;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -57,7 +57,7 @@ export function UserProvider({ children }: {children: React.ReactNode}) {
     }
   }, [user])
 
-  function update_user(user_id: number, body:{diet: string | undefined, mail: string | undefined, attendance: Attandance | undefined, language: string | undefined, arrival_date: string | undefined, departure_date: string | undefined}){
+  function update_user(user_id: number, body: RsvpInformation){
     UserService.updateUser(user_id, body).then( 
       (new_user) => {
         if (new_user) setUser(new_user);

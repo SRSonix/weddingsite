@@ -26,5 +26,7 @@
     "cancel": "Cancelar",
     "en": "Inglés",
     "de": "Alemán", 
-    "es": "Español"
+    "es": "Español",
+    "seating_preference_info": "Si tienes preferencias de asientos (por ejemplo, si prefieres sentarte cerca de ciertas personas o lejos de otras), por favor indícalas en el campo de texto a continuación.",
+    "seating_preference": "Preferencias de asientos"
 }

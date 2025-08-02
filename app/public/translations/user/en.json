@@ -26,5 +26,7 @@
     "cancel": "Cancel",
     "en": "English",
     "de": "German", 
-    "es": "Spanish"
+    "es": "Spanish",
+    "seating_preference_info": "If you have seating preferences (for example, if you would like to sit near certain people or away from others), please indicate your preferences in the text field below.",
+    "seating_preference": "Seating Preference"
 }

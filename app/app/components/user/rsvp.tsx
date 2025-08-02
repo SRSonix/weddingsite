@@ -14,7 +14,7 @@ export function Rsvp() {
         if (user != undefined) setFormData(user.getRsvpInformation())
     }, [user]);
 
-    function handleChange(e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>){
+    function handleChange(e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLTextAreaElement>){
         const id = e.target.id
         const new_value = (e.target.value !== "" ?  e.target.value : undefined)
         setFormData((prev) => ({...prev, [id]: new_value}));
@@ -49,32 +49,52 @@ export function Rsvp() {
         <div>
             {edit && <p className="text-l/4 text-red-900 pb-3">{t("save_reminder")}</p> }
             <ul>
-                <li>{t("diet")}: <input disabled={!edit} placeholder={t("diet")} value={formData.diet == undefined ? "": formData.diet} id="diet" onChange={handleChange} className={edit ? "input-inline" : ""}></input></li>
-                <li>{t("mail")}: <input disabled={!edit} placeholder={t("mail")} value={formData.mail == undefined ? "": formData.mail} id="mail" onChange={handleChange} className={edit ? "input-inline" : ""}></input></li>
-                <li>{t("attendance")}:&nbsp;
-                    <select disabled={!edit} value={formData.attendance == undefined ? "": formData.attendance} id="attendance" onChange={handleChange} className={edit ? "input-inline" : "appearance-none"}>
+                <li className="flex align-center w-full mb-2">
+                    <label htmlFor="diet">{t("diet")}</label>:
+                    <input disabled={!edit} placeholder={t("diet")} value={formData.diet == undefined ? "": formData.diet} id="diet" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
+                </li>
+                <li className="flex align-center w-full mb-2">
+                    <label htmlFor="mail">{t("mail")}</label>:
+                    <input disabled={!edit} placeholder={t("mail")} value={formData.mail == undefined ? "": formData.mail} id="mail" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
+                </li>
+                <li className="flex align-center w-full mb-2">
+                    <label htmlFor="attendance">{t("attendance")}</label>:
+                    <select disabled={!edit} value={formData.attendance == undefined ? "": formData.attendance} id="attendance" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "appearance-none")}>
                         <option value={""}>{t("not_set")}</option>
                         <option value={Attandance.undecided}>{t(Attandance.undecided)}</option>
                         <option value={Attandance.will_join}>{t(Attandance.will_join)}</option>
                         <option value={Attandance.will_not_join}>{t(Attandance.will_not_join)}</option>
                     </select>
                 </li>
-                <li>{t("language")}:&nbsp;
-                    <select disabled={!edit} value={formData.language == undefined ? "": formData.language} id="language" onChange={handleChange} className={edit ? "input-inline" : "appearance-none"}>
+                <li className="flex align-center w-full mb-2">
+                    <label htmlFor="language">{t("language")}</label>:
+                    <select disabled={!edit} value={formData.language == undefined ? "": formData.language} id="language" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "appearance-none")}>
                         <option value={""}>{t("not_set")}</option>
                         <option value={Language.en}>{t(Language.en)}</option>
                         <option value={Language.de}>{t(Language.de)}</option>
                         <option value={Language.es}>{t(Language.es)}</option>
                     </select>
                 </li>
-                <li>{t("arrival")}: <input disabled={!edit} type="date" value={formData.arrival_date == undefined ? "": formData.arrival_date} id="arrival_date" onChange={handleChange} className={edit ? "input-inline" : ""}></input></li>
-                <li>{t("departure")}: <input disabled={!edit} type="date" value={formData.departure_date == undefined ? "": formData.departure_date} id="departure_date" onChange={handleChange} className={edit ? "input-inline" : ""}></input></li>
-                <li>{t("guests")}:
+                <li className="flex align-center w-full mb-2">
+                    <label htmlFor="arrival">{t("arrival")}</label>:
+                    <input disabled={!edit} type="date" value={formData.arrival_date == undefined ? "": formData.arrival_date} id="arrival_date" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
+                </li>
+                <li className="flex align-center w-full mb-2">
+                    <label htmlFor="departure">{t("departure")}</label>:
+                    <input disabled={!edit} type="date" value={formData.departure_date == undefined ? "": formData.departure_date} id="departure_date" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
+                </li>
+                <li className="mb-2">
+                    <label htmlFor="seating_preference">{t("seating_preference")}</label>:<br></br>
+                    <p className="text-[0.8rem]/4 text-gray-700"><Trans i18nKey="user:seating_preference_info"></Trans></p>
+                    <textarea disabled={!edit} style={{ resize: "none" }}  rows={2} placeholder={t("seating_preference")} value={formData.seating_preference == undefined ? "": formData.seating_preference} id="seating_preference" onChange={handleChange} className={"w-full " + (edit ? "input-inline" : "")}/>
+                </li>
+                <li>
+                    <label>{t("guests")}</label>:
                     <p className="text-[0.8rem]/4 text-gray-700"><Trans i18nKey="user:guests_disclaimer"></Trans></p>
                     <ul className="">
                     {formData.guests.map((guest: Guest, index: number) => (
                         <li key = {index} className={index > 0  ? "pt-2" : ""}>
-                        <GuestTile edit={edit} guest={guest} onChange={(newGuest) => handleGuestChange(index, newGuest)} onDelete={() => deleteGuest(index)}></GuestTile>
+                            <GuestTile edit={edit} guest={guest} onChange={(newGuest) => handleGuestChange(index, newGuest)} onDelete={() => deleteGuest(index)}></GuestTile>
                         </li>
                     ))}
                     </ul>
