@@ -1,10 +1,12 @@
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 import { useUser } from "~/providers/userProvider";
 
 export function UserLogin(){
   const {t} = useTranslation(["user", "common"])
   const {login} = useUser();
+  const navigate = useNavigate();
   const [userToken, setuserToken] = useState('');
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -20,6 +22,7 @@ export function UserLogin(){
         login(userToken).then(
             (loginResult) => {
                 if(!loginResult) setErrorMessage("Login Failed! Contact the wedding organizer if you have problems with the login!");
+                else  navigate("/", { replace: true });
             }
         );
     };
