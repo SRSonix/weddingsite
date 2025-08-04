@@ -31,9 +31,9 @@ export default function Overview() {
    <>
     <EmptyState>
       <div className="content-tile-wrap">
-        <ContentTile>
-          <div className="flex items-center justify-center h-full min-h-60 max-h-120 lg:min-w-180">
-            <img src={import.meta.env.VITE_API_URL + "/image/overview/landscape_1.jpg"} className="max-h-full max-w-full"></img>
+         <ContentTile>
+          <div className="flex items-center justify-center h-full min-h-60 max-h-150 lg:min-w-60">
+            <img src={import.meta.env.VITE_API_URL + "/image/overview/portrait_1.jpg"} className="max-h-full  max-w-full"></img>
           </div>
         </ContentTile>
         <ContentTile header={t("rsvp")}>
@@ -63,9 +63,9 @@ export default function Overview() {
             </ul>
           </div>
         </ContentTile>
-         <ContentTile>
-          <div className="flex items-center justify-center h-full min-h-60 max-h-150 lg:min-w-60">
-            <img src={import.meta.env.VITE_API_URL + "/image/overview/portrait_1.jpg"} className="max-h-full  max-w-full"></img>
+        <ContentTile>
+          <div className="flex items-center justify-center h-full min-h-60 max-h-120 lg:min-w-180">
+            <img src={import.meta.env.VITE_API_URL + "/image/overview/landscape_1.jpg"} className="max-h-full max-w-full"></img>
           </div>
         </ContentTile>
       </div>
