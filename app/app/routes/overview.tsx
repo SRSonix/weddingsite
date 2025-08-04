@@ -31,14 +31,21 @@ export default function Overview() {
    <>
     <EmptyState>
       <div className="content-tile-wrap">
+        <ContentTile>
+          <div className="flex items-center justify-center h-full min-h-60 max-h-120 lg:min-w-180">
+            <img src={import.meta.env.VITE_API_URL + "/image/overview/landscape_1.jpg"} className="max-h-full max-w-full"></img>
+          </div>
+        </ContentTile>
         <ContentTile header={t("rsvp")}>
-          <p>{t("hey_there", {ns: 'common'})}</p> 
-          <p className="mt-2"><Trans i18nKey="overview:rsvp_help_us_with">text<Link to="/user" className="text-blue-600 hover:text-gray-300">text</Link>text</Trans></p>
-          <p className="mt-2">{t("rsvp_for_no_show")}</p>
-          <p className="mt-2">{t("rsvp_why_we_need")}</p>
+          <div className="lg:min-w-120">
+            <p>{t("hey_there", {ns: 'common'})}</p> 
+            <p className="mt-2"><Trans i18nKey="overview:rsvp_help_us_with">text<Link to="/user" className="text-blue-600 hover:text-gray-300">text</Link>text</Trans></p>
+            <p className="mt-2">{t("rsvp_for_no_show")}</p>
+            <p className="mt-2">{t("rsvp_why_we_need")}</p>
+          </div>
         </ContentTile>
         <ContentTile header={t("need_to_know")}>
-          <div>
+          <div className="lg:min-w-120">
             <ul className="list-disc list-outside pl-5">
               <li><span className="font-bold">Date and Time</span>: {overviewInfo?.date}, arrival {overviewInfo?.arrival_time}</li>
               <li><span className="font-bold">Location</span>: {overviewInfo?.location}.</li>
@@ -56,8 +63,13 @@ export default function Overview() {
             </ul>
           </div>
         </ContentTile>
+         <ContentTile>
+          <div className="flex items-center justify-center h-full min-h-60 max-h-150 lg:min-w-60">
+            <img src={import.meta.env.VITE_API_URL + "/image/overview/portrait_1.jpg"} className="max-h-full  max-w-full"></img>
+          </div>
+        </ContentTile>
       </div>
     </EmptyState>
     </>
   )
-}
+} 
