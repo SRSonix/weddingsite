@@ -93,12 +93,13 @@ function update_user(\Request $request){
 }
 
 function update_user_token(\Request $request){
-    /*if ($request->user_role != "ADMIN") {
+    $user_id = $request->path_params["user_id"] ?? NULL;
+
+    if (!($request->user_role == "ADMIN" or $user_id == $request->user_id)) {
         http_response_code(403);
         return [];
-    }*/
+    }
 
-    $user_id = $request->path_params["user_id"] ?? NULL;
     if ($user_id === NULL)
     {
         http_response_code(422);
