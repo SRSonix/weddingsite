@@ -10,3 +10,4 @@ local_credentials.txt
 .venv*
 
 *.png
+*.jpg
