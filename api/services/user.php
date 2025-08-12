@@ -31,6 +31,17 @@ function update_user_token($user_id) {
     return \AuthService\generate_user_token($user_id, $jti);
 }
 
+function get_user_token($user_id) {
+    $jti = \UserRepository\get_user_token_jti($user_id);
+
+    if ($jti === NULL) {
+        _log("unable to get user jit.");
+        return NULL;
+    }
+    
+    return \AuthService\generate_user_token($user_id, $jti);
+}
+
 function get_user($user_id) {
     \UserRepository\update_last_visited($user_id);
     return \UserRepository\get_user_by_id($user_id);

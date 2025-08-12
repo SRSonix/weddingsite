@@ -139,4 +139,36 @@ export class UserService{
       return undefined
     }
   }
+
+  static async getCustomUserUrl(user_id: number){
+   try{
+      const response = await fetch(
+        `${UserService.BASE_URL}/${user_id}/token`, 
+        {method: "get", credentials: 'include'},
+      )
+
+      const data = await response.json();
+      const token = data.token;
+
+      return `${import.meta.env.VITE_WEBSITE_URL}?token=${token}`;
+    }catch (error) {
+      return undefined
+    }
+  }
+
+  static async resetUserToken(user_id: number){
+   try{
+      const response = await fetch(
+        `${UserService.BASE_URL}/${user_id}/reset_token`, 
+        {method: "put", credentials: 'include'},
+      )
+
+      const data = await response.json();
+      const token = data.token;
+
+      return `${import.meta.env.VITE_WEBSITE_URL}?token=${token}`;
+    }catch (error) {
+      return undefined
+    }
+  }
 };

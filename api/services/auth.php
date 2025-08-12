@@ -123,6 +123,11 @@ function generate_jti(){
 }
 
 function generate_user_token(int $user_id, $jti) {
+    if ($jti == NULL)
+    {
+        return NULL;
+    }
+
     return generate_jwt_token(["sub"=> $user_id, "jti"=> $jti]);
 }
 

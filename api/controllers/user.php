@@ -106,5 +106,22 @@ function update_user_token(\Request $request){
         return [];
     }
 
-    return \UserService\update_user_token($user_id);
+    return ["token" => \UserService\update_user_token($user_id)];
+}
+
+function get_user_token(\Request $request){
+    $user_id = $request->path_params["user_id"] ?? NULL;
+
+    if (!($request->user_role == "ADMIN" or $user_id == $request->user_id)) {
+        http_response_code(403);
+        return [];
+    }
+
+    if ($user_id === NULL)
+    {
+        http_response_code(404);
+        return [];
+    }
+
+    return ["token" => \UserService\get_user_token($user_id)];
 }

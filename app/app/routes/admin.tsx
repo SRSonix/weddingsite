@@ -3,6 +3,7 @@ import type { Route } from "./+types/admin";
 import { useTranslation } from "react-i18next";
 import { useState, type ChangeEvent, type FormEvent} from "react";
 import { Guest, Language, UserService, type User } from "~/services/userService";
+import { UserItem } from "~/components/admin/userItem";
 
 
 export function meta({}: Route.MetaArgs) {
@@ -58,6 +59,7 @@ export default function Home() {
     )
   }
 
+
   return (
     <>
       {user?.role === "ADMIN" ?  
@@ -108,25 +110,10 @@ export default function Home() {
           </div>
           <div className="mt-3">
             <button onClick={() => showUsers()}  className="btn">show all users</button>
-            <div>
-              <ul className="list-disc list-inside">
+            <div className="p-3">
                 {allUsers.map((item: User, index) => (
-                  <li key={index}>
-                    <div className="inline">{item.first_name} | 
-                      {item.last_name} | 
-                      {item.role} | 
-                      {item.diet || "diet not set"} | 
-                      {item.mail || "mail not set"} | 
-                      {item.attendance || "attendance not set"} | 
-                      {item.language || "language not set"} | 
-                      {item.arrival_date || "arrival_date not set"} | 
-                      {item.departure_date || "departure_date not set"} | 
-                      {item.seating_preference || "seating_preference not set"} | 
-                      guests: {item.guests.map((guest: Guest, index) => (guest.first_name + "/" + guest.last_name  + "/" + guest.diet) + "|" )} | 
-                      {item.last_visit || "has not visited"} </div>
-                  </li>
+                  <UserItem user={item}></UserItem>
                 ))}
-              </ul>
             </div>
           </div>          
         </div> 
