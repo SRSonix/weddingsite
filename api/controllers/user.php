@@ -91,3 +91,19 @@ function update_user(\Request $request){
         $guests
     );
 }
+
+function update_user_token(\Request $request){
+    /*if ($request->user_role != "ADMIN") {
+        http_response_code(403);
+        return [];
+    }*/
+
+    $user_id = $request->path_params["user_id"] ?? NULL;
+    if ($user_id === NULL)
+    {
+        http_response_code(422);
+        return [];
+    }
+
+    return \UserService\update_user_token($user_id);
+}

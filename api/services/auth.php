@@ -118,29 +118,33 @@ function generate_user_password(){
     return [$password, $password_hash];
 }
 
-function generate_user_token(int $user_id, $user_password) {
-    return generate_jwt_token(["sub"=> $user_id,"password"=> $user_password]);
+function generate_jti(){
+    return bin2hex(random_bytes(length: 20));
+}
+
+function generate_user_token(int $user_id, $jti) {
+    return generate_jwt_token(["sub"=> $user_id, "jti"=> $jti]);
 }
 
 function validate_user_token($token): int | null {
     $payload = decode_jwt_token($token);
 
-    if ($payload === NULL or !array_key_exists("password", $payload) or !array_key_exists("sub", $payload)) {
+    if ($payload === NULL or !array_key_exists("jti", $payload) or !array_key_exists("sub", $payload)) {
         _log(msg: "user token invalid.");
         return NULL;
     }
 
-    $password = $payload["password"];
+    $jti = $payload["jti"];
     $user_id = $payload["sub"];
 
-    $passwor_hash = \UserRepository\get_password_hash_by_id($user_id);
+    $user_jti = \UserRepository\get_user_token_jti($user_id);
 
-    if ($passwor_hash === NULL) {
+    if ($user_jti === NULL) {
         _log("no user with id $user_id");
         return NULL;
     }
 
-    if (!password_verify($password, $passwor_hash)){
+    if ($jti != $user_jti){
         return NULL;
     }
 

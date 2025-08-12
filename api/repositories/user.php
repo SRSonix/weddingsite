@@ -76,13 +76,13 @@ function get_all_users(){
     return $users;
 }
 
-function get_password_hash_by_id($user_id) {
+function get_user_token_jti($user_id) {
     $session = create_db_session();
     if ($session === null) {
         _log("failed to create session");
         return NULL;
     }
-    $stmt = $session->prepare("SELECT password_hash FROM user_auth WHERE id = :id;");
+    $stmt = $session->prepare("SELECT jti FROM user_auth WHERE id = :id;");
     $stmt->execute(["id" => $user_id]);
 
     $result = $stmt->fetchAll();
@@ -98,10 +98,10 @@ function get_password_hash_by_id($user_id) {
 
     $session = null;
     
-    return $result[0]["password_hash"];
+    return $result[0]["jti"];
 }
 
-function create_user($first_name, $last_name, $role, $password_hash, $language) {
+function create_user($first_name, $last_name, $role, $jti, $language) {
     $session = create_db_session();    
     if ($session === null) {
         _log("failed to create session");
@@ -109,8 +109,8 @@ function create_user($first_name, $last_name, $role, $password_hash, $language) 
     }
 
     try {
-        $stmt = $session->prepare("INSERT INTO user_auth(password_hash) VALUES (:password_hash);");       
-        $stmt->execute(["password_hash"=>$password_hash]);
+        $stmt = $session->prepare("INSERT INTO user_auth(jti) VALUES (:jti);");       
+        $stmt->execute(["jti"=>$jti]);
         $lastInsertId = $session->lastInsertId();
         $stmt = $session->prepare("INSERT INTO user (id, role, first_name, last_name, language) VALUES(:id, :role, :first_name, :last_name, :language);");
         $stmt->execute(["id"=>$lastInsertId, "role"=> $role, "first_name"=>$first_name, "last_name"=>$last_name, "language"=>$language]);
@@ -182,4 +182,29 @@ function update_last_visited(int $user_id): void {
     $stmt->execute(["last_visited" => time(), "user_id" => $user_id]);
 
     $session = null;
+}
+
+function update_user_token_jti(int $user_id, $jti) {
+    $session = create_db_session();   
+     if ($session === null) {
+        _log("failed to create session");
+        return;
+    }
+    try {
+        $stmt = $session->prepare(
+            "UPDATE user_auth SET jti = :jti WHERE id = :user_id;"
+        );
+        $stmt->execute(["jti" => $jti, "user_id" => $user_id]);
+
+        $session = null;
+    }
+    catch(\PDOException $e) 
+    {
+        _log($e);
+        $session = null;
+        http_response_code(response_code: 404);
+        return NULL;
+    }
+
+    return true;
 }

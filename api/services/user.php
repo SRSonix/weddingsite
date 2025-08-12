@@ -6,16 +6,29 @@ require_once "repositories/user.php";
 require_once "services/auth.php";
 
 function create_user($first_name, $last_name, $role, $language) {
-	[$password, $password_hash] = \AuthService\generate_user_password();
+	$jti = \AuthService\generate_jti();
 
-    $user_id = \UserRepository\create_user($first_name, $last_name, $role, $password_hash, $language);
+    $user_id = \UserRepository\create_user($first_name, $last_name, $role, $jti, $language);
 
     if ($user_id === NULL) {
         _log("unable to create user.");
         return NULL;
     }
 
-    return \AuthService\generate_user_token($user_id, $password);
+    return \AuthService\generate_user_token($user_id, $jti);
+}
+
+function update_user_token($user_id) {
+    $jti = \AuthService\generate_jti();
+
+    $result = \UserRepository\update_user_token_jti($user_id, $jti);
+
+    if ($result === NULL) {
+        _log("unable to update user jit.");
+        return NULL;
+    }
+    
+    return \AuthService\generate_user_token($user_id, $jti);
 }
 
 function get_user($user_id) {
