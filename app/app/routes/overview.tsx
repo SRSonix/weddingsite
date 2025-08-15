@@ -38,7 +38,7 @@ export default function Overview() {
         </ContentTile>
         <ContentTile header={t("rsvp")}>
           <div className="lg:min-w-120">
-            <p>{t("hey_there", {ns: 'common'})}</p> 
+            <p>{t("hey_there")}</p>
             <p className="mt-2"><Trans i18nKey="overview:rsvp_help_us_with">text<Link to="/user" className="text-blue-600 hover:text-gray-300">text</Link>text</Trans></p>
             <p className="mt-2">{t("rsvp_for_no_show")}</p>
             <p className="mt-2">{t("rsvp_why_we_need")}</p>

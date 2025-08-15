@@ -58,6 +58,6 @@
   }
 
   .content-tile-wrap {
-    @apply p-3 flex flex-wrap
+    @apply p-3 flex flex-wrap gap-3
   }
 }
