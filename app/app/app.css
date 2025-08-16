@@ -45,6 +45,10 @@
     @apply hover:bg-green-700/80 text-green-700/80 border-green-700/80
   }
 
+  .btn-gray {
+    @apply hover:bg-stone-700/80 text-stone-700/80 border-stone-700/80
+  }
+
   .input-inline {
     @apply bg-gray-200 border border-gray-200 text-gray-700 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500
   }

@@ -1,0 +1,84 @@
+
+import { useState, type ChangeEvent, type FormEvent} from "react";
+import { Language, UserService } from "~/services/userService";
+
+export default function CreateUser(){
+  const [formData, setFormData] = useState({first_name: undefined, last_name: undefined, role: "USER", language: undefined});
+  const [newUserToken, setNewUserToken] = useState(undefined);
+  const [showCreateUser, setShowCreateUser] = useState(false);
+  
+  function handleChange(e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>){
+    setFormData({...formData, [e.target.id]: e.target.value})
+  }
+
+  function createUser(e: FormEvent){
+    e.preventDefault();
+    
+    if (formData.first_name === undefined){
+      alert("first_name missing");
+      return;
+    }
+
+    if (formData.last_name === undefined){
+      alert("last_name missing");
+      return;
+    }
+
+    UserService.createUser({first_name:formData.first_name, last_name:formData.last_name, role:formData.role, language: formData.language}).then(
+      (token) => {
+        if (token !== undefined){
+          setNewUserToken(token);
+        }
+        else {
+          setNewUserToken(undefined);
+        }
+      }
+    )
+  }
+      
+  return (
+    <div className="mt-3">
+      <button onClick={() => setShowCreateUser(!showCreateUser)} className="btn">create user</button>
+      <div className={showCreateUser ? "": "hidden" +  " mt-2"}>
+        <form onSubmit={createUser} className="w-full flex flex-wrap">
+          <div className="px-3">
+            <label htmlFor="first_name" className="input-label">username</label>
+            <input id="first_name" type="text" placeholder="first name" onChange={handleChange} className="input-block"></input>
+          </div>
+          <div className="px-3">
+            <label htmlFor="last_name" className="input-label">username</label>
+            <input id="last_name" type="text" placeholder="last name" onChange={handleChange} className="input-block"></input>
+          </div>
+          <div className="px-3">
+            <label htmlFor="role" className="input-label">role</label>
+            <select id="role" defaultValue="USER" onChange={handleChange} className="input-block" >
+              <option value="USER">user</option>
+              <option value="ADMIN">admin</option>
+            </select>
+          </div>
+          <div className="px-3">
+            <label htmlFor="language" className="input-label">language</label>
+            <select id="language" defaultValue={undefined} onChange={handleChange} className="input-block">
+              <option value={undefined}>Not set</option>
+              <option value={Language.en}>{Language.en}</option>
+              <option value={Language.de}>{Language.de}</option>
+              <option value={Language.es}>{Language.es}</option>
+            </select>
+          </div>
+          <div className="px-3 mt-7">
+            <button type="submit" className="font-bolt py-2 px-4 rounded bg-gray-200 hover:bg-gray-400">submit</button>
+          </div>
+        </form>
+        <div className={(newUserToken!==undefined ? "": "hidden ")}>
+          <p className="break-all">new user was created with token {newUserToken}</p>
+          <button onClick={() => {navigator.clipboard.writeText(newUserToken ? newUserToken : "")}} className="font-bolt py-2 px-4 mx-3 rounded bg-gray-200 hover:bg-gray-400">
+            copy token to clipboard
+          </button>
+          <button onClick={() => setNewUserToken(undefined)} className="font-bolt py-2 px-4 rounded bg-gray-200 hover:bg-gray-400 mx-3">
+            I have saved the token! 
+          </button>
+        </div>
+      </div>  
+    </div>
+  )
+}

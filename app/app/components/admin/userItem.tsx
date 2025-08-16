@@ -46,23 +46,25 @@ export function UserItem({user}: {user:User}){
     return(
       <div className="mb-3 border p-3">
         <p>
-          {user.first_name} <br/>
-          {user.last_name} <br/>
-          {user.role} <br/>
-          {user.diet || "diet not set"} <br/>
-          {user.mail || "mail not set"} <br/>
-          {user.attendance || "attendance not set"} <br/>
-          {user.language || "language not set"} <br/>
-          {user.arrival_date || "arrival_date not set"} <br/>
-          {user.departure_date || "departure_date not set"} <br/>
-          {user.seating_preference || "seating_preference not set"} <br/>
+          first_name: {user.first_name} <br/>
+          last_name: {user.last_name} <br/>
+          role: {user.role} <br/>
+          diet: {user.diet || "diet not set"} <br/>
+          mail: {user.mail || "mail not set"} <br/>
+          attendance: {user.attendance || "attendance not set"} <br/>
+          language: {user.language || "language not set"} <br/>
+          arrival_date: {user.arrival_date || "arrival_date not set"} <br/>
+          departure_date: {user.departure_date || "departure_date not set"} <br/>
+          seating_preference: {user.seating_preference || "seating_preference not set"} <br/>
           guests: {user.guests.map((guest: Guest, index) => (guest.first_name + "/" + guest.last_name  + "/" + guest.diet) + "|" )} <br/>
           {user.last_visit || "has not visited"} 
         </p>
-        <button className="btn btn-small" onClick={() => getUserUrl(user.id)}>{isSafari ? "fetch user token" : "load custom user url"}</button>
-        {isSafari &&  <button className="btn btn-small" onClick={copyUrl}>copy token to clipboard</button> }
-        <button className="btn btn-small btn-red" onClick={() => resetUserToken(user.id)}>reset token</button>
-        <p>{infoMessage}</p>
+        <div className="mt-2">
+          <button className="btn btn-small mr-2 btn-gray" onClick={() => getUserUrl(user.id)}>{isSafari ? "fetch user token" : "load custom user url"}</button>
+          {isSafari &&  <button className="btn btn-small mr-2 btn-gray" onClick={copyUrl}>copy token to clipboard</button> }
+          <button className="btn btn-small btn-red" onClick={() => resetUserToken(user.id)}>reset token</button>
+          <p>{infoMessage}</p>
+        </div>
       </div>
     )
 }
