@@ -1,6 +1,7 @@
 import { useState, type ChangeEvent} from "react";
-import { UserService, type User } from "~/services/userService";
+import { Attandance, UserService, type User } from "~/services/userService";
 import { UserItem } from "./userItem";
+import { useAllUsers } from "~/providers/allUserProvider";
 
 
 class SearchForm{
@@ -8,31 +9,20 @@ class SearchForm{
         public first_name: string,
         public last_name: string,
         public role: string,
+        public attendance: string,
     ){}
 
     static initialFormData(){
-        return new SearchForm("", "", "");
+        return new SearchForm("", "", "", "");
     }
 }
 
 export default function AllUsers(){
-    const [allUsers, setAllUsers] = useState<Array<User>>([]);
     const [showAllUsers, setShowAllUsers] = useState(false);
     const [formData, setFormData] = useState<SearchForm>(SearchForm.initialFormData());
+    const {allUsers} = useAllUsers()
  
-    function loadUsers(){
-        UserService.getAllUsers().then(
-            (users) => {
-                setAllUsers(users || []);
-            }
-        )
-    }
-
     function tollgeShowAllUsers(){  
-        if (!showAllUsers){
-            loadUsers();
-        }
-
         setShowAllUsers(!showAllUsers);
     }
 
@@ -47,11 +37,12 @@ export default function AllUsers(){
     }
 
     function filterUser(user: User){
-        const {first_name, last_name, role} = formData;
+        const {first_name, last_name, role, attendance} = formData;
 
         if (first_name && !user.first_name.toLowerCase().includes(first_name.toLocaleLowerCase())) return false;
         if (last_name && !user.last_name.toLowerCase().includes(last_name.toLocaleLowerCase())) return false;
         if (role && !user.role.toLowerCase().includes(role.toLocaleLowerCase())) return false;
+        if (attendance && user.attendance!=attendance) return false;
 
         return true;
     }
@@ -72,6 +63,15 @@ export default function AllUsers(){
                             <input type="text" id="last_name" placeholder="last_name" onChange={handleChange}  className="input-block" value={formData.last_name}></input>
                         </div>
                         <div className="px-3 inline">
+                            <label htmlFor="attendance">"attendance"</label>:
+                            <select value={formData.attendance} id="attendance" onChange={handleChange} className="input-block">
+                                <option value={""}>{"not_set"}</option>
+                                <option value={Attandance.undecided}>{Attandance.undecided}</option>
+                                <option value={Attandance.will_join}>{Attandance.will_join}</option>
+                                <option value={Attandance.will_not_join}>{Attandance.will_not_join}</option>
+                            </select>
+                        </div>
+                        <div className="px-3 inline">
                             <label htmlFor="role" className="input-label">role</label>
                             <select id="role" defaultValue="" onChange={handleChange}  className="input-block"  value={formData.role}>
                                 <option value="">not set</option>
@@ -80,7 +80,6 @@ export default function AllUsers(){
                             </select>
                         </div>
                         <button onClick={(e) => resetSearchField(e)} className="btn btn-inline mt-6 btn-gray mr-3">reset filter</button>
-            <button onClick={loadUsers}  className={"btn btn-inlune mt-6 btn-gray"}>refresh users</button>   
                     </form>
                 </div>
                 <div className="mt-3">

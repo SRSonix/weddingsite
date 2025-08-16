@@ -59,6 +59,12 @@ export class User extends RsvpInformation{
   }
 }
 
+export class UserStatistics{
+  constructor(
+    public user_count: number | undefined
+  ){}
+}
+
 export class UserService{
   static BASE_URL = `${import.meta.env.VITE_API_URL}/user`;
 
