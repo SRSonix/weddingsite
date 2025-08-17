@@ -44,8 +44,9 @@ export default function AllUsers(){
 
         if (first_name && !user.first_name.toLowerCase().includes(first_name.toLocaleLowerCase())) return false;
         if (last_name && !user.last_name.toLowerCase().includes(last_name.toLocaleLowerCase())) return false;
-        if (role && user.role !=  role) return false;
         if (attendance && attendance === "not_set" && user.attendance !== null) return false;
+        if (attendance && attendance !== "not_set" && user.attendance !== attendance) return false;
+        if (role && user.role !==  role) return false;
         if (has_guests  && has_guests === "guests" && user.guests.length === 0) return false;
         if (has_guests  && has_guests === "no_guests" && user.guests.length !== 0) return false;
         if (has_visited === "visited" && user.last_visit === null) return false;
