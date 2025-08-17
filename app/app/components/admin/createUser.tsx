@@ -1,11 +1,13 @@
 
 import { useState, type ChangeEvent, type FormEvent} from "react";
+import { useAllUsers } from "~/providers/allUserProvider";
 import { Language, UserService } from "~/services/userService";
 
 export default function CreateUser(){
   const [formData, setFormData] = useState({first_name: undefined, last_name: undefined, role: "USER", language: undefined});
-  const [newUserToken, setNewUserToken] = useState(undefined);
+  const [newUserUrl, setNewUserUrl] = useState<string | undefined>(undefined);
   const [showCreateUser, setShowCreateUser] = useState(false);
+  const {reloadUsers} = useAllUsers();
   
   function handleChange(e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>){
     setFormData({...formData, [e.target.id]: e.target.value})
@@ -27,11 +29,13 @@ export default function CreateUser(){
     UserService.createUser({first_name:formData.first_name, last_name:formData.last_name, role:formData.role, language: formData.language}).then(
       (token) => {
         if (token !== undefined){
-          setNewUserToken(token);
+          setNewUserUrl(`${import.meta.env.VITE_WEBSITE_URL}?token=${token}`);
         }
         else {
-          setNewUserToken(undefined);
+          setNewUserUrl(undefined);
         }
+
+        reloadUsers();
       }
     )
   }
@@ -69,13 +73,13 @@ export default function CreateUser(){
             <button type="submit" className="font-bolt py-2 px-4 rounded bg-gray-200 hover:bg-gray-400">submit</button>
           </div>
         </form>
-        <div className={(newUserToken!==undefined ? "": "hidden ")}>
-          <p className="break-all">new user was created with token {newUserToken}</p>
-          <button onClick={() => {navigator.clipboard.writeText(newUserToken ? newUserToken : "")}} className="font-bolt py-2 px-4 mx-3 rounded bg-gray-200 hover:bg-gray-400">
-            copy token to clipboard
+        <div className={(newUserUrl!==undefined ? "": "hidden ")}>
+          <p className="break-all">new user was created with url {newUserUrl}</p>
+          <button onClick={() => {navigator.clipboard.writeText(newUserUrl ? newUserUrl : "")}} className="font-bolt py-2 px-4 mx-3 rounded bg-gray-200 hover:bg-gray-400">
+            copy url to clipboard
           </button>
-          <button onClick={() => setNewUserToken(undefined)} className="font-bolt py-2 px-4 rounded bg-gray-200 hover:bg-gray-400 mx-3">
-            I have saved the token! 
+          <button onClick={() => setNewUserUrl(undefined)} className="font-bolt py-2 px-4 rounded bg-gray-200 hover:bg-gray-400 mx-3">
+            I have saved the url! 
           </button>
         </div>
       </div>  

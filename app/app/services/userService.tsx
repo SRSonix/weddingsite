@@ -4,6 +4,11 @@ export enum Attandance {
   undecided="undecided"
 }
 
+export enum Role {
+  user = "USER",
+  admin = "ADMIN"
+}
+
 export enum Language {
   en = "en",
   de = "de",
