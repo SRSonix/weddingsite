@@ -57,7 +57,7 @@ export function UserItem({user}: {user:User}){
           departure_date: {user.departure_date || "departure_date not set"} <br/>
           seating_preference: {user.seating_preference || "seating_preference not set"} <br/>
           guests: {user.guests.map((guest: Guest, index) => (guest.first_name + "/" + guest.last_name  + "/" + guest.diet) + "|" )} <br/>
-          {user.last_visit || "has not visited"} 
+          last_visit: {user.last_visit || "has not visited"} 
         </p>
         <div className="mt-2">
           <button className="btn btn-small mr-2 btn-gray" onClick={() => getUserUrl(user.id)}>{isSafari ? "fetch user token" : "load custom user url"}</button>

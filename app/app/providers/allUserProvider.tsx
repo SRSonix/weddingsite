@@ -19,6 +19,7 @@ export default function AllUsersProvider({children}: {children: React.ReactNode}
         UserService.getAllUsers().then(
             (allUsers) => {
                 setAllUsers(allUsers || []);
+                console.log(allUsers)
             }
         )
     }

@@ -7,7 +7,7 @@ export default function CreateUser(){
   const [formData, setFormData] = useState({first_name: undefined, last_name: undefined, role: "USER", language: undefined});
   const [newUserUrl, setNewUserUrl] = useState<string | undefined>(undefined);
   const [showCreateUser, setShowCreateUser] = useState(false);
-  const {reloadUsers} = useAllUsers();
+  const {reloadAllUsers} = useAllUsers();
   
   function handleChange(e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>){
     setFormData({...formData, [e.target.id]: e.target.value})
@@ -35,7 +35,7 @@ export default function CreateUser(){
           setNewUserUrl(undefined);
         }
 
-        reloadUsers();
+        reloadAllUsers();
       }
     )
   }
