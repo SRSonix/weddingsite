@@ -14,7 +14,9 @@ function get_overview(\Request $request){
         "location"=> "Casa Flor de Maria, C. 31, 97345 Conkal, Yuc.",
         "car_minutes"=> "15-30",
         "car_from"=> "Mérida",
-        "post_wedding_day"=> "sunday",
+        "pre_wedding_day" => "Friday, 28.11.",
+        "pre_wedding_location" => "location tbd",
+        "post_wedding_day" => "sunday",
         "post_wedding_location"=> "beach in Progreso",
         "whatsapp"=> [
             "Regina" => "+49 152 5606 2564",

@@ -54,7 +54,8 @@ export default function Overview() {
               <li><span className="font-bold">Getting there</span>: {overviewInfo?.car_minutes} minutes by car from {overviewInfo?.car_from}</li>
               <li><span className="font-bold">Parking</span>: not available, please use Uber or Taxi</li>
               <li><span className="font-bold">Gifts</span>: We have small suitcases, a donation or experience is great!</li>
-              <li><span className="font-bold">Post-wedding</span>: feel free to join us at the {overviewInfo?.post_wedding_location} on {overviewInfo?.post_wedding_day} ❤️</li>
+              <li><span className="font-bold">Pre-wedding</span>: join us for a pre-weeding lunch on {overviewInfo?.pre_wedding_day} - {overviewInfo?.pre_wedding_location}</li>
+              <li><span className="font-bold">Post-wedding</span>: join us at the {overviewInfo?.post_wedding_location} on {overviewInfo?.post_wedding_day}</li>
               <li><span className="font-bold align-top">WhatsApp</span>: 
                 <div className="inline-block align-top ml-2"> {
                   Object.entries(overviewInfo?.whatsapp || []).map(([key, value]) => <span className="block">{key}: {value}</span>)

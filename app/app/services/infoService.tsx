@@ -5,6 +5,8 @@ export class OverviewInfo{
         public location: string,
         public car_minutes: string,
         public car_from: string,
+        public pre_wedding_day: string,
+        public pre_wedding_location: string,
         public post_wedding_day: string,
         public post_wedding_location: string,
         public whatsapp: Record<string, string>
@@ -23,8 +25,8 @@ export class InfoService{
         return undefined;
       }
 
-      const {date, arrival_time, location, car_minutes, car_from, post_wedding_day, post_wedding_location, whatsapp} = data;
-      return new OverviewInfo(date, arrival_time, location, car_minutes, car_from, post_wedding_day, post_wedding_location, whatsapp);
+      const {date, arrival_time, location, car_minutes, car_from, pre_wedding_day, pre_wedding_location, post_wedding_day, post_wedding_location, whatsapp} = data;
+      return new OverviewInfo(date, arrival_time, location, car_minutes, car_from, pre_wedding_day, pre_wedding_location, post_wedding_day, post_wedding_location, whatsapp);
     } catch (error) {
       return undefined
     }
