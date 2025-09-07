@@ -16,11 +16,9 @@ export default function UserStatisticsPanel(){
         ]
 
         let csvContent = "data:text/csv;charset=utf-8,"
-        csvContent += fields.join(",") + ",guest_count" + "\n"
         csvContent = csvContent + allUsers.map(
             (user) => {
                 let row =  fields.map((field) =>user[field]).join(",");
-                row += ","+ user.guests.length;
                 return row;
             }
         ).join("\n");
@@ -45,9 +43,7 @@ export default function UserStatisticsPanel(){
                 joining user-count: {allUsers.filter((user) => (user.attendance==Attandance.will_join)).length} <br/>
                 not joining user-count: {allUsers.filter((user) => (user.attendance==Attandance.will_not_join)).length} <br/>
                 undecided user-count: {allUsers.filter((user) => (user.attendance==Attandance.undecided)).length} <br/>
-                attendance not set user-count: {allUsers.filter((user) => (user.attendance===null)).length} <br/><br/>
-                <h4>guests</h4>
-                guest_count joining users: {allUsers.filter((user) => (user.attendance==Attandance.will_join)).map((item) => (item.guests.length)).reduce((a, b) => (a+b), 0)}       
+                attendance not set user-count: {allUsers.filter((user) => (user.attendance===null)).length} <br/><br/>  
             </div>
         </div>
     )

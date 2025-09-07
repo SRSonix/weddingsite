@@ -5,16 +5,6 @@ namespace UserRepository;
 require_once "secrets/config.php";
 require_once "services/models.php";
 
-const GET_USER_QUERY = <<<EOD
-WITH g AS (
-SELECT user_id, JSON_ARRAYAGG(JSON_OBJECT('id', guest.id, 'first_name', guest.first_name, 'last_name', guest.last_name, 'diet', guest.diet)) as guests
-from guest
-GROUP BY user_id
-)
-select user.*, guests
-from user LEFT JOIN g ON user.id = g.user_id
-EOD;
-
 function create_db_session() {
     $servername = DB_SERVER;
     $username = DB_USER;
@@ -33,6 +23,27 @@ function create_db_session() {
     return $session;
 }
 
+function user_from_row($row){
+    $drinks = [];
+    if ($row["drinks"]!= null && ($row["drinks"]!="")) $drinks = explode(",", $row["drinks"]);
+
+    return new \User(
+        id: $row["id"],
+        role: $row["role"], 
+        first_name: $row["first_name"], 
+        last_name: $row["last_name"], 
+        diet: $row["diet"], 
+        drinks: $drinks,
+        mail: $row["mail"], 
+        attendance: $row["attendance"] , 
+        language: $row["language"] , 
+        arrival_date: $row["arrival_date"] , 
+        departure_date: $row["departure_date"],
+        seating_preference: $row["seating_preference"],
+        last_visit: $row["last_visit"]
+    );
+}
+
 function get_user_by_id($user_id) {
     $session = create_db_session();
     if ($session === null) {
@@ -40,7 +51,7 @@ function get_user_by_id($user_id) {
         return NULL;
     }
     
-    $stmt = $session->prepare(GET_USER_QUERY." HAVING id = :id;");
+    $stmt = $session->prepare("SELECT * FROM user WHERE id = :id;");
     $stmt->execute(["id" => $user_id]);
     $result = $stmt->fetchAll();
     
@@ -51,7 +62,7 @@ function get_user_by_id($user_id) {
 
     $session = null;
     
-    return \User::from_row($result[0]);
+    return user_from_row($result[0]);
 }
 
 function get_all_users(){
@@ -61,7 +72,7 @@ function get_all_users(){
         return NULL;
     }
 
-    $stmt = $session->prepare(GET_USER_QUERY.";");
+    $stmt = $session->prepare("SELECT * FROM user;");
     $stmt->execute([]);
     
     $result = $stmt->fetchAll();
@@ -70,7 +81,7 @@ function get_all_users(){
 
     $users = [];
     foreach ($result as $row){
-        $users[] = \User::from_row($row);
+        $users[] = user_from_row($row);
     }
 
     return $users;
@@ -126,16 +137,10 @@ function create_user($first_name, $last_name, $role, $jti, $language) {
     return $lastInsertId;
 }
 
-function update_user(
+function update_user_name(
     $user_id, 
-    $mail, 
-    $diet, 
-    $attendance,
-    $language, 
-    $arrival_date, 
-    $departure_date,
-    $seating_preference,
-    $guests
+    $first_name, 
+    $last_name, 
     ){
     $session = create_db_session();    
     if ($session === null) {
@@ -144,17 +149,44 @@ function update_user(
     }
 
     try {
-        $stmt = $session->prepare("UPDATE user SET mail = :mail, diet = :diet, attendance = :attendance, language = :language, arrival_date = :arrival_date, departure_date = :departure_date, seating_preference = :seating_preference WHERE id = :user_id;");
-        $stmt->execute(["user_id"=>$user_id, "mail"=>$mail, "diet"=> $diet, "attendance"=>$attendance, "language"=>$language, "arrival_date"=>$arrival_date, "departure_date"=>$departure_date, "seating_preference"=>$seating_preference]);
+        $stmt = $session->prepare("UPDATE user SET first_name = :first_name, last_name = :last_name WHERE id = :user_id;");
+        $stmt->execute(["user_id"=>$user_id, "first_name"=>$first_name, "last_name"=> $first_name]);
+    }
+    catch(\PDOException $e) 
+    {
+        _log($e);
+        $session = null;
+        http_response_code(response_code: 422);
+        return ["msg"=>"error inserting user"];
+    }
+    
+    $session = null;
 
-        $stmt = $session->prepare("DELETE FROM guest WHERE user_id = :user_id;");
-        $stmt->execute(["user_id"=>$user_id]);
+    return get_user_by_id($user_id);
+}
 
-        $stmt = $session->prepare("INSERT INTO guest (user_id, id, first_name, last_name, diet) values (:user_id, :id, :first_name, :last_name, :diet);");
-        for ($i = 0; $i < count($guests); $i++) {
-            $guest = $guests[$i];
-            $stmt->execute(["user_id"=>$user_id, "id"=>$i, "first_name"=>$guest["first_name"], "last_name"=>$guest["last_name"], "diet"=>$guest["diet"]]);
-        }
+function update_user_rsvp(
+    $user_id, 
+    $mail, 
+    $diet, 
+    $drinks,
+    $attendance,
+    $language, 
+    $arrival_date, 
+    $departure_date,
+    $seating_preference,
+    ){
+    $session = create_db_session();    
+    if ($session === null) {
+        _log("failed to create session");
+        return NULL;
+    }
+
+    $drinks_str = implode(",", $drinks);
+
+    try {
+        $stmt = $session->prepare("UPDATE user SET mail = :mail, diet = :diet, drinks = :drinks, attendance = :attendance, language = :language, arrival_date = :arrival_date, departure_date = :departure_date, seating_preference = :seating_preference WHERE id = :user_id;");
+        $stmt->execute(["user_id"=>$user_id, "mail"=>$mail, "diet"=> $diet, "drinks"=>$drinks_str, "attendance"=>$attendance, "language"=>$language, "arrival_date"=>$arrival_date, "departure_date"=>$departure_date, "seating_preference"=>$seating_preference]);
     }
     catch(\PDOException $e) 
     {

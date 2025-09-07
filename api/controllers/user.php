@@ -61,7 +61,7 @@ function get_all_users(\Request $request){
 }
 
 
-function update_user(\Request $request){
+function update_user_rsvp(\Request $request){
     $user_id = $request->path_params["user_id"];
     _log("trying to update user ".$user_id);
 
@@ -72,23 +72,49 @@ function update_user(\Request $request){
 
     $mail = $request->body["mail"] ?? null;
     $diet = $request->body["diet"] ?? null;
+    $drinks = $request->body["drinks"] ?? null;
     $attendance = $request->body["attendance"] ?? null;
     $language = $request->body["language"] ?? null;
     $arrival_date = $request->body["arrival_date"] ?? null;
     $departure_date = $request->body["departure_date"] ?? null;
     $seating_preference = $request->body["seating_preference"] ?? null;
-    $guests = $request->body["guests"] ?? null;
 
-    return \UserService\update_user(
+    return \UserService\update_user_rsvp(
         $user_id, 
         $mail, 
         $diet, 
+        $drinks,
         $attendance, 
         $language, 
         $arrival_date, 
         $departure_date,
         $seating_preference,
-        $guests
+    );
+}
+
+
+function update_user_name(\Request $request){
+    $user_id = $request->path_params["user_id"];
+    _log("trying to update user ".$user_id);
+
+    if (!($request->user_role == "ADMIN")) {
+        http_response_code(403);
+        return [];
+    }
+
+    $first_name = $request->body["first_name"] ?? null;
+    $last_name = $request->body["last_name"] ?? null;
+
+    if ($first_name === NULL or $last_name === NULL){
+        _log(" first_name or last_name or language was missing");
+        http_response_code(422);
+        return ["missing"=> "role, first_name, last_name or language"];
+    }
+
+    return \UserService\update_user_name(
+        $user_id, 
+        $first_name, 
+        $last_name, 
     );
 }
 

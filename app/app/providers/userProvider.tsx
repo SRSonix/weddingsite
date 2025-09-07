@@ -8,7 +8,7 @@ type UserContextType = {
   user: User | undefined | null;
   login: (token: string | null) => Promise<boolean>;
   logout: () => void;
-  updateUser: (user_id: number, body: RsvpInformation) => void;
+  updateUserRsvp: (user_id: number, body: RsvpInformation) => void;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -57,8 +57,8 @@ export function UserProvider({ children }: {children: React.ReactNode}) {
     }
   }, [user])
 
-  function update_user(user_id: number, body: RsvpInformation){
-    UserService.updateUser(user_id, body).then( 
+  function updateUserRsvp(user_id: number, body: RsvpInformation){
+    UserService.updateUserRsvp(user_id, body).then( 
       (new_user) => {
         if (new_user) setUser(new_user);
         else console.log("something went wrong setting new user!");
@@ -67,7 +67,7 @@ export function UserProvider({ children }: {children: React.ReactNode}) {
   }
 
   return (
-    <UserContext.Provider value={{user, "logout": logout_reset_user, "login": login_and_fetch_user, "updateUser": update_user}}>
+    <UserContext.Provider value={{user, "logout": logout_reset_user, "login": login_and_fetch_user, "updateUserRsvp": updateUserRsvp}}>
       {children}
     </UserContext.Provider>
   );

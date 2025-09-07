@@ -45,7 +45,7 @@ export default function Imprint(){
                     <h4>What Data Is Collected</h4>
                     <ul className="list-disc list-inside">
                         <li>User Account Data: Name, user ID (assigned by the host)</li>
-                        <li>Participation Data: Attendance status, email address, dietary preferences, arrival and departure dates including accompanying guests for the user, and other information relevant to the event</li>
+                        <li>Participation Data: Attendance status, email address, dietary preferences, arrival and departure dates for the user, and other information relevant to the event</li>
                         <li>Session Data: Session token for browser session management, last website visit timestamp</li>
                         <li>User password: User passwords are stored in a secure way for authentification.</li>
                     </ul>

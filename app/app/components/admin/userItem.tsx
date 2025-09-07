@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { UserService, type Guest, type User } from "~/services/userService";
+import { UserService, type User } from "~/services/userService";
 
 
 export function UserItem({user}: {user:User}){
@@ -49,14 +49,14 @@ export function UserItem({user}: {user:User}){
           first_name: {user.first_name} <br/>
           last_name: {user.last_name} <br/>
           role: {user.role} <br/>
-          diet: {user.diet || "diet not set"} <br/>
-          mail: {user.mail || "mail not set"} <br/>
           attendance: {user.attendance || "attendance not set"} <br/>
-          language: {user.language || "language not set"} <br/>
+          mail: {user.mail || "mail not set"} <br/>
           arrival_date: {user.arrival_date || "arrival_date not set"} <br/>
           departure_date: {user.departure_date || "departure_date not set"} <br/>
+          language: {user.language || "language not set"} <br/>
+          diet: {user.diet || "diet not set"} <br/>
+          drinks: {user.drinks.join(", ") || "drinks not set"} <br/>
           seating_preference: {user.seating_preference || "seating_preference not set"} <br/>
-          guests: {user.guests.map((guest: Guest, index) => (guest.first_name + "/" + guest.last_name  + "/" + guest.diet) + "|" )} <br/>
           last_visit: {user.last_visit || "has not visited"} 
         </p>
         <div className="mt-2">

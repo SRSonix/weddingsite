@@ -10,7 +10,6 @@ class SearchForm{
         public last_name: string,
         public role: Role | "",
         public attendance: Attandance | "not_set" | "",
-        public has_guests: "guests" | "no_guests" | "",
         public has_visited: "visited" | "not_visited" | "",
         public mail_set: "mail_set" | "no_mail_set" | "",
     ){}
@@ -40,15 +39,13 @@ export default function AllUsers(){
     }
 
     function filterUser(user: User){
-        const {first_name, last_name, role, attendance, has_guests, has_visited, mail_set} = formData;
+        const {first_name, last_name, role, attendance, has_visited, mail_set} = formData;
 
         if (first_name && !user.first_name.toLowerCase().includes(first_name.toLocaleLowerCase())) return false;
         if (last_name && !user.last_name.toLowerCase().includes(last_name.toLocaleLowerCase())) return false;
         if (attendance && attendance === "not_set" && user.attendance !== null) return false;
         if (attendance && attendance !== "not_set" && user.attendance !== attendance) return false;
         if (role && user.role !==  role) return false;
-        if (has_guests  && has_guests === "guests" && user.guests.length === 0) return false;
-        if (has_guests  && has_guests === "no_guests" && user.guests.length !== 0) return false;
         if (has_visited === "visited" && user.last_visit === null) return false;
         if (has_visited === "not_visited" && user.last_visit !== null) return false;
         if (mail_set === "mail_set" && user.mail === null) return false;
@@ -88,14 +85,6 @@ export default function AllUsers(){
                                 <option value="">no filter</option>
                                 <option value={Role.user}>user</option>
                                 <option value={Role.admin}>admin</option>
-                            </select>
-                        </div>
-                        <div className="inline">
-                            <label htmlFor="has_guests" className="input-label">has guests</label>
-                            <select id="has_guests" onChange={handleChange}  className="input-block"  value={formData.has_guests}>
-                                <option value="">no filter</option>
-                                <option value={"guests"}>guests</option>
-                                <option value={"no_guests"}>no guests</option>
                             </select>
                         </div>
                         <div className="inline">

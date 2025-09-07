@@ -51,27 +51,41 @@ function get_all_users(){
     return \UserRepository\get_all_users();
 }
 
-function update_user(
+function update_user_rsvp(
     $user_id, 
     $mail,
     $diet, 
+    $drinks,
     $attendance,
     $language, 
     $arrival_date, 
     $departure_date,
     $seating_preference,
-    $guests
     ){
 
-    return \UserRepository\update_user(
+    return \UserRepository\update_user_rsvp(
         $user_id, 
         $mail, 
         $diet, 
+        $drinks,
         $attendance,
         $language, 
         $arrival_date, 
         $departure_date,
         $seating_preference,
-        $guests
+    );
+}
+
+
+function update_user_name(
+    $user_id, 
+    $first_name,
+    $last_name
+    ){
+
+    return \UserRepository\update_user_name(
+        $user_id, 
+        $first_name, 
+        $last_name, 
     );
 }
