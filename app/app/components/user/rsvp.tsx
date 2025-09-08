@@ -76,22 +76,27 @@ export function Rsvp() {
                     <label htmlFor="departure">{t("departure")}</label>:
                     <input disabled={!edit} type="date" value={formData.departure_date == undefined ? "": formData.departure_date} id="departure_date" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
                 </li>
-                <li className="flex align-center w-full mb-2">
-                    <label htmlFor="diet">{t("diet")}</label>:
-                    <input disabled={!edit} placeholder={t("diet")} value={formData.diet == undefined ? "": formData.diet} id="diet" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
+                <li className="mb-2">
+                    <label htmlFor="diet">{t("diet")}</label>:<br/>
+                    <p className="text-[0.8rem]/4 text-gray-700"><Trans i18nKey="user:diet_info"></Trans></p>
+                    <input disabled={!edit} placeholder={t("diet")} value={formData.diet == undefined ? "": formData.diet} id="diet" onChange={handleChange} className={"w-full " + (edit ? "input-inline" : "")}/>
                 </li>
                 <li className="flex align-center w-full mb-2">
                     <label htmlFor="drinks">{t("drinks")}</label>:
                     <div className="flex-grow ml-1">
-                        {Object.keys(Drink).map(
-                            (key: string) => (<div>
-                                <input disabled={!edit} type="checkbox" id={key} checked={formData.drinks.includes(Drink[key as keyof typeof Drink])} onChange={handleDrinkCheckbox} className="mr-2"/><label>{t(key)}</label>
-                            </div>)
-                        )}
+                        {edit ? 
+                            Object.keys(Drink).map(
+                                (key: string) => (<div>
+                                    <input disabled={!edit} type="checkbox" id={key} checked={formData.drinks.includes(Drink[key as keyof typeof Drink])} onChange={handleDrinkCheckbox} className="mr-2"/><label>{t(key)}</label>
+                                </div>))
+                            :
+                            formData.drinks.map(
+                                (drink: Drink) => (<div><label>{t(drink)}</label></div>))
+                    }
                     </div>
                 </li>
                 <li className="mb-2">
-                    <label htmlFor="seating_preference">{t("seating_preference")}</label>:<br></br>
+                    <label htmlFor="seating_preference">{t("seating_preference")}</label>:<br/>
                     <p className="text-[0.8rem]/4 text-gray-700"><Trans i18nKey="user:seating_preference_info"></Trans></p>
                     <textarea disabled={!edit} style={{ resize: "none" }}  rows={2} placeholder={t("seating_preference")} value={formData.seating_preference == undefined ? "": formData.seating_preference} id="seating_preference" onChange={handleChange} className={"w-full " + (edit ? "input-inline" : "")}/>
                 </li>
