@@ -93,9 +93,8 @@ function update_user_rsvp(\Request $request){
 }
 
 
-function update_user_name(\Request $request){
+function update_user_core_info(\Request $request){
     $user_id = $request->path_params["user_id"];
-    _log("trying to update user ".$user_id);
 
     if (!($request->user_role == "ADMIN")) {
         http_response_code(403);
@@ -104,17 +103,19 @@ function update_user_name(\Request $request){
 
     $first_name = $request->body["first_name"] ?? null;
     $last_name = $request->body["last_name"] ?? null;
+    $role = $request->body["role"] ?? null;
 
-    if ($first_name === NULL or $last_name === NULL){
+    if ($first_name === NULL or $last_name === NULL or $role === NULL){
         _log(" first_name or last_name or language was missing");
         http_response_code(422);
         return ["missing"=> "role, first_name, last_name or language"];
     }
 
-    return \UserService\update_user_name(
+    return \UserService\update_user_core_info(
         $user_id, 
         $first_name, 
         $last_name, 
+        $role,
     );
 }
 
@@ -150,4 +151,26 @@ function get_user_token(\Request $request){
     }
 
     return ["token" => \UserService\get_user_token($user_id)];
+}
+
+function delete_user(\Request $request){
+    $user_id = $request->path_params["user_id"] ?? NULL;
+
+    if (!($request->user_role == "ADMIN")) {
+        http_response_code(403);
+        return [];
+    }
+
+    if ($user_id == $request->user_id) {
+        http_response_code(403);
+        return ["error" => "you are not allowed to delete yourself. ask another admin!"];
+    }
+
+    if ($user_id === NULL)
+    {
+        http_response_code(404);
+        return [];
+    }
+
+    return ["success" => \UserService\delete_user($user_id)];
 }

@@ -77,15 +77,21 @@ function update_user_rsvp(
 }
 
 
-function update_user_name(
+function update_user_core_info(
     $user_id, 
     $first_name,
-    $last_name
+    $last_name,
+    $role,
     ){
 
-    return \UserRepository\update_user_name(
+    return \UserRepository\update_user_core_info(
         $user_id, 
         $first_name, 
         $last_name, 
+        $role,
     );
+}
+
+function delete_user($user_id) {
+    return \UserRepository\delete_user($user_id);
 }

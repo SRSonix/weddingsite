@@ -15,14 +15,14 @@ class SearchForm{
     ){}
 
     static initialFormData(){
-        return new SearchForm("", "", "", "", "", "", "");
+        return new SearchForm("", "", "", "", "", "");
     }
 }
 
 export default function AllUsers(){
     const [showAllUsers, setShowAllUsers] = useState(false);
     const [formData, setFormData] = useState<SearchForm>(SearchForm.initialFormData());
-    const {allUsers} = useAllUsers()
+    const {allUsers} = useAllUsers();
  
     function tollgeShowAllUsers(){  
         setShowAllUsers(!showAllUsers);

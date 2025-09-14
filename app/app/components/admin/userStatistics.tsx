@@ -11,6 +11,7 @@ export default function UserStatisticsPanel(){
             "last_name", 
             "attendance",
             "diet",
+            "drinks",
             "mail", 
             "seating_preference"
         ]

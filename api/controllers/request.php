@@ -3,6 +3,7 @@
 const POST = "POST";
 const PUT = "PUT";
 const GET = "GET";
+const DELETE = "DELETE";
 
 class Request {
     public $origin;

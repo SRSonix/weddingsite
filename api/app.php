@@ -18,8 +18,9 @@ $router->add_route(pattern: '/health', method: GET, parameter_names: [], callbac
 );
 $router->add_route(pattern: '^/user$', method: POST, parameter_names: [], callback: "UserController\\create_user");
 $router->add_route(pattern: "^/user$", method: GET, parameter_names: [], callback:"UserController\\get_user");
+$router->add_route(pattern: "^/user\/(\d+)$", method: DELETE, parameter_names: ["user_id"], callback:"UserController\\delete_user");
 $router->add_route(pattern: "^/user\/(\d+)\/rsvp$", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user_rsvp");
-$router->add_route(pattern: "^/user\/(\d+)\/name$", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user_name");
+$router->add_route(pattern: "^/user\/(\d+)\/core_info$", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user_core_info");
 $router->add_route(pattern: "^/user\/(\d+)\/reset_token$", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user_token");
 $router->add_route(pattern: "^/user\/(\d+)\/token$", method: GET, parameter_names: ["user_id"], callback:"UserController\\get_user_token");
 $router->add_route(pattern: "^/users$", method: GET, parameter_names: [], callback:"UserController\\get_all_users");

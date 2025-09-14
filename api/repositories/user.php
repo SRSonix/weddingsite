@@ -137,10 +137,11 @@ function create_user($first_name, $last_name, $role, $jti, $language) {
     return $lastInsertId;
 }
 
-function update_user_name(
+function update_user_core_info(
     $user_id, 
     $first_name, 
     $last_name, 
+    $role,
     ){
     $session = create_db_session();    
     if ($session === null) {
@@ -149,8 +150,8 @@ function update_user_name(
     }
 
     try {
-        $stmt = $session->prepare("UPDATE user SET first_name = :first_name, last_name = :last_name WHERE id = :user_id;");
-        $stmt->execute(["user_id"=>$user_id, "first_name"=>$first_name, "last_name"=> $first_name]);
+        $stmt = $session->prepare("UPDATE user SET first_name = :first_name, last_name = :last_name, role = :role WHERE id = :user_id;");
+        $stmt->execute(["user_id"=>$user_id, "first_name"=>$first_name, "last_name"=> $last_name, "role"=> $role]);
     }
     catch(\PDOException $e) 
     {
@@ -237,6 +238,30 @@ function update_user_token_jti(int $user_id, $jti) {
         http_response_code(response_code: 404);
         return NULL;
     }
+
+    return true;
+}
+
+function delete_user($user_id) {
+    $session = create_db_session();
+    if ($session === null) {
+        _log("failed to create session");
+        return NULL;
+    }
+
+    try {
+        $stmt = $session->prepare("DELETE FROM user WHERE id = :user_id; DELETE FROM user_auth WHERE id = :user_id;");
+        $stmt->execute(["user_id"=>$user_id]);
+    }
+    catch(\PDOException $e)
+    {
+        _log($e);
+        $session = null;
+        http_response_code(response_code: 422);
+        return ["msg"=>"error deleting user"];
+    }
+
+    $session = null;
 
     return true;
 }

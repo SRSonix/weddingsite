@@ -40,6 +40,17 @@ export class RsvpInformation{
   }
 }
 
+export class UserCoreInfo{
+  constructor(
+    public role: string | undefined, 
+    public first_name: string | undefined,
+    public last_name: string | undefined){}
+
+  static getEmpty(){
+    return new UserCoreInfo(undefined, undefined, undefined);
+  }
+}
+
 export class User extends RsvpInformation{
   constructor(
     public id: number, 
@@ -140,6 +151,42 @@ export class UserService{
         return undefined;
       }
       return new User(data.id, data.role, data.first_name, data.last_name, data.diet, data.drinks, data.mail, data.attendance, data.language, data.arrival_date, data.departure_date, data.seating_preference, data.last_visit);
+    }catch (error) {
+      return undefined
+    }
+  }
+
+  static async updateUserCoreInfo(user_id: number, body:UserCoreInfo){
+   try{
+      const response = await fetch(
+        `${UserService.BASE_URL}/${user_id}/core_info`,
+        {method: "put", body: JSON.stringify(body), credentials: 'include'},
+      )
+
+      const data = await response.json()
+
+      if (!response.ok){
+        return undefined;
+      }
+      return new User(data.id, data.role, data.first_name, data.last_name, data.diet, data.drinks, data.mail, data.attendance, data.language, data.arrival_date, data.departure_date, data.seating_preference, data.last_visit);
+    }catch (error) {
+      return undefined
+    }
+  }
+
+  static async deleteUser(user_id: number){
+   try{
+      const response = await fetch(
+        `${UserService.BASE_URL}/${user_id}`,
+        {method: "delete", credentials: 'include'},
+      )
+
+      const data = await response.json()
+
+      if (!response.ok){
+        return undefined;
+      }
+      return data["success"];
     }catch (error) {
       return undefined
     }
