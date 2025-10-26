@@ -78,15 +78,15 @@ export function UserItem({user}: {user:User}){
 
     return(
       <div className="mb-3 border p-3">
-        <div className="flex align-center w-full mb-2">
+        <div className="flex align-center w-full">
             <label htmlFor="diet">first_name</label>:<br/>
             <input disabled={!edit} placeholder="first_name" value={formData.first_name == undefined ? "": formData.first_name} id="first_name" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
         </div>
-        <div className="flex align-center w-full mb-2">
+        <div className="flex align-center w-full">
             <label htmlFor="diet">last_name</label>:<br/>
             <input disabled={!edit} placeholder="last_name" value={formData.last_name == undefined ? "": formData.last_name} id="last_name" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
         </div>
-        <div className="flex align-center w-full mb-2">
+        <div className="flex align-center w-full">
             <label htmlFor="role">role</label>:
             <select disabled={!edit} value={formData.role == undefined ? "": formData.role} id="role" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "appearance-none")}>
                 <option value={Role.admin}>ADMIN</option>
@@ -111,13 +111,13 @@ export function UserItem({user}: {user:User}){
           <p>{infoMessage}</p>
         </div>
           <div className="pt-3">
-              {!edit && <button onClickCapture={() => setEdit(true)} className="btn">
+              {!edit && <button onClickCapture={() => setEdit(true)} className="btn mr-2">
                   edit
               </button>} 
               {edit && <button onClickCapture={sumbitUserChange} className="btn btn-green mr-2">
                   submit
               </button>}
-              {edit && <button onClickCapture={resetUserChange} className="btn btn-red">
+              {edit && <button onClickCapture={resetUserChange} className="btn btn-red mr-2">
                   cancel
               </button>}
               <button onClickCapture={deleteUserHandle} className="btn btn-red">

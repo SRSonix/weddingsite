@@ -47,15 +47,15 @@ export default function Overview() {
         <ContentTile header={t("need_to_know")}>
           <div className="lg:min-w-120">
             <ul className="list-disc list-outside pl-5">
-              <li><span className="font-bold">Date and Time</span>: {overviewInfo?.date}, arrival {overviewInfo?.arrival_time}</li>
-              <li><span className="font-bold">Location</span>: {overviewInfo?.location}.</li>
-              <li><span className="font-bold">Dress code</span>: What makes you feel elegant - and not too hot!</li>
-              <li><span className="font-bold">Climate</span>: 30ºC by day, 20 by night, humid</li>
-              <li><span className="font-bold">Getting there</span>: {overviewInfo?.car_minutes} minutes by car from {overviewInfo?.car_from}</li>
-              <li><span className="font-bold">Parking</span>: not available, please use Uber or Taxi</li>
-              <li><span className="font-bold">Gifts</span>: We have small suitcases, a donation or experience is great!</li>
-              <li><span className="font-bold">Pre-wedding</span>: join us for a pre-weeding lunch on {overviewInfo?.pre_wedding_day} - {overviewInfo?.pre_wedding_location}</li>
-              <li><span className="font-bold">Post-wedding</span>: join us at the {overviewInfo?.post_wedding_location} on {overviewInfo?.post_wedding_day}</li>
+             <li><span className="font-bold">{t("date_and_time")}</span>: {overviewInfo?.date}, {t("arrival")} {overviewInfo?.arrival_time}</li>
+            <li><span className="font-bold">{t("location")}</span>: {overviewInfo?.location}</li>
+            <li><span className="font-bold">{t("dress_code")}</span>: {t("dress_text")}</li>
+            <li><span className="font-bold">{t("climate")}</span>: {t("climate_text")}</li>
+            <li><span className="font-bold">{t("getting_there")}</span>: {overviewInfo?.car_minutes} {t("minutes_by_car")} {overviewInfo?.car_from}</li>
+            <li><span className="font-bold">{t("parking")}</span>: {t("parking_text")}</li>
+            <li><span className="font-bold">{t("gifts")}</span>: {t("gifts_text")}</li>
+            <li><span className="font-bold">{t("pre_wedding")}</span>: {t("pre_wedding_text")} {overviewInfo?.pre_wedding_day} - {overviewInfo?.pre_wedding_location}</li>
+            <li><span className="font-bold">{t("post_wedding")}</span>: {t("post_wedding_text")} {overviewInfo?.post_wedding_location} {t("on")} {t(overviewInfo?.post_wedding_day || "")}</li>
               <li><span className="font-bold align-top">WhatsApp</span>: 
                 <div className="inline-block align-top ml-2"> {
                   Object.entries(overviewInfo?.whatsapp || []).map(([key, value]) => <span className="block">{key}: {value}</span>)

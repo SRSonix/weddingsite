@@ -29,7 +29,7 @@ export default function Traveling() {
         </ComingSoon>
       </ContentTile>
 
-      <ContentTile header="Itineraries" >
+      <ContentTile header={t("itineraries")} >
         <Itineraries/>
       </ContentTile>
       </div>
