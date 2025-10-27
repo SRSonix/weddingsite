@@ -45,3 +45,27 @@ class User{
         $this->last_visit = $last_visit;
     }
 }
+
+class Gift{
+    public $id;
+    public $type;
+    public $title_en;
+    public $title_de;
+    public $title_es;
+    public $price_euro;
+    public $amount;
+    public $amount_left;
+    public $price_euro_left;
+
+    public function __construct(array  $data){
+        $this->id = $data["id"];
+        $this->type = $data["type"];
+        $this->title_en = $data["title_en"];
+        $this->title_de = $data["title_de"];
+        $this->title_es = $data["title_es"];
+        $this->price_euro = $data["price_euro"];
+        $this->amount = $data["amount"];
+        $this->amount_left = $data["amount_left"];
+        $this->price_euro_left = $data["price_euro_left"];
+    }
+}

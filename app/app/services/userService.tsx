@@ -1,3 +1,5 @@
+import type { Gift } from "./infoService";
+
 export enum Attandance {
   will_join = "will_join",
   will_not_join="will_not_join",
@@ -21,6 +23,11 @@ export enum Drink {
   beer = "beer",
   cocktail = "cocktail",
   non_alcoholic = "non_alcoholic",
+}
+
+export interface GiftClaim{
+  id: number,
+  amount: number
 }
 
 export class RsvpInformation{
@@ -221,6 +228,45 @@ export class UserService{
       return `${import.meta.env.VITE_WEBSITE_URL}?token=${token}`;
     }catch (error) {
       return undefined
+    }
+  }
+
+  static async getGiftClaims(user_id: number): Promise<GiftClaim[]>{
+    try {
+      const response = await fetch(`${UserService.BASE_URL}/${user_id}/gifts`, {method: "get", credentials: 'include'})
+      
+      if (!response.ok){
+        return [];
+      }
+      return await response.json() as GiftClaim[]
+    } catch(error){
+      return [];
+    }
+  }
+
+  static async addGiftClaim(userId: number, giftId: number, amount: number): Promise<GiftClaim[]>{
+    try {
+      const response = await fetch(`${UserService.BASE_URL}/${userId}/gifts/${giftId}`, {method: "put", body:JSON.stringify({amount}), credentials: 'include'})
+      
+      if (!response.ok){
+        return [];
+      }
+      return await response.json() as GiftClaim[]
+    } catch(error){
+      return [];
+    }
+  }
+
+  static async removeGiftClaim(userId: number, giftId: number): Promise<GiftClaim[]>{
+    try {
+      const response = await fetch(`${UserService.BASE_URL}/${userId}/gifts/${giftId}`, {method: "delete", credentials: 'include'})
+      
+      if (!response.ok){
+        return [];
+      }
+      return await response.json() as GiftClaim[]
+    } catch(error){
+      return [];
     }
   }
 };

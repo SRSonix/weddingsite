@@ -174,3 +174,56 @@ function delete_user(\Request $request){
 
     return ["success" => \UserService\delete_user($user_id)];
 }
+
+function get_gifts(\Request $request){
+    $user_id = $request->path_params["user_id"];
+
+    if ($request->user_id != $user_id) {
+        http_response_code(403);
+        return [];
+    }
+
+    return [
+        [
+            "id" => 1,
+            "amount" => 2,
+        ],
+        [
+            "id" => 2,
+            "amount" => 200,
+        ]
+    ];
+}
+
+function add_gift(\Request $request){
+    $user_id = $request->path_params["user_id"];
+    $gift_id = $request->path_params["gift_id"] ?? null;
+
+    if ($request->user_id != $user_id) {
+        http_response_code(403);
+        return [];
+    }
+
+    $amount = $request->body["amount"] ?? null;
+
+    return  [
+        [
+            "id" => $gift_id,
+            "amount" => $amount,
+        ]
+    ];
+}
+
+function delete_gift(\Request $request){
+    $user_id = $request->path_params["user_id"];
+    $gift_id = $request->path_params["id"] ?? null;
+
+    if ($request->user_id != $user_id) {
+        http_response_code(403);
+        return [];
+    }
+
+    return  [
+        []
+    ];
+}

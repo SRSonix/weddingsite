@@ -22,6 +22,7 @@ class Router {
 
     public function route(Request $request): void {
         _log("ROUTING: ". $request->path);
+        _log("origin: ". $request->origin);
 
         if (in_array($request->origin, ALLOWED_ORIGINS)){
             header('Access-Control-Allow-Credentials: true');

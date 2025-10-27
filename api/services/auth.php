@@ -133,7 +133,6 @@ function generate_user_token(int $user_id, $jti) {
 
 function validate_user_token($token): int | null {
     $payload = decode_jwt_token($token);
-
     if ($payload === NULL or !array_key_exists("jti", $payload) or !array_key_exists("sub", $payload)) {
         _log(msg: "user token invalid.");
         return NULL;
