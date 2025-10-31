@@ -23,7 +23,7 @@ $router->add_route(pattern: "^/user\/(\d+)\/rsvp$", method: PUT, parameter_names
 $router->add_route(pattern: "^/user\/(\d+)\/core_info$", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user_core_info");
 $router->add_route(pattern: "^/user\/(\d+)\/reset_token$", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user_token");
 $router->add_route(pattern: "^/user\/(\d+)\/token$", method: GET, parameter_names: ["user_id"], callback:"UserController\\get_user_token");
-$router->add_route(pattern: "^/user\/(\d+)\/gifts$", method: GET, parameter_names: ["user_id"], callback:"UserController\\get_gifts");
+$router->add_route(pattern: "^/user\/(\d+)\/gifts$", method: GET, parameter_names: ["user_id"], callback:"UserController\\get_gift_claims");
 $router->add_route(pattern: "^/user\/(\d+)\/gifts\/(\d+)$", method: PUT, parameter_names: ["user_id", "gift_id"], callback:"UserController\\add_gift");
 $router->add_route(pattern: "^/user\/(\d+)\/gifts\/(\d+)$", method: DELETE, parameter_names: ["user_id", "gift_id"], callback:"UserController\\delete_gift");
 $router->add_route(pattern: "^/users$", method: GET, parameter_names: [], callback:"UserController\\get_all_users");
