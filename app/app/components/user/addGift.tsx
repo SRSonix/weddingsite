@@ -46,7 +46,8 @@ export function AddGift({gifts, handleAddGiftClaim, showPeso}: {gifts: {[key: nu
         const selectedGift = gifts[selectedGiftId]
 
         if (selectedGift.type === GiftType.upToPrice){
-            setAmount(Math.min(parsedInput, selectedGift.price_euro_left!))
+            if (showPeso) setAmount(Math.min(parsedInput, selectedGift.price_euro_left! * 20))
+            else setAmount(Math.min(parsedInput, selectedGift.price_euro_left!))
         }
         else{
             setAmount(parsedInput)
@@ -62,13 +63,17 @@ export function AddGift({gifts, handleAddGiftClaim, showPeso}: {gifts: {[key: nu
             setAlert("please select amount")
             return;
         }
-        if (showPeso && amount % 20 != 0) {
-            setAlert("Please select a multiple of 20 MEX.")
-            return;
+        let amount_clean = amount;
+        if (gifts[selectedGiftId].type == GiftType.upToPrice && showPeso) {
+            if (amount % 20 != 0){
+                setAlert("Please select a multiple of 20 MEX.")
+                return;
+            }
+            else amount_clean = amount / 20;
         }
 
         setAlert("");
-        handleAddGiftClaim(selectedGiftId, amount);
+        handleAddGiftClaim(selectedGiftId, amount_clean);
         setSelectedGiftId(null);
         setAmount(null);
         setVisible(false);

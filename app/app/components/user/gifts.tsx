@@ -28,11 +28,7 @@ export function Gifts() {
     }
 
     function addGiftClaim(giftId: number, amount: number){
-        let amount_euro;
-        if (showPeso) amount_euro = amount / 20;
-        else amount_euro = amount;
-
-        UserService.addGiftClaim(user!.id, giftId, amount_euro)
+        UserService.addGiftClaim(user!.id, giftId, amount)
         .then(() => reloadUser())
     }
 

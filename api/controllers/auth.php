@@ -21,7 +21,7 @@ function login(\Request $request){
 	$timeout_s =  60*60*24*7;
 
 	$session_token = \AuthService\generate_session_token($user_id, $timeout_s);
-	setcookie("session_token", $session_token, ["expires"=> time()+$timeout_s, "secure" => true, "httponly"=>true, "path"=>"/", "samesite"=> "None"]);
+	setcookie("session_token", $session_token, ["expires"=> time()+$timeout_s, "secure" => true, "httponly"=>true, "path"=>"/", "samesite"=> "Strict"]);
 
 	_log("successful login");
 	return [];
