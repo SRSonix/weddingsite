@@ -9,6 +9,7 @@ type UserContextType = {
   login: (token: string | null) => Promise<boolean>;
   logout: () => void;
   updateUserRsvp: (user_id: number, body: RsvpInformation) => void;
+  reloadUser: () => void;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -67,7 +68,7 @@ export function UserProvider({ children }: {children: React.ReactNode}) {
   }
 
   return (
-    <UserContext.Provider value={{user, "logout": logout_reset_user, "login": login_and_fetch_user, "updateUserRsvp": updateUserRsvp}}>
+    <UserContext.Provider value={{user, "logout": logout_reset_user, "login": login_and_fetch_user, "updateUserRsvp": updateUserRsvp, "reloadUser": fetch_user}}>
       {children}
     </UserContext.Provider>
   );

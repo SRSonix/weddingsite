@@ -5,20 +5,14 @@ import { useUser } from "~/providers/userProvider";
 import { GiftType, InfoService, type Gift } from "~/services/infoService";
 import { UserService, type GiftClaim } from "~/services/userService";
 import { GiftItem } from "./giftItem";
+import { CurrecnyService } from "~/services/currencyService";
 
-export function AddGift({handleAddGiftClaim}: {handleAddGiftClaim: (id: number, amount:number) => void}) {
+export function AddGift({gifts, handleAddGiftClaim, showPeso}: {gifts: {[key: number]: Gift},handleAddGiftClaim: (id: number, amount:number) => void, showPeso: boolean}) {
     const {user} = useUser();
-    const [gifts, setGifts] = useState<{[key: number]: Gift}>([]);
     const [visible, setVisible] = useState<boolean >(false);
     const [selectedGiftId, setSelectedGiftId] = useState<number|null>(null);
     const [amount, setAmount] = useState<number|null>(null);
     const [alert, setAlert] = useState<string>("")
-
-    useEffect(() =>{
-        if (user){
-            InfoService.getGifts().then((gifts) => setGifts(gifts))
-        }
-    }, [user]);
 
     function hdanleGiftSelection(event: ChangeEvent<HTMLSelectElement>):void{
         setAlert("");
@@ -43,7 +37,7 @@ export function AddGift({handleAddGiftClaim}: {handleAddGiftClaim: (id: number, 
 
     function handleAmountChange(value: string):void{
         setAlert("");
-        
+
         const parsedInput = parseInt(value.replace(/\D/g, ""));
         if (isNaN(parsedInput) || selectedGiftId == null){
             setAmount(null);
@@ -51,11 +45,11 @@ export function AddGift({handleAddGiftClaim}: {handleAddGiftClaim: (id: number, 
         }
         const selectedGift = gifts[selectedGiftId]
 
-        if (selectedGift.type == GiftType.fixPrice){
-            setAmount(Math.min(parsedInput, selectedGift.amount_left!))
-        }
-        else {
+        if (selectedGift.type === GiftType.upToPrice){
             setAmount(Math.min(parsedInput, selectedGift.price_euro_left!))
+        }
+        else{
+            setAmount(parsedInput)
         }
     }
 
@@ -66,6 +60,10 @@ export function AddGift({handleAddGiftClaim}: {handleAddGiftClaim: (id: number, 
         }
         if (amount == null) {
             setAlert("please select amount")
+            return;
+        }
+        if (showPeso && amount % 20 != 0) {
+            setAlert("Please select a multiple of 20 MEX.")
             return;
         }
 
@@ -80,16 +78,19 @@ export function AddGift({handleAddGiftClaim}: {handleAddGiftClaim: (id: number, 
     <div>
         <div hidden={alert === ""} className="text-red-700">{alert}</div>
         <div hidden={!visible} className="inline">
-                <select id="gift_id" value={selectedGiftId === null ? "" : selectedGiftId}  onChange={hdanleGiftSelection} className="input"> 
-                <option value="">Please select a gift</option>
+                <select id="gift_id" value={selectedGiftId === null ? "" : selectedGiftId}  onChange={hdanleGiftSelection} className="input-inline w-full mb-3"> 
+                <option value="" disabled>Please select a gift</option>
                 {Object.values(gifts).map((g) => (
-                    <option value={g.id}>{g.title["en"]} {g.type==GiftType.fixPrice ? <>{g.price_euro} &euro;</>: <>up to {g.price_euro_left!} &euro;</>}</option>
+                    g.type==GiftType.fixPrice ? 
+                        <option value={g.id} disabled={g.amount_left===0}>{g.title["en"]} {CurrecnyService.format_amount(g.price_euro, showPeso)} ({g.amount_left} left)</option>
+                    :
+                        <option value={g.id} disabled={g.price_euro_left===0}>{g.title["en"]} up to {CurrecnyService.format_amount(g.price_euro, showPeso)} ({CurrecnyService.format_amount(g.price_euro_left!, showPeso)} left)</option>
                 ))}
             </select>
             {
                 selectedGiftId != null && gifts[selectedGiftId] && gifts[selectedGiftId].type == GiftType.fixPrice && 
-                <select id="gift_id" value={amount === null ? "" : amount} onChange={(e) => handleAmountChange(e.target.value)} className="input">
-                    <option value="">Please select an the amount</option>
+                <select id="gift_id" value={amount === null ? "" : amount} onChange={(e) => handleAmountChange(e.target.value)} className="input-inline w-full mb-3">
+                    <option value="" disabled>Please select an the amount</option>
                     {[...Array(gifts[selectedGiftId].amount_left!).keys()].map((i) => (
                         <option value={i+1}>{i+1}</option>
                     ))}
@@ -97,11 +98,11 @@ export function AddGift({handleAddGiftClaim}: {handleAddGiftClaim: (id: number, 
             }
             {
                 selectedGiftId != null && gifts[selectedGiftId] && gifts[selectedGiftId].type == GiftType.upToPrice && 
-                <><input type="text" value={amount || 0} onChange={(e) => handleAmountChange(e.target.value)}></input> &euro;</>
+                <div className="flex"><input type="text" value={amount || 0} onChange={(e) => handleAmountChange(e.target.value)} className="input-inline flex-grow mb-3"></input> {showPeso? "MEX" : "\u20AC"}</div>
             }
         </div>
         <button hidden={visible} onClick={() => setVisible(true)} className="btn" >Add Gift</button>
-        <button hidden={!visible} onClick={cancel} className="btn btn-red" >Cancel</button>
+        <button hidden={!visible} onClick={cancel} className="btn btn-red mr-3" >Cancel</button>
         <button hidden={!visible} className="btn btn-green" onClick={handleSubmit}>Submit</button>
     </div>
     )

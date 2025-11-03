@@ -8,46 +8,64 @@ import { GiftItem } from "./giftItem";
 import { AddGift } from "./addGift";
 
 export function Gifts() {
-    const {user} = useUser();
+    const {user, reloadUser} = useUser();
     const [giftClaims, setGiftClaims] = useState<GiftClaim[] >([]);
     const [gifts, setGifts] = useState<{[key: number]: Gift}>([]);
+    const [showPeso, setShowPeso] = useState(false);
 
     useEffect(() =>{
         if (user){
-            UserService.getGiftClaims(user.id).then((claims) =>  setGiftClaims(claims))
             InfoService.getGifts().then((gifts) => setGifts(gifts))
+            setGiftClaims(user.giftClaims)
+
+            if( user.language == "es") setShowPeso(true);
         }
     }, [user]);
 
     function removeGiftClaim(giftId: number){
         UserService.removeGiftClaim(user!.id, giftId)
-        .then((claims) => setGiftClaims(claims))
+        .then(() => reloadUser())
     }
 
     function addGiftClaim(giftId: number, amount: number){
-        UserService.addGiftClaim(user!.id, giftId, amount)
-        .then((claims) => setGiftClaims(claims))
+        let amount_euro;
+        if (showPeso) amount_euro = amount / 20;
+        else amount_euro = amount;
+
+        UserService.addGiftClaim(user!.id, giftId, amount_euro)
+        .then(() => reloadUser())
     }
 
     return (
         <div>
             <div>
-                <p>Your presence at our wedding means the world to us! If you'd like to give a little something, we've gathered a few meaningful options. You can choose one of our <strong>small suitcases</strong>, make a <strong>donation</strong>, or share an <strong>experience</strong> with us—each one will make our journey together even more special.</p>
-                <p>We've prepared two types of gifts: <strong>smaller gifts</strong> that you can give as a whole, and <strong>larger ones</strong> to which you can contribute any amount you wish, up to what's still needed after others have joined in.</p>
-                <p>All prices are displayed either in <strong>euro (€)</strong> or <strong>Mexican peso (MXN)</strong>, depending on your selection, with a fixed conversion rate applied. Payments can be made via <strong>PayPal</strong> or <strong>bank transfer</strong>, and we'll provide the details for both options here soon.</p>
+                <p className="text-[0.8rem]/4 text-gray-700">As we'll be traveling with limited luggage, we'd appreciate a contribution toward an experience or donation instead of physical gifts. Our gift list includes both smaller and larger items: smaller ones are individual gifts, while larger ones can be shared and partially contributed to. Select a gift and the amount, in oder to coordinate the gifts.</p>                    
+                <p className="text-[0.8rem]/4 text-gray-700">All prices are shown in either Euro (€) or Mexican Peso (MXN) (using a fixed exchange rate). Contributions can be made via PayPal or bank transfer (Details will be shared here soon).</p>
+            </div>
+            <div className="flex justify-end">
+                show prices in:
+                <div className="inline ml-2">
+                    <input type="radio" name="currency" id="eur" checked={!showPeso} onChange={() => setShowPeso(false)}/>
+                    <label htmlFor="m" onClick={() => setShowPeso(false)}>&euro;</label>
+                </div>
+                <div className="inline ml-2">
+                    <input type="radio" name="currency" id="mex" checked={showPeso} onChange={() => setShowPeso(true)}/>
+                    <label htmlFor="f"onClick={() => setShowPeso(true)}>MEX</label>
+                </div>
             </div>
             <div>
-                You have selected {giftClaims.length} Gift(s):
+                <h4>You have selected {giftClaims.length} Gift(s)</h4>
                 <ul>
                     {giftClaims.map((g) => {
-                        const gift = gifts[g.id]
-                        if (!gift) return <></>
+                        const gift = gifts[g.gift_id]
+                        if (!gift) return <div> {g.gift_id} / {g.amount}</div>
                         return <li>
-                            <GiftItem gift={gift} amount={g.amount} onDelete={removeGiftClaim}></GiftItem>
+                            <GiftItem gift={gift} amount={g.amount} onDelete={removeGiftClaim} showPeso={showPeso}></GiftItem>
                         </li>})}
                 </ul>
             </div>
-            <AddGift handleAddGiftClaim={addGiftClaim}></AddGift>
+            <h4>Add a gift</h4>
+            <AddGift gifts={gifts} handleAddGiftClaim={addGiftClaim} showPeso={showPeso}></AddGift>
         </div>
     )
 }

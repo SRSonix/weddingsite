@@ -111,7 +111,8 @@ function remove_gift_claim($user_id, $gift_id){
     $success = \GiftRepository\remove_gift_claim($user_id, $gift_id);
 
     if ($success){
-        return get_user($user_id);
+        http_response_code(204);
+        return ["message" => "success"];
     }
 
     http_response_code(500);
@@ -123,7 +124,8 @@ function add_gift_claim(\GiftClaim $gift_claim){
     $success = \GiftRepository\upsert_gift_claim($gift_claim);
 
     if ($success){
-        return get_user($gift_claim->user_id);
+        http_response_code(response_code: 204);
+        return ["message" => "success"];
     }
 
     http_response_code(409);

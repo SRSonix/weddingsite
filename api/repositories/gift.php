@@ -45,8 +45,8 @@ function get_gifts() {
 
         SELECT 
             id, type, price_euro, amount, title_en, title_de, title_es,
-            CASE WHEN type = 'up_to_price' THEN price_euro - claimed_amount_filled END AS price_euro_left,
-            CASE WHEN type = 'fix_price' THEN amount - claimed_amount_filled END AS amount_left
+            CAST( CASE WHEN type = 'up_to_price' THEN price_euro - claimed_amount_filled END AS SIGNED INT) AS price_euro_left,
+            CAST( CASE WHEN type = 'fix_price' THEN amount - claimed_amount_filled END AS SIGNED INT) AS amount_left
         FROM joined;
     EOD);
     $stmt->execute();

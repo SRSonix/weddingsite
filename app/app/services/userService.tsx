@@ -26,7 +26,7 @@ export enum Drink {
 }
 
 export interface GiftClaim{
-  id: number,
+  gift_id: number,
   amount: number
 }
 
@@ -72,7 +72,8 @@ export class User extends RsvpInformation{
     arrival_date: string | undefined,
     departure_date: string | undefined,
     seating_preference: string | undefined,
-    public last_visit: string
+    public last_visit: string,
+    public giftClaims: GiftClaim[]
   ){
     super(diet, drinks, mail, attendance, language, arrival_date, departure_date, seating_preference);
   }
@@ -94,7 +95,7 @@ export class UserService{
         return null;
       }
 
-      return new User(data.id, data.role, data.first_name, data.last_name, data.diet, data.drinks, data.mail, data.attendance, data.language, data.arrival_date, data.departure_date, data.seating_preference, data.last_visit);
+      return new User(data.id, data.role, data.first_name, data.last_name, data.diet, data.drinks, data.mail, data.attendance, data.language, data.arrival_date, data.departure_date, data.seating_preference, data.last_visit, data.gift_claims);
 
     } catch (error) {
       return null
@@ -135,7 +136,7 @@ export class UserService{
       let users: Array<User> = []
       data.forEach((row: any) =>
         {
-          users.push(new User(row.id, row.role, row.first_name, row.last_name, row.diet, row.drinks, row.mail, row.attendance, row.language, row.arrival_date, row.departure_date, row.seating_preference, row.last_visit));
+          users.push(new User(row.id, row.role, row.first_name, row.last_name, row.diet, row.drinks, row.mail, row.attendance, row.language, row.arrival_date, row.departure_date, row.seating_preference, row.last_visit, []));
         }
       )
       return users
@@ -157,7 +158,7 @@ export class UserService{
       if (!response.ok){
         return undefined;
       }
-      return new User(data.id, data.role, data.first_name, data.last_name, data.diet, data.drinks, data.mail, data.attendance, data.language, data.arrival_date, data.departure_date, data.seating_preference, data.last_visit);
+      return new User(data.id, data.role, data.first_name, data.last_name, data.diet, data.drinks, data.mail, data.attendance, data.language, data.arrival_date, data.departure_date, data.seating_preference, data.last_visit, data.gift_claims);
     }catch (error) {
       return undefined
     }
@@ -175,7 +176,7 @@ export class UserService{
       if (!response.ok){
         return undefined;
       }
-      return new User(data.id, data.role, data.first_name, data.last_name, data.diet, data.drinks, data.mail, data.attendance, data.language, data.arrival_date, data.departure_date, data.seating_preference, data.last_visit);
+      return new User(data.id, data.role, data.first_name, data.last_name, data.diet, data.drinks, data.mail, data.attendance, data.language, data.arrival_date, data.departure_date, data.seating_preference, data.last_visit, data.gift_claims);
     }catch (error) {
       return undefined
     }
@@ -231,42 +232,32 @@ export class UserService{
     }
   }
 
-  static async getGiftClaims(user_id: number): Promise<GiftClaim[]>{
-    try {
-      const response = await fetch(`${UserService.BASE_URL}/${user_id}/gifts`, {method: "get", credentials: 'include'})
-      
-      if (!response.ok){
-        return [];
-      }
-      return await response.json() as GiftClaim[]
-    } catch(error){
-      return [];
-    }
-  }
 
-  static async addGiftClaim(userId: number, giftId: number, amount: number): Promise<GiftClaim[]>{
+  static async addGiftClaim(userId: number, giftId: number, amount: number): Promise<User | undefined>{
     try {
       const response = await fetch(`${UserService.BASE_URL}/${userId}/gifts/${giftId}`, {method: "put", body:JSON.stringify({amount}), credentials: 'include'})
       
       if (!response.ok){
-        return [];
+        return undefined;
       }
-      return await response.json() as GiftClaim[]
+
     } catch(error){
-      return [];
+      return undefined;
     }
   }
 
-  static async removeGiftClaim(userId: number, giftId: number): Promise<GiftClaim[]>{
+  static async removeGiftClaim(userId: number, giftId: number): Promise<User | undefined>{
     try {
       const response = await fetch(`${UserService.BASE_URL}/${userId}/gifts/${giftId}`, {method: "delete", credentials: 'include'})
       
       if (!response.ok){
-        return [];
+        return undefined;
       }
-      return await response.json() as GiftClaim[]
+      const data = await response.json();
+
+      return new User(data.id, data.role, data.first_name, data.last_name, data.diet, data.drinks, data.mail, data.attendance, data.language, data.arrival_date, data.departure_date, data.seating_preference, data.last_visit, data.gift_claims);
     } catch(error){
-      return [];
+      return undefined;
     }
   }
 };
