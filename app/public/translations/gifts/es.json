@@ -1,0 +1,21 @@
+{
+  "gift_info": "Sobre los regalos",
+  "your_gifts": "Tus regalos",
+  "select_gift_text": "Selecciona un regalo que quieras regalarnos por completo o contribuye con una parte a un artículo más grande",
+  "no_physical_gifts": "En primer lugar, por favor no traigas regalos físicos a la boda. Tenemos poco espacio en el equipaje y no podemos llevar regalos de vuelta, incluso los pequeños se acumulan rápido. Además, ya tenemos muchas cosas en nuestro pequeño piso :)",
+  "no_gift_required": "En segundo lugar, no te sientas obligado a traer ningún regalo; tu presencia en nuestra boda es el mejor regalo para nosotros. Muchos de ustedes habrán gastado bastante en el viaje a México, así que por favor da solo lo que desees y te resulte adecuado según tus posibilidades.",
+  "gifts_explain": "En tercer lugar, tenemos algunos regalos que nos gustaría recibir. Puedes elegir un regalo de la lista para regalárnoslo por completo o contribuir con una parte a uno de los artículos más grandes. También puedes elegir cualquier cantidad para contribuir a nuestra boda y a nuestros planes futuros.",
+  "gifts_payment": "Después de seleccionar, puedes transferir a nuestra cuenta compartida de PayPal, a nuestra cuenta de Revolut o usar la caja de donaciones en la boda. Se prefieren euros en efectivo, pero cualquier moneda está bien.",
+  "beneficiary": "Beneficiario",
+  "bank_details": "Datos bancarios",
+  "prices_in": "mostrar precios en",
+  "select_gift": "Por favor selecciona un regalo",
+  "select_amount": "Por favor selecciona la cantidad",
+  "add_gift": "Añadir regalo",
+  "yourSelectionAmount_one": "Has seleccionado {{count}} regalo",
+  "yourSelectionAmount_other": "Has seleccionado {{count}} regalos",
+  "your_selected_up_to": "Has seleccionado {{amount}} (de {{out_of}})",
+  "your_selection_fix": "Has seleccionado {{total_value}} ({{amount}} de {{out_of}} artículos de {{value}})",
+  "your_selection_open": "Has seleccionado {{amount}} (Donación personalizada)",
+  "custom_donation": "Donación personalizada"
+}

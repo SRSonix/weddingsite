@@ -153,18 +153,30 @@ function upsert_gift_claim(\GiftClaim $gift_claim){
                 FROM gift 
                 LEFT OUTER JOIN claimed
                 ON claimed.id = gift.id
+            ),
+            amount_left AS (
+                SELECT 
+                    type AS gift_type,
+                    CASE 
+                        WHEN type = 'up_to_price' THEN price_euro 
+                        WHEN type = 'fix_price' THEN amount 
+                        ELSE  0
+                    END - claimed_amount_filled AS amount_left
+                FROM joined
+                WHERE id = :gift_id
             )
-
             SELECT 
-                CASE WHEN type = 'up_to_price' THEN price_euro ELSE amount END - claimed_amount_filled AS amount_left
-            FROM joined
-            WHERE id = :gift_id; 
+                CASE
+                    WHEN gift_type = 'open_price' THEN TRUE
+                    ELSE amount_left >= :new_amount
+                END AS can_upsert
+            FROM amount_left;
         EOD);
-        $stmt->execute(["gift_id"=>$gift_claim->gift_id]);
-        $amount_left = $stmt->fetchAll()[0]["amount_left"];
+        $stmt->execute(["gift_id"=>$gift_claim->gift_id, "new_amount"=> $gift_claim->amount]);
+        $can_upsert = $stmt->fetchAll()[0]["can_upsert"];
 
-        _log("amount_left $amount_left; new amount $gift_claim->amount");
-        if ($amount_left >= $gift_claim->amount){
+        _log("can_upsert $can_upsert;");
+        if ($can_upsert){
             $stmt = $session->prepare("INSERT INTO gift_claim (user_id, gift_id, amount) VALUES (:user_id, :gift_id, :amount);");
             $stmt->execute(["user_id"=>$gift_claim->user_id, "gift_id"=>$gift_claim->gift_id, "amount"=>$gift_claim->amount]);
 

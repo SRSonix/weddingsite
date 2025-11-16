@@ -27,3 +27,42 @@ function get_overview(){
 function get_gifts() {
     return \GiftRepository\get_gifts();
 }
+
+function get_agenda() {
+    $info = [
+        "15:30" => "Arrival & refreshments",
+        "16:00" => "Wedding Ceremony",
+        "17:00" => "Bar opens",
+        "18:00" => "Take seats at tables",
+        "18:15" => "Entry of the couple",
+        "18:20" => "Dinner",
+        "19:30" => "Couple and family dance",
+        "20:00" => "Dance floor opening",
+        "20:15" => "Desert table opens",
+        "22:00" => "Snack cart opens",
+        "22:30" => "Keex B2B DJ Baron",
+        "23:30" => "Taco truck opens; Mariachi",
+        "00:15" => "DJ continues",
+        "02:30" => "Dance floor closes",
+        "03:30" => "-Closing-"
+    ];
+
+    return $info;
+}
+
+function get_payment_details() {
+    $info = [
+        "paypal" => [
+            "mail" =>"reg.yannic.bm@gmail.com",
+            "username" => "regandyannic"
+        ],
+        "bank" => [
+            "name" => "R MARTINEZ GRACIA-MEDRANO & Y Bode",
+            "iban" => "DE04 1001 0178 9396 5106 76",
+            "bic" => "REVODEB2"
+        ]
+    ];
+
+    return $info;
+}
+

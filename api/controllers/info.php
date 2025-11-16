@@ -14,6 +14,30 @@ function get_overview(\Request $request){
 }
 
 
+function get_agenda(\Request $request){
+    $user_id = $request->user_id;
+    if ($user_id === NULL){
+		http_response_code(response_code: 403);
+        return [];
+    }
+
+    return [
+        "items" => \InfoService\get_agenda()
+    ];
+}
+
+
+function get_payment_details(\Request $request){
+    $user_id = $request->user_id;
+    if ($user_id === NULL){
+		http_response_code(response_code: 403);
+        return [];
+    }
+
+    return \InfoService\get_payment_details();
+}
+
+
 function get_gifts(\Request $request){
     $user_id = $request->user_id;
     if ($user_id === NULL){

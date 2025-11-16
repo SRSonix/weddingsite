@@ -1,11 +1,21 @@
 
 export class CurrecnyService{
-    static format_amount(amout_euro: number, showPeso: boolean): string{
+    static get_value(amount: number, showPeso: boolean): number{
         if (showPeso){
-            return `${amout_euro * 20} MEX`;
+            return amount * 20;
         }
         else {
-            return `${amout_euro} \u20AC`;
+            return amount;
+        }
+    }
+
+    static format_amount(amout_euro: number, showPeso: boolean): string{
+        const value  = CurrecnyService.get_value(amout_euro, showPeso);
+        if (showPeso){
+            return `${value} MEX`;
+        }
+        else {
+            return `${value} \u20AC`;
         }
     }
 }

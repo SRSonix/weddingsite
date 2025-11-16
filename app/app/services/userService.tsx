@@ -233,31 +233,23 @@ export class UserService{
   }
 
 
-  static async addGiftClaim(userId: number, giftId: number, amount: number): Promise<User | undefined>{
+  static async addGiftClaim(userId: number, giftId: number, amount: number): Promise<boolean>{
     try {
       const response = await fetch(`${UserService.BASE_URL}/${userId}/gifts/${giftId}`, {method: "put", body:JSON.stringify({amount}), credentials: 'include'})
-      
-      if (!response.ok){
-        return undefined;
-      }
+        return response.ok;
 
     } catch(error){
-      return undefined;
+      return false;
     }
   }
 
-  static async removeGiftClaim(userId: number, giftId: number): Promise<User | undefined>{
+  static async removeGiftClaim(userId: number, giftId: number): Promise<boolean>{
     try {
       const response = await fetch(`${UserService.BASE_URL}/${userId}/gifts/${giftId}`, {method: "delete", credentials: 'include'})
       
-      if (!response.ok){
-        return undefined;
-      }
-      const data = await response.json();
-
-      return new User(data.id, data.role, data.first_name, data.last_name, data.diet, data.drinks, data.mail, data.attendance, data.language, data.arrival_date, data.departure_date, data.seating_preference, data.last_visit, data.gift_claims);
+      return response.ok;
     } catch(error){
-      return undefined;
+      return false;
     }
   }
 };

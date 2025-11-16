@@ -64,4 +64,8 @@
   .content-tile-wrap {
     @apply p-3 flex flex-wrap gap-3
   }
+
+  .text-interact {
+    @apply text-blue-600 hover:text-gray-300
+  }
 }

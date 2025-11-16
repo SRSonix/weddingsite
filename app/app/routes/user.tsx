@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Rsvp } from "~/components/user/rsvp";
 import { UserLogin } from "~/components/user/login";
 import { ContentTile } from "~/components/common/content_tile";
-import { Gifts } from "~/components/user/gifts";
+import { Gifts } from "~/components/gifts/gifts";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -33,7 +33,6 @@ export default function Users() {
             </button>
           </ContentTile>
           <ContentTile header={t("rsvp")}><Rsvp></Rsvp></ContentTile>
-          <ContentTile header={t("gifts")}><Gifts></Gifts></ContentTile>
         </div>
         : <UserLogin></UserLogin>
       }

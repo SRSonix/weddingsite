@@ -4,10 +4,11 @@ import { useNavigate } from "react-router";
 import { useUser } from "~/providers/userProvider";
 import { GiftType, InfoService, type Gift } from "~/services/infoService";
 import { UserService, type GiftClaim } from "~/services/userService";
-import { GiftItem } from "./giftItem";
+import { GiftItem } from "../gifts/giftItem";
 import { AddGift } from "./addGift";
 
 export function Gifts() {
+    const {t} = useTranslation(["gifts", "common"]);
     const {user, reloadUser} = useUser();
     const [giftClaims, setGiftClaims] = useState<GiftClaim[] >([]);
     const [gifts, setGifts] = useState<{[key: number]: Gift}>([]);
@@ -27,19 +28,18 @@ export function Gifts() {
         .then(() => reloadUser())
     }
 
-    function addGiftClaim(giftId: number, amount: number){
-        UserService.addGiftClaim(user!.id, giftId, amount)
-        .then(() => reloadUser())
+    async function addGiftClaim(giftId: number, amount: number): Promise<boolean>{
+        const result = await UserService.addGiftClaim(user!.id, giftId, amount)
+        reloadUser();
+
+        return result
     }
 
     return (
         <div>
-            <div>
-                <p className="text-[0.8rem]/4 text-gray-700">As we'll be traveling with limited luggage, we'd appreciate a contribution toward an experience or donation instead of physical gifts. Our gift list includes both smaller and larger items: smaller ones are individual gifts, while larger ones can be shared and partially contributed to. Select a gift and the amount, in oder to coordinate the gifts.</p>                    
-                <p className="text-[0.8rem]/4 text-gray-700">All prices are shown in either Euro (€) or Mexican Peso (MXN) (using a fixed exchange rate). Contributions can be made via PayPal or bank transfer (Details will be shared here soon).</p>
-            </div>
+            <p>{t("select_gift_text")}:</p>
             <div className="flex justify-end">
-                show prices in:
+                {t("prices_in")}:
                 <div className="inline ml-2">
                     <input type="radio" name="currency" id="eur" checked={!showPeso} onChange={() => setShowPeso(false)}/>
                     <label htmlFor="m" onClick={() => setShowPeso(false)}>&euro;</label>
@@ -50,7 +50,7 @@ export function Gifts() {
                 </div>
             </div>
             <div>
-                <h4>You have selected {giftClaims.length} Gift(s)</h4>
+                <h4>{t("yourSelectionAmount", {"count": giftClaims.length})}</h4>
                 <ul>
                     {giftClaims.map((g) => {
                         const gift = gifts[g.gift_id]
