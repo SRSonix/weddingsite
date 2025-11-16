@@ -13,6 +13,42 @@ export class OverviewInfo{
     ){};
 }
 
+export enum GiftType{
+  fixPrice = "fix_price",
+  upToPrice = "up_to_price",
+  openPrice = "open_price"
+}
+
+export interface Gift{
+  id: number;
+  type: GiftType;
+  title: { [key: string]: string }
+  price_euro: number
+  amount?: number
+  amount_left?: number
+  price_euro_left?: number
+}
+
+export interface Agenda{
+  items: {[key: string]: string}
+}
+
+export interface BankDetails{
+  name: string,
+  iban: string,
+  bic: string
+}
+
+export interface PayPalDetails{
+  mail: string,
+  username: string,
+}
+
+export interface PaymentDetails{
+  paypal: PayPalDetails
+  bank: BankDetails
+}
+
 export class InfoService{
   static BASE_URL = `${import.meta.env.VITE_API_URL}/info`;
 
@@ -31,4 +67,53 @@ export class InfoService{
       return undefined
     }
   };
+
+  static async getAganda(): Promise<Agenda | undefined>{
+    try{
+      const response = await fetch(`${InfoService.BASE_URL}/agenda`, {method: "get", credentials: 'include'})
+      const data = await response.json()
+
+      if (!response.ok){
+        return undefined;
+      }
+
+      return data as Agenda;
+    } catch (error) {
+      return undefined
+    }
+  };
+
+
+  static async getPaymentDetails(): Promise<PaymentDetails | undefined>{
+    try{
+      const response = await fetch(`${InfoService.BASE_URL}/payment_details`, {method: "get", credentials: 'include'})
+      const data = await response.json()
+
+      if (!response.ok){
+        return undefined;
+      }
+
+      return data as PaymentDetails;
+    } catch (error) {
+      return undefined
+    }
+  };
+
+
+  static async getGifts(): Promise<{[key: number]: Gift}>{
+    try {
+      const response = await fetch(`${InfoService.BASE_URL}/gifts`, {method: "get", credentials: 'include'})
+      
+      if (!response.ok){
+        return {};
+      }
+      const data = await response.json() as Gift[]
+
+      return  Object.fromEntries(
+        data.map(item => [item.id, item])
+      );
+    } catch(error){
+      return {};
+    }
+  }
 };

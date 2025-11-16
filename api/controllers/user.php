@@ -174,3 +174,34 @@ function delete_user(\Request $request){
 
     return ["success" => \UserService\delete_user($user_id)];
 }
+
+function add_gift(\Request $request){
+    $user_id = $request->path_params["user_id"];
+    $gift_id = $request->path_params["gift_id"];
+
+    if ($request->user_id != $user_id) {
+        http_response_code(403);
+        return [];
+    }
+
+    $amount = $request->body["amount"] ?? null;
+
+    if($amount == null || $amount <= 0){
+        http_response_code(422);
+        return ["message"=> "amount must be a positive integer"];
+    }
+
+    return \UserService\add_gift_claim(new \GiftClaim($user_id, $gift_id, $amount));
+}
+
+function delete_gift(\Request $request){
+    $user_id = $request->path_params["user_id"];
+    $gift_id = $request->path_params["gift_id"] ?? null;
+
+    if ($request->user_id != $user_id) {
+        http_response_code(403);
+        return [];
+    }
+
+    return  \UserService\remove_gift_claim($user_id, $gift_id);
+}

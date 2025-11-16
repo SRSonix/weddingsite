@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Rsvp } from "~/components/user/rsvp";
 import { UserLogin } from "~/components/user/login";
 import { ContentTile } from "~/components/common/content_tile";
+import { Gifts } from "~/components/gifts/gifts";
 
 export function meta({}: Route.MetaArgs) {
   return [

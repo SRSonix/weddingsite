@@ -40,7 +40,8 @@ function user_from_row($row){
         arrival_date: $row["arrival_date"] , 
         departure_date: $row["departure_date"],
         seating_preference: $row["seating_preference"],
-        last_visit: $row["last_visit"]
+        last_visit: $row["last_visit"],
+        gift_claims: NULL,
     );
 }
 

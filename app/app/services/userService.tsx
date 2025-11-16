@@ -1,3 +1,5 @@
+import type { Gift } from "./infoService";
+
 export enum Attandance {
   will_join = "will_join",
   will_not_join="will_not_join",
@@ -21,6 +23,11 @@ export enum Drink {
   beer = "beer",
   cocktail = "cocktail",
   non_alcoholic = "non_alcoholic",
+}
+
+export interface GiftClaim{
+  gift_id: number,
+  amount: number
 }
 
 export class RsvpInformation{
@@ -65,7 +72,8 @@ export class User extends RsvpInformation{
     arrival_date: string | undefined,
     departure_date: string | undefined,
     seating_preference: string | undefined,
-    public last_visit: string
+    public last_visit: string,
+    public giftClaims: GiftClaim[]
   ){
     super(diet, drinks, mail, attendance, language, arrival_date, departure_date, seating_preference);
   }
@@ -87,7 +95,7 @@ export class UserService{
         return null;
       }
 
-      return new User(data.id, data.role, data.first_name, data.last_name, data.diet, data.drinks, data.mail, data.attendance, data.language, data.arrival_date, data.departure_date, data.seating_preference, data.last_visit);
+      return new User(data.id, data.role, data.first_name, data.last_name, data.diet, data.drinks, data.mail, data.attendance, data.language, data.arrival_date, data.departure_date, data.seating_preference, data.last_visit, data.gift_claims);
 
     } catch (error) {
       return null
@@ -128,7 +136,7 @@ export class UserService{
       let users: Array<User> = []
       data.forEach((row: any) =>
         {
-          users.push(new User(row.id, row.role, row.first_name, row.last_name, row.diet, row.drinks, row.mail, row.attendance, row.language, row.arrival_date, row.departure_date, row.seating_preference, row.last_visit));
+          users.push(new User(row.id, row.role, row.first_name, row.last_name, row.diet, row.drinks, row.mail, row.attendance, row.language, row.arrival_date, row.departure_date, row.seating_preference, row.last_visit, []));
         }
       )
       return users
@@ -150,7 +158,7 @@ export class UserService{
       if (!response.ok){
         return undefined;
       }
-      return new User(data.id, data.role, data.first_name, data.last_name, data.diet, data.drinks, data.mail, data.attendance, data.language, data.arrival_date, data.departure_date, data.seating_preference, data.last_visit);
+      return new User(data.id, data.role, data.first_name, data.last_name, data.diet, data.drinks, data.mail, data.attendance, data.language, data.arrival_date, data.departure_date, data.seating_preference, data.last_visit, data.gift_claims);
     }catch (error) {
       return undefined
     }
@@ -168,7 +176,7 @@ export class UserService{
       if (!response.ok){
         return undefined;
       }
-      return new User(data.id, data.role, data.first_name, data.last_name, data.diet, data.drinks, data.mail, data.attendance, data.language, data.arrival_date, data.departure_date, data.seating_preference, data.last_visit);
+      return new User(data.id, data.role, data.first_name, data.last_name, data.diet, data.drinks, data.mail, data.attendance, data.language, data.arrival_date, data.departure_date, data.seating_preference, data.last_visit, data.gift_claims);
     }catch (error) {
       return undefined
     }
@@ -221,6 +229,27 @@ export class UserService{
       return `${import.meta.env.VITE_WEBSITE_URL}?token=${token}`;
     }catch (error) {
       return undefined
+    }
+  }
+
+
+  static async addGiftClaim(userId: number, giftId: number, amount: number): Promise<boolean>{
+    try {
+      const response = await fetch(`${UserService.BASE_URL}/${userId}/gifts/${giftId}`, {method: "put", body:JSON.stringify({amount}), credentials: 'include'})
+        return response.ok;
+
+    } catch(error){
+      return false;
+    }
+  }
+
+  static async removeGiftClaim(userId: number, giftId: number): Promise<boolean>{
+    try {
+      const response = await fetch(`${UserService.BASE_URL}/${userId}/gifts/${giftId}`, {method: "delete", credentials: 'include'})
+      
+      return response.ok;
+    } catch(error){
+      return false;
     }
   }
 };

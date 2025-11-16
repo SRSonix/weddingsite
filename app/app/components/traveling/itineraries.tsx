@@ -5,21 +5,7 @@ export default function Itineraries(){
 
     return (
         <div className="text-justify">
-            <h4>Yucatan</h4>
-            <div className="text-justify">
-                {t("yucatan_intro")}
-            </div>
-            <div className="text-justify">
-                {t("stay_recommendation")}
-            </div>
 
-            <h4>Tren Maya</h4>
-            <div className="text-justify">
-                {t("tren_maya_intro")}
-            </div>
-            <div className="text-justify">
-                {t("tren_maya_loop")}
-            </div>
 
             <h4>{t("itinerary_intro")}</h4>
             <h4>Day 1: Cancun &amp; {t("arrival")}</h4>

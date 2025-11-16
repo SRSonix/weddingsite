@@ -23,10 +23,16 @@ $router->add_route(pattern: "^/user\/(\d+)\/rsvp$", method: PUT, parameter_names
 $router->add_route(pattern: "^/user\/(\d+)\/core_info$", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user_core_info");
 $router->add_route(pattern: "^/user\/(\d+)\/reset_token$", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user_token");
 $router->add_route(pattern: "^/user\/(\d+)\/token$", method: GET, parameter_names: ["user_id"], callback:"UserController\\get_user_token");
+$router->add_route(pattern: "^/user\/(\d+)\/gifts$", method: GET, parameter_names: ["user_id"], callback:"UserController\\get_gift_claims");
+$router->add_route(pattern: "^/user\/(\d+)\/gifts\/(\d+)$", method: PUT, parameter_names: ["user_id", "gift_id"], callback:"UserController\\add_gift");
+$router->add_route(pattern: "^/user\/(\d+)\/gifts\/(\d+)$", method: DELETE, parameter_names: ["user_id", "gift_id"], callback:"UserController\\delete_gift");
 $router->add_route(pattern: "^/users$", method: GET, parameter_names: [], callback:"UserController\\get_all_users");
 $router->add_route(pattern: "^/auth/login$", method: POST, parameter_names: [], callback:"AuthController\\login");
 $router->add_route(pattern: "^/auth/logout$", method: POST, parameter_names: [], callback:"AuthController\\logout");
 $router->add_route(pattern: "^/info/overview$", method: GET, parameter_names: [], callback:"InfoController\\get_overview");
+$router->add_route(pattern: "^/info/agenda$", method: GET, parameter_names: [], callback:"InfoController\\get_agenda");
+$router->add_route(pattern: "^/info/payment_details$", method: GET, parameter_names: [], callback:"InfoController\\get_payment_details");
+$router->add_route(pattern: "^/info/gifts$", method: GET, parameter_names: [], callback:"InfoController\\get_gifts");
 $router->add_route(pattern: "^/image\/(.+)$", method: GET, parameter_names: ["image_path"], callback:"ImageController\\get_image");
 
 $router->add_middleware("resolve_user");

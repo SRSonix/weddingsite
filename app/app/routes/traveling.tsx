@@ -4,6 +4,7 @@ import { EmptyState } from "~/components/common/empty_state";
 import { ComingSoon } from "~/components/common/coming_soon";
 import Itineraries from "~/components/traveling/itineraries";
 import { ContentTile } from "~/components/common/content_tile";
+import { TravelInfo } from "~/components/traveling/info";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -19,15 +20,7 @@ export default function Traveling() {
     <EmptyState>
 
       <div className="content-tile-wrap">
-      <ContentTile header={undefined}>
-        <ComingSoon>
-          <ul className="list-disc list-inside">
-            <li>{t("recommended-sites")}</li>
-            <li>{t("food")}</li>
-            <li>{t("culture")}</li>
-          </ul>
-        </ComingSoon>
-      </ContentTile>
+      <ContentTile header={undefined}><TravelInfo></TravelInfo></ContentTile>
 
       <ContentTile header={t("itineraries")} >
         <Itineraries/>
