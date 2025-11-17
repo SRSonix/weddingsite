@@ -45,8 +45,8 @@ export function Gifts() {
                     <label htmlFor="m" onClick={() => setShowPeso(false)}>&euro;</label>
                 </div>
                 <div className="inline ml-2">
-                    <input type="radio" name="currency" id="mex" checked={showPeso} onChange={() => setShowPeso(true)}/>
-                    <label htmlFor="f"onClick={() => setShowPeso(true)}>MEX</label>
+                    <input type="radio" name="currency" id="mxn" checked={showPeso} onChange={() => setShowPeso(true)}/>
+                    <label htmlFor="f" onClick={() => setShowPeso(true)}>MXN</label>
                 </div>
             </div>
             <div>

@@ -74,7 +74,7 @@ function update_user_rsvp(
     $seating_preference,
     ){
 
-    return \UserRepository\update_user_rsvp(
+    $success = \UserRepository\update_user_rsvp(
         $user_id, 
         $mail, 
         $diet, 
@@ -85,6 +85,13 @@ function update_user_rsvp(
         $departure_date,
         $seating_preference,
     );
+
+    if (!$success){
+        http_response_code(response_code: 422);
+        return ["msg"=>"error inserting user"];
+    }
+
+    return get_user($user_id);
 }
 
 
@@ -95,12 +102,20 @@ function update_user_core_info(
     $role,
     ){
 
-    return \UserRepository\update_user_core_info(
+    $success = \UserRepository\update_user_core_info(
         $user_id, 
         $first_name, 
         $last_name, 
         $role,
     );
+
+    if (!$success){
+
+        http_response_code(response_code: 422);
+        return ["msg"=>"error inserting user"];
+    }
+
+    return get_user($user_id);
 }
 
 function delete_user($user_id) {

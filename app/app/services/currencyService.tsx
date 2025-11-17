@@ -12,7 +12,7 @@ export class CurrecnyService{
     static format_amount(amout_euro: number, showPeso: boolean): string{
         const value  = CurrecnyService.get_value(amout_euro, showPeso);
         if (showPeso){
-            return `${value} MEX`;
+            return `${value} MXN`;
         }
         else {
             return `${value} \u20AC`;

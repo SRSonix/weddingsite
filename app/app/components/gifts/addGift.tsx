@@ -62,7 +62,7 @@ export function AddGift({gifts, handleAddGiftClaim, showPeso}: {gifts: {[key: nu
         let amount_clean = amount;
         if ([GiftType.upToPrice, GiftType.openPrice].includes(gifts[selectedGiftId].type) && showPeso) {
             if (amount % 20 != 0){
-                setAlert("Please select a multiple of 20 MEX.")
+                setAlert(t("mxn_invalid_amount", {"amount": 20}))
                 return;
             }
             else amount_clean = amount / 20;
@@ -119,7 +119,7 @@ export function AddGift({gifts, handleAddGiftClaim, showPeso}: {gifts: {[key: nu
             }
             {
                 selectedGiftId != null && [ GiftType.upToPrice, GiftType.openPrice].includes(gifts[selectedGiftId] && gifts[selectedGiftId].type) && 
-                <div className="flex"><input type="text" value={amount || 0} onChange={(e) => handleAmountChange(e.target.value)} className="input-inline flex-grow mb-3"></input> {showPeso? "MEX" : "\u20AC"}</div>
+                <div className="flex"><input type="text" value={amount || 0} onChange={(e) => handleAmountChange(e.target.value)} className="input-inline flex-grow mb-3"></input> {showPeso? "MXN" : "\u20AC"}</div>
             }
         </div>
         <button hidden={visible} onClick={() => setVisible(true)} className="btn" >{t("add_gift")}</button>

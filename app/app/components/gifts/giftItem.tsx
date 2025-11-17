@@ -11,8 +11,8 @@ export function GiftItem({gift, amount, showPeso, onDelete}: {gift: Gift, amount
             return <p> {t("your_selected_up_to", {"amount": CurrecnyService.format_amount(amount, showPeso), "out_of": CurrecnyService.format_amount(gift.price_euro!, showPeso)})}</p>
         }
         else if (gift.type == GiftType.fixPrice) {
-            const value_str = CurrecnyService.format_amount(gift.amount!, showPeso);
-            const total_value = CurrecnyService.format_amount(amount * gift.amount!, showPeso);
+            const value_str = CurrecnyService.format_amount(gift.price_euro!, showPeso);
+            const total_value = CurrecnyService.format_amount(amount * gift.price_euro!, showPeso);
             return <p> {t("your_selection_fix", {"amount": amount, "out_of": gift.amount, "value": value_str, "total_value": total_value})}</p>
         }
         else if (gift.type == GiftType.openPrice) {

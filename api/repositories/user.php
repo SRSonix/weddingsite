@@ -158,13 +158,12 @@ function update_user_core_info(
     {
         _log($e);
         $session = null;
-        http_response_code(response_code: 422);
-        return ["msg"=>"error inserting user"];
+        return False;
     }
     
     $session = null;
 
-    return get_user_by_id($user_id);
+    return True;
 }
 
 function update_user_rsvp(
@@ -194,13 +193,12 @@ function update_user_rsvp(
     {
         _log($e);
         $session = null;
-        http_response_code(response_code: 422);
-        return ["msg"=>"error inserting user"];
+        return False;
     }
     
     $session = null;
 
-    return get_user_by_id($user_id);
+    return True;
 }
 
 function update_last_visited(int $user_id): void {

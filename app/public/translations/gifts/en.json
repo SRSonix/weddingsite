@@ -1,7 +1,7 @@
 {
   "gift_info": "About Gifts",
   "your_gifts": "Your Gifts",
-  "select_gift_text": "Select a gifts you want to gift us in full, or contribute a portion to some larger item",
+  "select_gift_text": "Select a gift or gifts you would like to give us in full, or contribute any amount to a larger item",
   "no_physical_gifts":  "First off, please no physical gifts at the wedding! We have little space in our luggage, so we simply cannot bring back gifts - even small ones will add up. Besides, we have a lot of stuff in our small flat already :)",
   "no_gift_required": "Second, please feel no obligation to bring a gift at all - your presence at our wedding is the greatest gift to us! And many of you will have spent a good deal on your trip to Mexico, so please only give what you really want to, and what is suitable to your personal finances.",
   "gifts_explain": "Third, we have a few gifts we would like to receive from you. You can either select an item of the list to gift us in full, or contribute a portion to some of the larger items. You can also choose any sum to contribute to our wedding and future plans.",
@@ -11,6 +11,7 @@
   "prices_in": "show prices in",
   "select_gift": "Please select a gift",
   "select_amount": "Please select an the amount",
+  "mxn_invalid_amount": "Please select a multiple of {{amount}} MXN",
   "add_gift": "Add Gift",
   "yourSelectionAmount_one": "You have selected {{count}} Gift",
   "yourSelectionAmount_other": "You have selected {{count}} Gifts",
