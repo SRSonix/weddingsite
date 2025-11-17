@@ -9,8 +9,11 @@ function create_db_session() {
     $dbname = DB_NAME;
 
     try {
-        $session = new \PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+        $session = new \PDO("mysql:host=$servername;dbname=$dbname", $username, $password,  [
+            \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"
+        ]);
         $session->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $session->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
     }
     catch (\PDOException  $e) {
         _log($e->getMessage());
