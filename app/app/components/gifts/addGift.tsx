@@ -82,19 +82,20 @@ export function AddGift({gifts, handleAddGiftClaim, showPeso}: {gifts: {[key: nu
     }
 
     function getGiftSelectOption(g: Gift){
+        const title = g.title[i18n.language] || g.title["en"]
 
         if (g.type == GiftType.upToPrice) {
             if (g.price_euro_left === 0) return <></>;
 
-            return <option value={g.id} disabled={g.price_euro_left===0}>{g.title[i18n.language]} up to {CurrecnyService.format_amount(g.price_euro, showPeso)} ({CurrecnyService.format_amount(g.price_euro_left!, showPeso)} left)</option>
+            return <option value={g.id} disabled={g.price_euro_left===0}>{t("select_up_to", {"title": title, "total_value": CurrecnyService.format_amount(g.price_euro, showPeso), "value_left": CurrecnyService.format_amount(g.price_euro_left!, showPeso)})}</option>
         }
         else if (g.type == GiftType.openPrice) {
-            return <option value={g.id}>{g.title[i18n.language]} ({t("custom_donation")})</option>
+            return <option value={g.id}>{title} ({t("custom_donation")})</option>
         }
         else if (g.type == GiftType.fixPrice) {
             if (g.amount_left === 0) return <></>;
 
-            return <option value={g.id} disabled={g.amount_left===0}>{g.title[i18n.language]} {CurrecnyService.format_amount(g.price_euro, showPeso)} ({g.amount_left} left)</option>
+            return <option value={g.id} disabled={g.amount_left===0}>{t("select_fix", {"title": title, "price": CurrecnyService.format_amount(g.price_euro, showPeso), "amount_left": g.amount_left})}</option>
         }
        
         return <></>

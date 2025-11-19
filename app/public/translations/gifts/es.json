@@ -18,5 +18,7 @@
   "your_selected_up_to": "Has seleccionado {{amount}} (de {{out_of}})",
   "your_selection_fix": "Has seleccionado {{total_value}} ({{amount}} de {{out_of}} artículos de {{value}})",
   "your_selection_open": "Has seleccionado {{amount}} (Donación personalizada)",
+  "select_up_to": "{{title}} hasta {{total_value}} (quedan {{value_left}})",
+  "select_fix": "{{title}} {{price}} (quedan {{amount_left}})",
   "custom_donation": "Donación personalizada"
 }

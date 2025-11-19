@@ -6,7 +6,7 @@ import { GiftType, type Gift } from "~/services/infoService";
 export function GiftItem({gift, amount, showPeso, onDelete}: {gift: Gift, amount: number, showPeso:boolean, onDelete: (id: number) => void}) {
     const {i18n, t} = useTranslation(["gifts", "common"]);
 
-    function getText(gift: Gift){
+    function getGiftText(gift: Gift){
         if (gift.type == GiftType.upToPrice) {
             return <p> {t("your_selected_up_to", {"amount": CurrecnyService.format_amount(amount, showPeso), "out_of": CurrecnyService.format_amount(gift.price_euro!, showPeso)})}</p>
         }
@@ -20,11 +20,15 @@ export function GiftItem({gift, amount, showPeso, onDelete}: {gift: Gift, amount
         }
         return ""
     }
+
+    function getGiftTitile(gift: Gift){
+        return gift.title[i18n.language] || gift.title["en"];
+    }
     
     return <div  className="mb-3 border p-3 flex">
         <div className="flex-grow">
-            <h5 className="font-bold">{gift.title[i18n.language]}</h5>
-            {getText(gift) }
+            <h5 className="font-bold">{getGiftTitile(gift)}</h5>
+            {getGiftText(gift) }
         </div>
         <button className="btn btn-small btn-red" onClick={() => onDelete(gift.id)}>{t("common:delete")}</button>
     </div>

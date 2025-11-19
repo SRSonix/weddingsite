@@ -18,5 +18,7 @@
   "your_selected_up_to": "Du hast {{amount}} (von {{out_of}}) ausgewählt",
   "your_selection_fix": "Du hast {{total_value}} ausgewählt ({{amount}} von {{out_of}} Artikeln zu je {{value}})",
   "your_selection_open": "Du hast {{amount}} ausgewählt (individuelle Spende)",
+  "select_up_to": "{{title}} bis zu {{total_value}} ({{value_left}} übrig)",
+  "select_fix": "{{title}} {{price}} ({{amount_left}} übrig)",
   "custom_donation": "individuelle Spende"
 }
