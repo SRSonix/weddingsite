@@ -12,10 +12,11 @@ class SearchForm{
         public attendance: Attandance | "not_set" | "",
         public has_visited: "visited" | "not_visited" | "",
         public mail_set: "mail_set" | "no_mail_set" | "",
+        public gift_set: "gift_set" | "no_gift_set" | "",
     ){}
 
     static initialFormData(){
-        return new SearchForm("", "", "", "", "", "");
+        return new SearchForm("", "", "", "", "", "", "");
     }
 }
 
@@ -39,7 +40,7 @@ export default function AllUsers(){
     }
 
     function filterUser(user: User){
-        const {first_name, last_name, role, attendance, has_visited, mail_set} = formData;
+        const {first_name, last_name, role, attendance, has_visited, mail_set, gift_set} = formData;
 
         if (first_name && !user.first_name.toLowerCase().includes(first_name.toLocaleLowerCase())) return false;
         if (last_name && !user.last_name.toLowerCase().includes(last_name.toLocaleLowerCase())) return false;
@@ -50,6 +51,8 @@ export default function AllUsers(){
         if (has_visited === "not_visited" && user.last_visit !== null) return false;
         if (mail_set === "mail_set" && user.mail === null) return false;
         if (mail_set === "no_mail_set" && user.mail !== null) return false;
+        if (gift_set === "gift_set" && user.giftClaims.length === 0) return false;
+        if (gift_set === "no_gift_set" && user.giftClaims.length !== 0) return false;
 
         return true;
     }
@@ -101,6 +104,14 @@ export default function AllUsers(){
                                 <option value="">no filter</option>
                                 <option value={"mail_set"}>mail set</option>
                                 <option value={"no_mail_set"}>no mail set</option>
+                            </select>
+                        </div>
+                        <div className="inline">
+                            <label htmlFor="has_gifts" className="input-label">has gift set</label>
+                            <select id="gift_set" onChange={handleChange}  className="input-block"  value={formData.gift_set}>
+                                <option value="">no filter</option>
+                                <option value={"gift_set"}>gift set</option>
+                                <option value={"no_gift_set"}>no gift set</option>
                             </select>
                         </div>
                         <button onClick={(e) => resetSearchField(e)} className="btn btn-inline mt-6 btn-gray mr-3">reset filter</button>

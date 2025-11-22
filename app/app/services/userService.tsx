@@ -136,7 +136,7 @@ export class UserService{
       let users: Array<User> = []
       data.forEach((row: any) =>
         {
-          users.push(new User(row.id, row.role, row.first_name, row.last_name, row.diet, row.drinks, row.mail, row.attendance, row.language, row.arrival_date, row.departure_date, row.seating_preference, row.last_visit, []));
+          users.push(new User(row.id, row.role, row.first_name, row.last_name, row.diet, row.drinks, row.mail, row.attendance, row.language, row.arrival_date, row.departure_date, row.seating_preference, row.last_visit, row.gift_claims));
         }
       )
       return users

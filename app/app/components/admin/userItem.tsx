@@ -1,6 +1,8 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import { useAllUsers } from "~/providers/allUserProvider";
-import { Role, UserCoreInfo, UserService, type User } from "~/services/userService";
+import { useGifts } from "~/providers/giftsProvider";
+import { GiftType } from "~/services/infoService";
+import { Role, UserCoreInfo, UserService, type GiftClaim, type User } from "~/services/userService";
 
 
 export function UserItem({user}: {user:User}){
@@ -9,6 +11,7 @@ export function UserItem({user}: {user:User}){
     const [edit, setEdit] = useState(false);
     const [formData, setFormData] = useState<UserCoreInfo>(UserCoreInfo.getEmpty());
     const {updateUserCoreInfo, deleteUser} = useAllUsers();
+    const {gifts} = useGifts();
 
     const userAgent = window.navigator.userAgent;
     const isSafari = userAgent.includes("Safari") && !userAgent.includes("Chrome");
@@ -76,6 +79,21 @@ export function UserItem({user}: {user:User}){
       deleteUser(user.id);
     }
 
+    function getGiftClaimText(claim: GiftClaim): string{
+      const gift = gifts[claim.gift_id];
+       if (gift.type == GiftType.fixPrice){
+            return `${gift.title.en} ${claim.amount}x${gift.price_euro}€ (${claim.amount*gift.price_euro}€)`;
+        }
+        if (gift.type == GiftType.openPrice){
+            return `${gift.title.en}: ${claim.amount}€`;
+        }
+        if (gift.type == GiftType.upToPrice){
+            return `${gift.title.en}: ${claim.amount}€`;
+        }
+
+        throw Error()
+    }
+
     return(
       <div className="mb-3 border p-3">
         <div className="flex align-center w-full">
@@ -102,8 +120,10 @@ export function UserItem({user}: {user:User}){
           diet: {user.diet || "diet not set"} <br/>
           drinks: {user.drinks.join(", ") || "drinks not set"} <br/>
           seating_preference: {user.seating_preference || "seating_preference not set"} <br/>
-          last_visit: {user.last_visit || "has not visited"} 
+          last_visit: {user.last_visit || "has not visited"} <br/>
+          gift_claims: {user.giftClaims.length == 0 && "has not set a gift"}
         </p>
+        <ul className="list-disc list-outside pl-5"> {user.giftClaims.map((claim)=> <li>{getGiftClaimText(claim)}</li>)} </ul>
         <div className="mt-2">
           <button className="btn btn-small mr-2 btn-gray" onClick={() => getUserUrl(user.id)}>{isSafari ? "fetch user token" : "load custom user url"}</button>
           {isSafari &&  <button className="btn btn-small mr-2 btn-gray" onClick={copyUrl}>copy token to clipboard</button> }

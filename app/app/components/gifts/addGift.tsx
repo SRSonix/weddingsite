@@ -2,13 +2,15 @@ import { useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { GiftType, type Gift } from "~/services/infoService";
 import { CurrecnyService } from "~/services/currencyService";
+import { useGifts } from "~/providers/giftsProvider";
 
-export function AddGift({gifts, handleAddGiftClaim, showPeso}: {gifts: {[key: number]: Gift},handleAddGiftClaim: (id: number, amount:number) => Promise<boolean>, showPeso: boolean}) {
+export function AddGift({handleAddGiftClaim, showPeso}: {handleAddGiftClaim: (id: number, amount:number) => Promise<boolean>, showPeso: boolean}) {
     const {i18n, t} = useTranslation(["gifts", "common"]);
     const [visible, setVisible] = useState<boolean >(false);
     const [selectedGiftId, setSelectedGiftId] = useState<number|null>(null);
     const [amount, setAmount] = useState<number|null>(null);
     const [alert, setAlert] = useState<string>("")
+    const {gifts} = useGifts();
 
     function handleGiftSelection(event: ChangeEvent<HTMLSelectElement>):void{
         setAlert("");

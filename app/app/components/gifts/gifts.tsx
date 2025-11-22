@@ -6,17 +6,17 @@ import { GiftType, InfoService, type Gift } from "~/services/infoService";
 import { UserService, type GiftClaim } from "~/services/userService";
 import { GiftItem } from "../gifts/giftItem";
 import { AddGift } from "./addGift";
+import { useGifts } from "~/providers/giftsProvider";
 
 export function Gifts() {
     const {t} = useTranslation(["gifts", "common"]);
     const {user, reloadUser} = useUser();
     const [giftClaims, setGiftClaims] = useState<GiftClaim[] >([]);
-    const [gifts, setGifts] = useState<{[key: number]: Gift}>([]);
     const [showPeso, setShowPeso] = useState(false);
+    const {gifts} = useGifts();
 
     useEffect(() =>{
         if (user){
-            InfoService.getGifts().then((gifts) => setGifts(gifts))
             setGiftClaims(user.giftClaims)
 
             if( user.language == "es") setShowPeso(true);
@@ -61,7 +61,7 @@ export function Gifts() {
                 </ul>
             </div>
             <h4>Add a gift</h4>
-            <AddGift gifts={gifts} handleAddGiftClaim={addGiftClaim} showPeso={showPeso}></AddGift>
+            <AddGift handleAddGiftClaim={addGiftClaim} showPeso={showPeso}></AddGift>
         </div>
     )
 }
