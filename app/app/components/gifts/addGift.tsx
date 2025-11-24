@@ -72,7 +72,6 @@ export function AddGift({handleAddGiftClaim, showPeso}: {handleAddGiftClaim: (id
 
         setAlert("");
         handleAddGiftClaim(selectedGiftId, amount_clean).then((success) => {
-            console.log(success)
 
             if (success) {
                 setSelectedGiftId(null);

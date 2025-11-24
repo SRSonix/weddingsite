@@ -32,7 +32,6 @@ export default function UserStatisticsPanel(){
                     if(field === "drinks"){
                         return user[field].join("/")
                     }
-                    console.log(user[field])
                     return user[field]?.replace(/(\r\n|\n|\r)/gm, "");
                 }).join(",");
                 return row;
@@ -51,9 +50,6 @@ export default function UserStatisticsPanel(){
     function getGiftAvailability(gift: Gift): string{
         const allClaims = allUsers.map((user) => user.giftClaims).reduce((a, b) => [...a, ...b], []).filter((claim)=> claim.gift_id == gift.id);
         const amountReserved = allClaims.map((claim) => claim.amount).reduce((a, b) => a + b, 0);
-
-        console.log(allUsers);
-        console.log(gift, allClaims, amountReserved);
 
         if (gift.type == GiftType.fixPrice){
             const price_reserved = amountReserved * gift.price_euro;
