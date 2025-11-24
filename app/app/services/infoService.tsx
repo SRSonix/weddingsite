@@ -29,8 +29,14 @@ export interface Gift{
   price_euro_left?: number
 }
 
-export interface Agenda{
-  items: {[key: string]: string}
+export interface AgendaItem{
+  "en": string,
+  "de": string,
+  "es": string
+}
+
+export interface AgendaData{
+  items: {[key: string]: AgendaItem}
 }
 
 export interface BankDetails{
@@ -68,7 +74,7 @@ export class InfoService{
     }
   };
 
-  static async getAganda(): Promise<Agenda | undefined>{
+  static async getAganda(): Promise<AgendaData | undefined>{
     try{
       const response = await fetch(`${InfoService.BASE_URL}/agenda`, {method: "get", credentials: 'include'})
       const data = await response.json()
@@ -77,7 +83,7 @@ export class InfoService{
         return undefined;
       }
 
-      return data as Agenda;
+      return data as AgendaData;
     } catch (error) {
       return undefined
     }

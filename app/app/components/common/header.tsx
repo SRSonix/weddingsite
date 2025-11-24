@@ -3,9 +3,10 @@ import i18n from "i18next";
 import { useUser } from "~/providers/userProvider";
 import { Link } from "react-router";
 import ReactCountryFlag from "react-country-flag";
-
+import { useTranslation } from "react-i18next";
 
 export function Header() {
+    const {t} = useTranslation(["common"]);
     const [expandNav, setexpandNav] = useState<boolean>(false);
     const {user} = useUser();
 
@@ -44,9 +45,9 @@ export function Header() {
                         <ReactCountryFlag countryCode="ES" svg style={{width: '1.5rem', height: '1.5rem'}} title="German"></ReactCountryFlag>
                     </button>
                 </div>
-                <Link to="/overview" onClick={closeMobuleHeader} className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">Overview</Link>
-                <Link to="/gifts" onClick={closeMobuleHeader} className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">Gifts</Link>
-                <Link to="/traveling" onClick={closeMobuleHeader} className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">Traveling</Link>
+                <Link to="/overview" onClick={closeMobuleHeader} className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">{t("overview")}</Link>
+                <Link to="/gifts" onClick={closeMobuleHeader} className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">{t("gifts")}</Link>
+                <Link to="/traveling" onClick={closeMobuleHeader} className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">{t("traveling")}</Link>
                 {user?.role === "ADMIN" && 
                     <Link to="/admin" onClick={closeMobuleHeader} className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">Admin</Link>
                 }

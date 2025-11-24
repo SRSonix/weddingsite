@@ -30,21 +30,81 @@ function get_gifts() {
 
 function get_agenda() {
     $info = [
-        "15:30" => "Arrival & refreshments",
-        "16:00" => "Wedding Ceremony",
-        "17:00" => "Bar opens",
-        "18:00" => "Take seats at tables",
-        "18:15" => "Entry of the couple",
-        "18:20" => "Dinner",
-        "19:30" => "Couple and family dance",
-        "20:00" => "Dance floor opening",
-        "20:15" => "Desert table opens",
-        "22:00" => "Snack cart opens",
-        "22:30" => "Keex B2B DJ Baron",
-        "23:30" => "Taco truck opens; Mariachi",
-        "00:15" => "DJ continues",
-        "02:30" => "Dance floor closes",
-        "03:30" => "-Closing-"
+        "15:30" => [
+            "en" =>"Arrival & refreshments",
+            "de" => "Ankunft & Apperetif",
+            "es" => "Llegada y refrescos"
+        ],
+        "16:00" => [
+            "en" =>"Wedding Ceremony",
+            "de" => "Hochzeitszeremonie",
+            "es" => "Ceremonia de boda"
+        ],
+        "17:00" => [
+            "en" =>"Bar opens",
+            "de" => "Bar öffnet",
+            "es" => "Apertura de la barra"
+        ],
+        "18:00" => [
+            "en" => "Take seats at tables",
+            "de" => "Platz nehmen am Tisch",
+            "es" => "Tomar asiento en las mesas"
+        ],
+        "18:15" => [
+            "en" => "Entry of the couple",
+            "de" => "Eintritt des Hochzeitpaares",
+            "es" => "Entrada de la pareja"
+        ],
+        "18:20" => [
+            "en" => "Dinner",
+            "de" => "Abendessen",
+            "es" => "Cena"
+        ],
+        "19:30" => [
+            "en" => "Couple and family dance",
+            "de" => "Paar- und Familientanz",
+            "es" => "Baile de la pareja y familia"
+        ],
+        "20:00" => [
+            "en" => "Dance floor opening",
+            "de" => "Tannzfläche öffnet",
+            "es" => "Apertura de la pista de baile"
+        ],
+        "20:15" => [
+            "en" => "Desert table opens",
+            "de" => "Nachtischbüffet öffnet",
+            "es" => "Apertura de la mesa de postres"
+        ],
+        "22:00" => [
+            "en" => "Snack cart opens",
+            "de" => "Snäckwagen öffnet",
+            "es" => "Apertura del carrito de snacks"
+        ],
+        "22:30" => [
+            "en" => "Keex B2B DJ Baron",
+            "de" => "Keex B2B DJ Baron",
+            "es" => "Keex B2B DJ Baron"
+        ],
+        "23:30" => [
+            "en" => "Taco truck opens; Mariachi",
+            "de" => "Taco-Foodtruck öffnet; Mariachi",
+            "es" => "Apertura del camión de tacos; Mariachi"
+        ],
+        "00:15" => [
+            "en" => "DJ continues",
+            "de" => "Der DJ macht weiter",
+            "es" => "El DJ continúa"
+        ],
+        "02:30" => [
+            "en" => "Dance floor closes",
+            "de" => "Tanzfläche schließt",
+            "es" => "Cierre de la pista de baile"
+        ],
+        "03:30" => [
+            "en" => "-Closing-",
+            "de" => "-Ende-",
+            "es" => "-Cierre-"
+        ]
     ];
 
     return $info;

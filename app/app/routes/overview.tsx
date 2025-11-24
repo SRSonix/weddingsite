@@ -46,7 +46,7 @@ export default function Overview() {
             <li><span className="font-bold">{t("climate")}</span>: {t("climate_text")}</li>
             <li><span className="font-bold">{t("getting_there")}</span>: {overviewInfo?.car_minutes} {t("minutes_by_car")} {overviewInfo?.car_from}</li>
             <li><span className="font-bold">{t("parking")}</span>: {t("parking_text")}</li>
-            <li><span className="font-bold">{t("gifts")}</span>: {t("gifts_text")} TODO: link to gifts + update texts</li>
+            <li><span className="font-bold">{t("gifts")}</span>: <Trans i18nKey="overview:gifts_text">text<Link className="text-interact" to="/gifts">text</Link>text</Trans></li> 
             <li><span className="font-bold">{t("pre_wedding")}</span>: {t("pre_wedding_text")} {overviewInfo?.pre_wedding_day} - {overviewInfo?.pre_wedding_location}</li>
             <li><span className="font-bold">{t("post_wedding")}</span>: {t("post_wedding_text")} {overviewInfo?.post_wedding_location} {t("on")} {t(overviewInfo?.post_wedding_day || "")}</li>
               <li><span className="font-bold align-top">WhatsApp</span>: 

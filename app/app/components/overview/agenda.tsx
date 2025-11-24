@@ -2,12 +2,17 @@ import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next";
 import { useUser } from "~/providers/userProvider";
 
-import { InfoService, type Agenda } from "~/services/infoService";
+import { InfoService, type AgendaData, type AgendaItem } from "~/services/infoService";
 
 
 export function Agenda(){
-    const [agenda, setAgenda] = useState<Agenda | undefined>(undefined)
-    const {user} = useUser()
+    const [agenda, setAgenda] = useState<AgendaData | undefined>(undefined)
+    const {user} = useUser();
+    const {i18n} = useTranslation(["gifts", "common"]);
+
+    function getAgendaString(agenda: AgendaItem): string{
+        return agenda[i18n.language] || agenda.en;
+    }
 
     useEffect(() => {
         if (user !== undefined) {
@@ -20,7 +25,7 @@ export function Agenda(){
     return <div>
         {
             agenda !== undefined  && 
-            Object.entries(agenda.items).map(([key, value]) => <div>{key}: {value}</div>) 
+            Object.entries(agenda.items).map(([key, value]) => <div><span className="font-bold">{key}</span>: {getAgendaString(value)}</div>) 
         }
     </div>
 }

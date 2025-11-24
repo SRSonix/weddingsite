@@ -4,16 +4,13 @@ export default function Itineraries(){
     const {t} = useTranslation(["traveling", "common"])
 
     return (
-        <div className="text-justify">
-
-
-            <h4>{t("itinerary_intro")}</h4>
-            <h4>Day 1: Cancun &amp; {t("arrival")}</h4>
+        <div className="text-justify lg:min-w-120">
+            <h4>{t("day")} 1: Cancun &amp; {t("arrival")}</h4>
             <div className="text-justify">
                 {t("day1_cancun_arrival")}
             </div>
 
-            <h4>Days 1-4: Cozumel</h4>
+            <h4>{t("day")} 1-4: Cozumel</h4>
             <div className="text-justify">
                 {t("days1_4_cozumel")}
             </div>
@@ -24,7 +21,7 @@ export default function Itineraries(){
                 {t("cozumel_stay_tip")}
             </div>
 
-            <h4>Day 4: Tulum</h4>
+            <h4>{t("day")} 4: Tulum</h4>
             <div className="text-justify">
                 {t("day4_tulum")}
             </div>
@@ -32,7 +29,7 @@ export default function Itineraries(){
                 {t("tulum_train_tip")}
             </div>
 
-            <h4>Days 4-6: Bacalar</h4>
+            <h4>{t("day")} 4-6: Bacalar</h4>
             <div className="text-justify">
                 {t("days4_6_bacalar")}
             </div>
@@ -40,7 +37,7 @@ export default function Itineraries(){
                 {t("bacalar_sites")}
             </div>
 
-            <h4>Days 6-8: Xpujil and Calakmul</h4>
+            <h4>{t("day")} 6-8: Xpujil and Calakmul</h4>
             <div className="text-justify">
                 {t("days6_8_xpujil_calakmul")}
             </div>
@@ -51,7 +48,7 @@ export default function Itineraries(){
                 {t("calakmul_ruins_desc")}
             </div>
 
-            <h4>Days 8-11: Palenque</h4>
+            <h4>{t("day")} 8-11: Palenque</h4>
             <div className="text-justify">
                 {t("days8_11_palenque")}
             </div>
@@ -59,7 +56,7 @@ export default function Itineraries(){
                 {t("palenque_nature")}
             </div>
 
-            <h4>Days 11-14: Mérida &amp; {t("wedding")}</h4>
+            <h4>{t("day")} 11-14: Mérida &amp; {t("wedding")}</h4>
             <div className="text-justify">
                 {t("days11_14_merida_wedding")}
             </div>
@@ -67,7 +64,7 @@ export default function Itineraries(){
                 {t("merida_hotel_tip")}
             </div>
 
-            <h4>Day 14: Cancun &amp; {t("departure")}</h4>
+            <h4>{t("day")} 14: Cancun &amp; {t("departure")}</h4>
             <div className="text-justify">
                 {t("day14_cancun_departure")}
             </div>
