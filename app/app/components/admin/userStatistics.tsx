@@ -29,8 +29,11 @@ export default function UserStatisticsPanel(){
                     if(field === "giftClaims"){
                         return user.giftClaims.map((claim) => `${claim.gift_id}:${claim.amount}`).join("/");
                     }
-
-                    return user[field]
+                    if(field === "drinks"){
+                        return user[field].join("/")
+                    }
+                    console.log(user[field])
+                    return user[field]?.replace(/(\r\n|\n|\r)/gm, "");
                 }).join(",");
                 return row;
             }
