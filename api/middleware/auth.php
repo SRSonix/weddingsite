@@ -4,8 +4,6 @@ require_once "controllers/request.php";
 require_once "services/auth.php";
 
 function resolve_user(Request $request): Request {
-    _log("running resolve_user_middleware");
-
     $session_token = $request->cookies["session_token"] ?? NULL;
 
     if ($session_token === NULL) {

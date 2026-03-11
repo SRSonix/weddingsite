@@ -6,6 +6,7 @@ require_once 'controllers/request.php';
 require_once 'controllers/info.php';
 require_once 'controllers/image.php';
 require_once 'middleware/auth.php';
+require_once 'middleware/cors.php';
 require_once "secrets/config.php";
 
 class Router {
@@ -24,21 +25,6 @@ class Router {
         _log("ROUTING: ". $request->path);
         _log("origin: ". $request->origin);
 
-        if (in_array($request->origin, ALLOWED_ORIGINS)){
-            header('Access-Control-Allow-Credentials: true');
-            header("Access-Control-Allow-Origin: $request->origin");
-            _log("known origin... setting CORS");
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-            header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-            header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
-            header('Access-Control-Max-Age: 86400'); // Cache for 1 day
-            header('Content-Length: 0');
-            header('Content-Type: text/plain');
-            exit;
-        }
-
         foreach ($this->routes[$request->method] as $pattern => [$callback, $parameter_names]) {            
             if (preg_match(pattern: "#^$pattern$#", subject: $request->path, matches: $matches)) {
                 for ($i = 0; $i < count($parameter_names); $i++) {
@@ -48,10 +34,18 @@ class Router {
 
                 $request = $this->run_middleware_chain($request);
                 $args["request"] = $request;
-
+                
                 # TODO: this is not nice and requires hacks when non json is returned. better move to individual controllers
                 header('Content-Type: application/json');    
-                echo json_encode(value: call_user_func_array(callback: $callback, args: $args));
+                try{
+                    echo json_encode(value: call_user_func_array(callback: $callback, args: $args));
+                }
+                catch (HttpException $e){
+                    _log($e);
+
+                    http_response_code($e->statusCode);
+                    echo json_encode(value: ["message" => $e->getMessage()]);
+                }
                 exit;
             }
         }

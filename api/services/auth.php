@@ -21,7 +21,10 @@ function base64url_decode($data, $strict = false)
 function get_secret(): string{
     $secret = file_get_contents("secrets/secret.txt");
 
-    if (!$secret) throw new \ErrorException("failed to load secret");
+    if (!$secret) {
+        _log("failed to load secret");
+        throw new \InternalServerError("");
+    }
 
     return $secret;
 }
@@ -41,7 +44,6 @@ function generate_jwt_token($payload){
 	$signature = hash_hmac("sha256", $header_enc . "." . $payload_enc, $secret_key, true);
 	$signature_enc = base64url_encode($signature);
 	
-	http_response_code(200);
 	return $header_enc . "." . $payload_enc  . "." . $signature_enc;
 }
 
@@ -109,13 +111,6 @@ function validate_session($session_token) {
     }
 
     return $payload;
-}
-
-function generate_user_password(){
-    $password = bin2hex(random_bytes(length: 36));
-    $password_hash = password_hash($password, PASSWORD_DEFAULT);
-
-    return [$password, $password_hash];
 }
 
 function generate_jti(){

@@ -6,202 +6,149 @@ require_once "controllers/request.php";
 
 
 function create_user(\Request $request){
-    if ($request->user_role != "ADMIN") {
-        http_response_code(403);
-        return [];
-    }
+    $request->validateAdminAccess();
+    $request->validateBodyContainsKeys("name", "role", "language", TRUE);
 
-    $first_name = $request->body["first_name"] ?? NULL;
-    $last_name = $request->body["last_name"] ?? NULL;
-    $role = $request->body["role"] ?? NULL;
-    $language = $request->body["language"] ?? NULL;
+    $name = $request->body["name"];
+    $role = $request->body["role"];
+    $language = $request->body["language"];
 
-    if ($role === NULL or $first_name === NULL or $last_name === NULL){
-        _log("role, first_name or last_name or language was missing");
-        http_response_code(422);
-        return ["missing"=> "role, first_name, last_name or language"];
-    }
+    _log("creating: user $name / $role / $language");
 
-    _log("creating: user $first_name / $last_name / $role / $language");
-
-    $token = \UserService\create_user($first_name, $last_name, $role, $language);
+    $token = \UserService\create_user($name, $role, $language);
 
     if ($token === NULL) {        
-        http_response_code(422);
-        return [];
+        throw new \InternalServerError("error creating user");
     }
 
 	return ["token"=>$token];
 }
 
 function get_user(\Request $request){
-    $user_id = $request->user_id;
-    if ($user_id === NULL){
-		http_response_code(response_code: 403);
-        return [];
-    }
+    $user_id = $request->getUserIdOrRaise();
 
     $user = \UserService\get_user($user_id);
 
     if ($user === NULL){
-		http_response_code(response_code: 401);
-        return [];
+        throw new \NotFoundException("user not found");
     }
 
     return $user;
 }
 
 function get_all_users(\Request $request){
-    if ($request->user_role != "ADMIN") {
-        http_response_code(403);
-        return [];
-    }
-
+    $request->validateAdminAccess();
+    
     return \UserService\get_all_users();
 }
 
 
 function update_user_rsvp(\Request $request){
+    $request->validatePathUserIsAuthorized();
+    $request->validateBodyContainsKeys(["mail", "attendance", "language"], TRUE);
+
     $user_id = $request->path_params["user_id"];
-    _log("trying to update user ".$user_id);
 
-    if ($request->user_id != $user_id) {
-        http_response_code(403);
-        return [];
-    }
-
-    $mail = $request->body["mail"] ?? null;
-    $diet = $request->body["diet"] ?? null;
-    $drinks = $request->body["drinks"] ?? null;
-    $attendance = $request->body["attendance"] ?? null;
-    $language = $request->body["language"] ?? null;
-    $arrival_date = $request->body["arrival_date"] ?? null;
-    $departure_date = $request->body["departure_date"] ?? null;
-    $seating_preference = $request->body["seating_preference"] ?? null;
-
+    $mail = $request->body["mail"];
+    $attendance = $request->body["attendance"];
+    $language = $request->body["language"];
+   
     return \UserService\update_user_rsvp(
         $user_id, 
         $mail, 
-        $diet, 
-        $drinks,
         $attendance, 
-        $language, 
-        $arrival_date, 
-        $departure_date,
-        $seating_preference,
+        $language,
     );
 }
 
 
 function update_user_core_info(\Request $request){
+    $request->validateAdminAccess();
+    $request->validateBodyContainsKeys(["user_id", "name", "role"], TRUE);
+
     $user_id = $request->path_params["user_id"];
-
-    if (!($request->user_role == "ADMIN")) {
-        http_response_code(403);
-        return [];
-    }
-
-    $first_name = $request->body["first_name"] ?? null;
-    $last_name = $request->body["last_name"] ?? null;
-    $role = $request->body["role"] ?? null;
-
-    if ($first_name === NULL or $last_name === NULL or $role === NULL){
-        _log(" first_name or last_name or language was missing");
-        http_response_code(422);
-        return ["missing"=> "role, first_name, last_name or language"];
-    }
+    $name = $request->body["name"];
+    $role = $request->body["role"];
 
     return \UserService\update_user_core_info(
         $user_id, 
-        $first_name, 
-        $last_name, 
+        $name, 
         $role,
     );
 }
 
 function update_user_token(\Request $request){
-    $user_id = $request->path_params["user_id"] ?? NULL;
-
-    if (!($request->user_role == "ADMIN" or $user_id == $request->user_id)) {
-        http_response_code(403);
-        return [];
-    }
-
-    if ($user_id === NULL)
-    {
-        http_response_code(422);
-        return [];
-    }
+    $user_id = $request->path_params["user_id"];
+    $request->validatePathUserIsAuthorized();
 
     return ["token" => \UserService\update_user_token($user_id)];
 }
 
-function get_user_token(\Request $request){
-    $user_id = $request->path_params["user_id"] ?? NULL;
-
-    if (!($request->user_role == "ADMIN" or $user_id == $request->user_id)) {
-        http_response_code(403);
-        return [];
-    }
-
-    if ($user_id === NULL)
-    {
-        http_response_code(404);
-        return [];
-    }
-
-    return ["token" => \UserService\get_user_token($user_id)];
-}
-
 function delete_user(\Request $request){
-    $user_id = $request->path_params["user_id"] ?? NULL;
+    $request->validateAdminAccess();
 
-    if (!($request->user_role == "ADMIN")) {
-        http_response_code(403);
-        return [];
-    }
+    $user_id = $request->path_params["user_id"];
 
     if ($user_id == $request->user_id) {
-        http_response_code(403);
-        return ["error" => "you are not allowed to delete yourself. ask another admin!"];
-    }
-
-    if ($user_id === NULL)
-    {
-        http_response_code(404);
-        return [];
+        throw new \ForbiddenException("you are not allowed to delete yourself. ask another admin!");
     }
 
     return ["success" => \UserService\delete_user($user_id)];
 }
 
-function add_gift(\Request $request){
+
+function add_family_member(\Request $request){  
+    $request->validatePathUserIsAuthorized();
+    $request->validateBodyContainsKeys(["name", "diet", "is_child"]);
+    $request->validateBodyContainsKeys(["name", "is_child"], TRUE);
+
     $user_id = $request->path_params["user_id"];
-    $gift_id = $request->path_params["gift_id"];
-
-    if ($request->user_id != $user_id) {
-        http_response_code(403);
-        return [];
-    }
-
-    $amount = $request->body["amount"] ?? null;
-
-    if($amount == null || $amount <= 0){
-        http_response_code(422);
-        return ["message"=> "amount must be a positive integer"];
-    }
-
-    return \UserService\add_gift_claim(new \GiftClaim($user_id, $gift_id, $amount));
+    
+    $name = $request->body["name"];
+    $diet = $request->body["diet"];
+    $is_child = $request->body["is_child"];
+   
+    return \UserService\add_family_member(
+        $user_id, 
+        $name, 
+        $diet, 
+        $is_child,
+    );
 }
 
-function delete_gift(\Request $request){
+
+function update_family_member(\Request $request){
+    $request->validatePathUserIsAuthorized();
+    $request->validateBodyContainsKeys(["name", "diet", "is_child"]);
+    $request->validateBodyContainsKeys(["name", "is_child"], TRUE);
+
+    _log($request->body["name"]);
+    _log($request->body["name"]==NULl);
+
     $user_id = $request->path_params["user_id"];
-    $gift_id = $request->path_params["gift_id"] ?? null;
+    $family_member_id = $request->path_params["family_member_id"];
+    
+    $name = $request->body["name"];
+    $diet = $request->body["diet"];
+    $is_child = $request->body["is_child"];
+   
+    return \UserService\update_family_member(
+        $user_id, 
+        $family_member_id,
+        $name, 
+        $diet, 
+        $is_child,
+    );
+}
 
-    if ($request->user_id != $user_id) {
-        http_response_code(403);
-        return [];
-    }
+function delete_family_member(\Request $request){
+    $request->validatePathUserIsAuthorized();
 
-    return  \UserService\remove_gift_claim($user_id, $gift_id);
+    $user_id = $request->path_params["user_id"];
+    $family_member_id = $request->path_params["family_member_id"];
+
+    return \UserService\remove_family_member(
+        $user_id, 
+        $family_member_id,
+    );
 }

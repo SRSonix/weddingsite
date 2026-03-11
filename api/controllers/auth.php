@@ -12,8 +12,8 @@ function login(\Request $request){
 
 	if($user_id === NULL){
 		_log("token is invalid");
-		http_response_code(response_code: 401);
-		return [];
+
+		throw new \UnauthorizedException("unauthorized");
 	}
 
 	_log("token is valid. generating session.");
@@ -21,6 +21,8 @@ function login(\Request $request){
 	$timeout_s =  60*60*24*7;
 
 	$session_token = \AuthService\generate_session_token($user_id, $timeout_s);
+	
+	http_response_code(200);
 	setcookie("session_token", $session_token, ["expires"=> time()+$timeout_s, "secure" => true, "httponly"=>true, "path"=>"/", "samesite"=> "Strict"]);
 
 	_log("successful login");

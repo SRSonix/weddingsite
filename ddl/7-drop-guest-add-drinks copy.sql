@@ -1,3 +1,0 @@
-DROP TABLE guest;
-
-ALTER TABLE user ADD COLUMN drinks TEXT;

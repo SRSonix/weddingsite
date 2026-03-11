@@ -3,17 +3,17 @@
 namespace UserService;
 
 require_once "repositories/user.php";
-require_once "repositories/gift.php";
+require_once "repositories/family_member.php";
 require_once "services/auth.php";
+require_once "exceptions.php";
 
-function create_user($first_name, $last_name, $role, $language) {
+function create_user($name, $role, $language) {
 	$jti = \AuthService\generate_jti();
 
-    $user_id = \UserRepository\create_user($first_name, $last_name, $role, $jti, $language);
+    $user_id = \UserRepository\create_user($name, $role, $language, $jti);
 
     if ($user_id === NULL) {
-        _log("unable to create user.");
-        return NULL;
+        throw new \InternalServerError("unable to create user.");
     }
 
     return \AuthService\generate_user_token($user_id, $jti);
@@ -25,19 +25,7 @@ function update_user_token($user_id) {
     $result = \UserRepository\update_user_token_jti($user_id, $jti);
 
     if ($result === NULL) {
-        _log("unable to update user jit.");
-        return NULL;
-    }
-    
-    return \AuthService\generate_user_token($user_id, $jti);
-}
-
-function get_user_token($user_id) {
-    $jti = \UserRepository\get_user_token_jti($user_id);
-
-    if ($jti === NULL) {
-        _log("unable to get user jit.");
-        return NULL;
+        throw new \InternalServerError("unable to update user token.");
     }
     
     return \AuthService\generate_user_token($user_id, $jti);
@@ -47,7 +35,7 @@ function get_user($user_id) {
     \UserRepository\update_last_visited($user_id);
 
     $user = \UserRepository\get_user_by_id($user_id);
-    $user->gift_claims = \GiftRepository\get_gift_claims($user_id);
+    $user->family_members = \FamilyMemberRepository\get_family_members($user_id);
 
     return $user;
 }
@@ -56,7 +44,7 @@ function get_all_users(){
     $users = \UserRepository\get_all_users();
 
     foreach ($users as $user) {
-        $user->gift_claims = \GiftRepository\get_gift_claims($user->id);
+        $user->family_members = \FamilyMemberRepository\get_family_members($user->id);
     }
 
     return $users;
@@ -65,30 +53,19 @@ function get_all_users(){
 function update_user_rsvp(
     $user_id, 
     $mail,
-    $diet, 
-    $drinks,
     $attendance,
     $language, 
-    $arrival_date, 
-    $departure_date,
-    $seating_preference,
     ){
 
     $success = \UserRepository\update_user_rsvp(
         $user_id, 
         $mail, 
-        $diet, 
-        $drinks,
         $attendance,
-        $language, 
-        $arrival_date, 
-        $departure_date,
-        $seating_preference,
+        $language,
     );
 
     if (!$success){
-        http_response_code(response_code: 422);
-        return ["msg"=>"error inserting user"];
+        throw new \InternalServerError("unable to update user RSVP.");
     }
 
     return get_user($user_id);
@@ -97,22 +74,18 @@ function update_user_rsvp(
 
 function update_user_core_info(
     $user_id, 
-    $first_name,
-    $last_name,
+    $name,
     $role,
     ){
 
     $success = \UserRepository\update_user_core_info(
         $user_id, 
-        $first_name, 
-        $last_name, 
+        $name, 
         $role,
     );
 
     if (!$success){
-
-        http_response_code(response_code: 422);
-        return ["msg"=>"error inserting user"];
+        throw new \InternalServerError("unable to update user core.");
     }
 
     return get_user($user_id);
@@ -122,27 +95,38 @@ function delete_user($user_id) {
     return \UserRepository\delete_user($user_id);
 }
 
-function remove_gift_claim($user_id, $gift_id){
-    $success = \GiftRepository\remove_gift_claim($user_id, $gift_id);
+function add_family_member($user_id, $name, $diet, $is_child){
+    $lastInsertId = \FamilyMemberRepository\create_family_member($user_id, $name, $diet, $is_child);
 
-    if ($success){
-        http_response_code(204);
-        return ["message" => "success"];
+    if (!$lastInsertId){
+        throw new \InternalServerError("unable to add family member.");
     }
 
-    http_response_code(500);
-    return ["message" => "error deleting gift_claim"];
+    http_response_code(response_code: 201);
+    return \FamilyMemberRepository\get_family_member($user_id, $lastInsertId);
 }
 
-function add_gift_claim(\GiftClaim $gift_claim){
-    $gift_claim->amount += \GiftRepository\get_gift_claim_amount($gift_claim->user_id, $gift_claim->gift_id);
-    $success = \GiftRepository\upsert_gift_claim($gift_claim);
+function update_family_member(        
+        $user_id, 
+        $family_member_id,
+        $name, 
+        $diet, 
+        $is_child,
+    ){
+    $affectedRowCount = \FamilyMemberRepository\update_family_member($user_id, $family_member_id, $name, $diet, $is_child);
 
-    if ($success){
-        http_response_code(response_code: 204);
-        return ["message" => "success"];
-    }
+    if ($affectedRowCount == 0) throw new \NotFoundException("");
+    
+    http_response_code(response_code: 200);
+    return \FamilyMemberRepository\get_family_member($user_id, $family_member_id);
+   
+}
 
-    http_response_code(409);
-    return ["message" => "could not set the requested amount for gift."];
+function remove_family_member($user_id, $family_member_id){
+    $affectedRowCount = \FamilyMemberRepository\delete_family_member($user_id, $family_member_id);
+
+    if ($affectedRowCount == 0) throw new \NotFoundException("");
+
+    http_response_code(200);
+    return [];
 }

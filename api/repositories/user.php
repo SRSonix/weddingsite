@@ -2,55 +2,24 @@
 
 namespace UserRepository;
 
-require_once "secrets/config.php";
 require_once "services/models.php";
-
-function create_db_session() {
-    $servername = DB_SERVER;
-    $username = DB_USER;
-    $password = DB_PASSWORD;
-    $dbname = DB_NAME;
-
-    try {
-        $session = new \PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-        $session->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-    }
-    catch (\PDOException  $e) {
-        _log($e->getMessage());
-        return NULL;
-    }
-
-    return $session;
-}
+require_once "repositories/helper.php";
 
 function user_from_row($row){
-    $drinks = [];
-    if ($row["drinks"]!= null && ($row["drinks"]!="")) $drinks = explode(",", $row["drinks"]);
-
     return new \User(
         id: $row["id"],
-        role: $row["role"], 
-        first_name: $row["first_name"], 
-        last_name: $row["last_name"], 
-        diet: $row["diet"], 
-        drinks: $drinks,
+        role: $row["role"],
+        name: $row["name"], 
         mail: $row["mail"], 
         attendance: $row["attendance"] , 
         language: $row["language"] , 
-        arrival_date: $row["arrival_date"] , 
-        departure_date: $row["departure_date"],
-        seating_preference: $row["seating_preference"],
         last_visit: $row["last_visit"],
-        gift_claims: NULL,
+        family_members: NULL,
     );
 }
 
 function get_user_by_id($user_id) {
     $session = create_db_session();
-    if ($session === null) {
-        _log("failed to create session");
-        return NULL;
-    }
     
     $stmt = $session->prepare("SELECT * FROM user WHERE id = :id;");
     $stmt->execute(["id" => $user_id]);
@@ -68,10 +37,6 @@ function get_user_by_id($user_id) {
 
 function get_all_users(){
     $session = create_db_session();
-    if ($session === null) {
-        _log("failed to create session");
-        return NULL;
-    }
 
     $stmt = $session->prepare("SELECT * FROM user;");
     $stmt->execute([]);
@@ -90,10 +55,7 @@ function get_all_users(){
 
 function get_user_token_jti($user_id) {
     $session = create_db_session();
-    if ($session === null) {
-        _log("failed to create session");
-        return NULL;
-    }
+    
     $stmt = $session->prepare("SELECT jti FROM user_auth WHERE id = :id;");
     $stmt->execute(["id" => $user_id]);
 
@@ -105,7 +67,7 @@ function get_user_token_jti($user_id) {
     }
     if (count($result) > 1){
         _log("multiple results found!");
-        throw new \ErrorException("multiple users with same id! id: $user_id");
+        throw new \InternalServerError("multiple users with same id! id: $user_id");
     }
 
     $session = null;
@@ -113,19 +75,15 @@ function get_user_token_jti($user_id) {
     return $result[0]["jti"];
 }
 
-function create_user($first_name, $last_name, $role, $jti, $language) {
+function create_user($name, $role, $language, $jti) {
     $session = create_db_session();    
-    if ($session === null) {
-        _log("failed to create session");
-        return NULL;
-    }
 
     try {
         $stmt = $session->prepare("INSERT INTO user_auth(jti) VALUES (:jti);");       
         $stmt->execute(["jti"=>$jti]);
         $lastInsertId = $session->lastInsertId();
-        $stmt = $session->prepare("INSERT INTO user (id, role, first_name, last_name, language) VALUES(:id, :role, :first_name, :last_name, :language);");
-        $stmt->execute(["id"=>$lastInsertId, "role"=> $role, "first_name"=>$first_name, "last_name"=>$last_name, "language"=>$language]);
+        $stmt = $session->prepare("INSERT INTO user (id, role, name, language) VALUES(:id, :role, :name, :language);");
+        $stmt->execute(["id"=>$lastInsertId, "role"=> $role, "name"=>$name, "language"=>$language]);
     }
     catch(\PDOException $e) 
     {
@@ -140,19 +98,14 @@ function create_user($first_name, $last_name, $role, $jti, $language) {
 
 function update_user_core_info(
     $user_id, 
-    $first_name, 
-    $last_name, 
+    $name, 
     $role,
     ){
     $session = create_db_session();    
-    if ($session === null) {
-        _log("failed to create session");
-        return NULL;
-    }
 
     try {
-        $stmt = $session->prepare("UPDATE user SET first_name = :first_name, last_name = :last_name, role = :role WHERE id = :user_id;");
-        $stmt->execute(["user_id"=>$user_id, "first_name"=>$first_name, "last_name"=> $last_name, "role"=> $role]);
+        $stmt = $session->prepare("UPDATE user SET name = :name, role = :role WHERE id = :user_id;");
+        $stmt->execute(["user_id"=>$user_id, "name"=>$name, "role"=> $role]);
     }
     catch(\PDOException $e) 
     {
@@ -169,25 +122,14 @@ function update_user_core_info(
 function update_user_rsvp(
     $user_id, 
     $mail, 
-    $diet, 
-    $drinks,
     $attendance,
-    $language, 
-    $arrival_date, 
-    $departure_date,
-    $seating_preference,
+    $language,
     ){
     $session = create_db_session();    
-    if ($session === null) {
-        _log("failed to create session");
-        return NULL;
-    }
-
-    $drinks_str = implode(",", $drinks);
 
     try {
-        $stmt = $session->prepare("UPDATE user SET mail = :mail, diet = :diet, drinks = :drinks, attendance = :attendance, language = :language, arrival_date = :arrival_date, departure_date = :departure_date, seating_preference = :seating_preference WHERE id = :user_id;");
-        $stmt->execute(["user_id"=>$user_id, "mail"=>$mail, "diet"=> $diet, "drinks"=>$drinks_str, "attendance"=>$attendance, "language"=>$language, "arrival_date"=>$arrival_date, "departure_date"=>$departure_date, "seating_preference"=>$seating_preference]);
+        $stmt = $session->prepare("UPDATE user SET mail = :mail, attendance = :attendance, language = :language WHERE id = :user_id;");
+        $stmt->execute(["user_id"=>$user_id, "mail"=>$mail, "attendance"=>$attendance, "language"=>$language]);
     }
     catch(\PDOException $e) 
     {
@@ -203,10 +145,6 @@ function update_user_rsvp(
 
 function update_last_visited(int $user_id): void {
     $session = create_db_session();   
-     if ($session === null) {
-        _log("failed to create session");
-        return;
-    }
 
     $stmt = $session->prepare(
         "UPDATE user SET last_visit = FROM_UNIXTIME(:last_visited) WHERE id = :user_id;"
@@ -218,7 +156,8 @@ function update_last_visited(int $user_id): void {
 
 function update_user_token_jti(int $user_id, $jti) {
     $session = create_db_session();   
-     if ($session === null) {
+
+    if ($session === null) {
         _log("failed to create session");
         return;
     }
@@ -243,10 +182,6 @@ function update_user_token_jti(int $user_id, $jti) {
 
 function delete_user($user_id) {
     $session = create_db_session();
-    if ($session === null) {
-        _log("failed to create session");
-        return NULL;
-    }
 
     try {
         $stmt = $session->prepare("DELETE FROM user WHERE id = :user_id; DELETE FROM user_auth WHERE id = :user_id;");
@@ -256,8 +191,7 @@ function delete_user($user_id) {
     {
         _log($e);
         $session = null;
-        http_response_code(response_code: 422);
-        return ["msg"=>"error deleting user"];
+        throw \InternalServerError("error deleting user");
     }
 
     $session = null;

@@ -5,12 +5,7 @@ require_once "services/image.php";
 require_once "controllers/request.php";
 
 function get_image(\Request $request){
-    $user_id = $request->user_id;
-    if ($user_id === NULL){
-        header('Content-Type: img/png');   
-		http_response_code(response_code: 403);
-        exit;
-    }
+    $user_id = $request->getUserIdOrRaise();
 
     $image_path = $request->path_params["image_path"];
     [$mimeType, $image] = \ImageService\get_image($image_path);

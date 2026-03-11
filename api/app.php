@@ -16,25 +16,29 @@ $router->add_route(pattern: '/health', method: GET, parameter_names: [], callbac
     	return ["status" => "up"];
     }
 );
+
 $router->add_route(pattern: '^/user$', method: POST, parameter_names: [], callback: "UserController\\create_user");
 $router->add_route(pattern: "^/user$", method: GET, parameter_names: [], callback:"UserController\\get_user");
 $router->add_route(pattern: "^/user\/(\d+)$", method: DELETE, parameter_names: ["user_id"], callback:"UserController\\delete_user");
 $router->add_route(pattern: "^/user\/(\d+)\/rsvp$", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user_rsvp");
-$router->add_route(pattern: "^/user\/(\d+)\/core_info$", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user_core_info");
-$router->add_route(pattern: "^/user\/(\d+)\/reset_token$", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user_token");
-$router->add_route(pattern: "^/user\/(\d+)\/token$", method: GET, parameter_names: ["user_id"], callback:"UserController\\get_user_token");
-$router->add_route(pattern: "^/user\/(\d+)\/gifts$", method: GET, parameter_names: ["user_id"], callback:"UserController\\get_gift_claims");
-$router->add_route(pattern: "^/user\/(\d+)\/gifts\/(\d+)$", method: PUT, parameter_names: ["user_id", "gift_id"], callback:"UserController\\add_gift");
-$router->add_route(pattern: "^/user\/(\d+)\/gifts\/(\d+)$", method: DELETE, parameter_names: ["user_id", "gift_id"], callback:"UserController\\delete_gift");
+$router->add_route(pattern: "^/user\/(\d+)\/core-info$", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user_core_info");
+$router->add_route(pattern: "^/user\/(\d+)\/reset-token$", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user_token");
 $router->add_route(pattern: "^/users$", method: GET, parameter_names: [], callback:"UserController\\get_all_users");
+
+$router->add_route(pattern: "^/user\/(\d+)\/family-member$", method: POST, parameter_names: ["user_id"], callback:"UserController\\add_family_member");
+$router->add_route(pattern: "^/user\/(\d+)\/family-member\/(\d+)$", method: POST, parameter_names: ["user_id", "family_member_id"], callback:"UserController\\update_family_member");
+$router->add_route(pattern: "^/user\/(\d+)\/family-member\/(\d+)$", method: DELETE, parameter_names: ["user_id", "family_member_id"], callback:"UserController\\delete_family_member");
+
 $router->add_route(pattern: "^/auth/login$", method: POST, parameter_names: [], callback:"AuthController\\login");
 $router->add_route(pattern: "^/auth/logout$", method: POST, parameter_names: [], callback:"AuthController\\logout");
+
 $router->add_route(pattern: "^/info/overview$", method: GET, parameter_names: [], callback:"InfoController\\get_overview");
 $router->add_route(pattern: "^/info/agenda$", method: GET, parameter_names: [], callback:"InfoController\\get_agenda");
-$router->add_route(pattern: "^/info/payment_details$", method: GET, parameter_names: [], callback:"InfoController\\get_payment_details");
-$router->add_route(pattern: "^/info/gifts$", method: GET, parameter_names: [], callback:"InfoController\\get_gifts");
+$router->add_route(pattern: "^/info/payment-details$", method: GET, parameter_names: [], callback:"InfoController\\get_payment_details");
+
 $router->add_route(pattern: "^/image\/(.+)$", method: GET, parameter_names: ["image_path"], callback:"ImageController\\get_image");
 
 $router->add_middleware("resolve_user");
+$router->add_middleware("add_cors");
 
 $router->route($request);
