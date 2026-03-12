@@ -2,7 +2,7 @@
 namespace AuthController;
 
 require_once "services/auth.php";
-require_once "controllers/request.php";
+require_once "controllers/base/request.php";
 require_once "services/auth.php";
 
 function login(\Request $request){	

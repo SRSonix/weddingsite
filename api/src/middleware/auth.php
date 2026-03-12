@@ -1,6 +1,6 @@
 <?php
 
-require_once "controllers/request.php";
+require_once "controllers/base/request.php";
 require_once "services/auth.php";
 
 function resolve_user(Request $request): Request {

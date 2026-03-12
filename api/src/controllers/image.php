@@ -2,7 +2,7 @@
 namespace ImageController;
 
 require_once "services/image.php";
-require_once "controllers/request.php";
+require_once "controllers/base/request.php";
 
 function get_image(\Request $request){
     $user_id = $request->getUserIdOrRaise();

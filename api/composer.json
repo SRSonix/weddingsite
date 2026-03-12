@@ -1,0 +1,12 @@
+{
+    "name": "michael/weddingsite",
+    "authors": [
+        {
+            "name": "Michael Meissner",
+            "email": "mi.meissner@pm.me"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^11"
+    }
+}

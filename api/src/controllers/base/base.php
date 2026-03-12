@@ -1,10 +1,11 @@
 <?php
 
 require_once "helper.php";
-require_once 'controllers/auth.php';
-require_once 'controllers/request.php';
+require_once 'controllers/base/request.php';
+require_once "controllers/base/response.php";
 require_once 'controllers/info.php';
 require_once 'controllers/image.php';
+require_once 'controllers/auth.php';
 require_once 'middleware/auth.php';
 require_once 'middleware/cors.php';
 require_once "secrets/config.php";
@@ -21,7 +22,7 @@ class Router {
         $this->middlewares[] = $callback;
     }
 
-    public function route(Request $request): void {
+    public function route(Request $request): Response {
         _log("ROUTING: ". $request->path);
         _log("origin: ". $request->origin);
 
@@ -35,26 +36,26 @@ class Router {
                 $request = $this->run_middleware_chain($request);
                 $args["request"] = $request;
                 
-                # TODO: this is not nice and requires hacks when non json is returned. better move to individual controllers
-                header('Content-Type: application/json');    
                 try{
-                    echo json_encode(value: call_user_func_array(callback: $callback, args: $args));
+                    return call_user_func_array(callback: $callback, args: $args);
                 }
                 catch (HttpException $e){
                     _log($e);
 
-                    http_response_code($e->statusCode);
-                    echo json_encode(value: ["message" => $e->getMessage()]);
+                    return new Response(
+                        status: $e->statusCode, 
+                        body: ["message" => $e->getMessage()]
+                    );
                 }
-                exit;
             }
         }
         
         _log("no route was matching ". $request->path);
-        header('Content-Type: application/text');    
-        http_response_code(response_code: 404);
-        echo "404 Not Found";
-        exit;
+        return new Response(
+            status: $e->statusCode, 
+            contentType: 'application/text',
+            body: "404 Not Found"
+        );
     }
 
     private function run_middleware_chain(Request $request): Request {

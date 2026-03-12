@@ -1,6 +1,6 @@
 <?php
 
-require_once "controllers/request.php";
+require_once "controllers/base/request.php";
 
 function add_cors(Request $request): Request {
     if (in_array($request->origin, ALLOWED_ORIGINS)){

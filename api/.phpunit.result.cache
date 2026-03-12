@@ -1,0 +1,1 @@
+{"version":2,"defects":{"EndpointTest::testDummy":7,"EndpointTest::testHeathReturns200":7},"times":{"EndpointTest::testDummy":0.002,"EndpointTest::testHeathReturns200":0.002}}
