@@ -3,6 +3,7 @@ namespace AuthController;
 
 require_once "services/auth.php";
 require_once "controllers/base/request.php";
+require_once "controllers/base/response.php";
 require_once "services/auth.php";
 
 function login(\Request $request){	
@@ -22,16 +23,20 @@ function login(\Request $request){
 
 	$session_token = \AuthService\generate_session_token($user_id, $timeout_s);
 	
-	http_response_code(200);
-	setcookie("session_token", $session_token, ["expires"=> time()+$timeout_s, "secure" => true, "httponly"=>true, "path"=>"/", "samesite"=> "Strict"]);
-
 	_log("successful login");
-	return [];
+
+	return new \Response(
+		cookies: [
+			["session_token", $session_token, ["expires"=> time()+$timeout_s, "secure" => true, "httponly"=>true, "path"=>"/", "samesite"=> "Strict"]],
+		]
+    );
 }
 
 
 function logout(\Request $request){	
-	setcookie("session_token", "", ["expires"=> time()-3600, "secure" => true, "httponly"=>true, "path"=>"/", "samesite"=> "None"]);
-
-	return [];
+	return new \Response(
+		cookies: [
+			["session_token", "", ["expires"=> time()-3600, "secure" => true, "httponly"=>true, "path"=>"/", "samesite"=> "None"]],
+		]
+    );
 }

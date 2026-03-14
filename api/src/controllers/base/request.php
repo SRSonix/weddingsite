@@ -18,7 +18,7 @@ class Request {
     public $user_id;
     public $user_role;
 
-    public function __construct() {
+    public function __construct($body = NULL) {
         $this->origin =array_key_exists("HTTP_ORIGIN", $_SERVER)? $this->origin = $_SERVER["HTTP_ORIGIN"]: NULL;
 
         $this->path = parse_url(url: $_SERVER['REQUEST_URI'], component: PHP_URL_PATH);
@@ -26,7 +26,7 @@ class Request {
         $this->query_params = $_GET;
 
         $json = file_get_contents('php://input');
-        $this->body = json_decode($json, associative:true);
+        $this->body = $body ?? json_decode($json, associative:true);
 
         $this->headers = getallheaders();
 

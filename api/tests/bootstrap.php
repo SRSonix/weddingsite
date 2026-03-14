@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/../vendor/autoload.php';
 
-set_include_path(__DIR__ . '/../src');
+set_include_path(__DIR__.":".__DIR__ . '/../src');
 
 if (!function_exists('getallheaders')) {
     function getallheaders(): array

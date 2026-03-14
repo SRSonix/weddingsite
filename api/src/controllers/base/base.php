@@ -6,6 +6,7 @@ require_once "controllers/base/response.php";
 require_once 'controllers/info.php';
 require_once 'controllers/image.php';
 require_once 'controllers/auth.php';
+require_once 'controllers/user.php';
 require_once 'middleware/auth.php';
 require_once 'middleware/cors.php';
 require_once "secrets/config.php";
@@ -40,8 +41,7 @@ class Router {
                     return call_user_func_array(callback: $callback, args: $args);
                 }
                 catch (HttpException $e){
-                    _log($e);
-
+                    _log("got HttpException");
                     return new Response(
                         status: $e->statusCode, 
                         body: ["message" => $e->getMessage()]
@@ -52,7 +52,7 @@ class Router {
         
         _log("no route was matching ". $request->path);
         return new Response(
-            status: $e->statusCode, 
+            status: 404, 
             contentType: 'application/text',
             body: "404 Not Found"
         );

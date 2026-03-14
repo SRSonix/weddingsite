@@ -2,7 +2,8 @@
 namespace UserController;
 
 require_once "services/user.php";
-require_once "controllers/base/request.php";
+require_once 'controllers/base/request.php';
+require_once "controllers/base/response.php";
 
 
 function create_user(\Request $request){
@@ -81,7 +82,9 @@ function update_user_token(\Request $request){
     $user_id = $request->path_params["user_id"];
     $request->validatePathUserIsAuthorized();
 
-    return ["token" => \UserService\update_user_token($user_id)];
+    return new \Response(
+        body: ["token" => \UserService\update_user_token($user_id)]
+    );
 }
 
 function delete_user(\Request $request){
