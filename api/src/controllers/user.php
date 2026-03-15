@@ -8,7 +8,7 @@ require_once "controllers/base/response.php";
 
 function create_user(\Request $request){
     $request->validateAdminAccess();
-    $request->validateBodyContainsKeys("name", "role", "language", TRUE);
+    $request->validateBodyContainsKeys(["name", "role", "language"], TRUE);
 
     $name = $request->body["name"];
     $role = $request->body["role"];
@@ -22,7 +22,10 @@ function create_user(\Request $request){
         throw new \InternalServerError("error creating user");
     }
 
-	return ["token"=>$token];
+    return new \Response(
+        body: ["token"=>$token], 
+        status: 201
+    );
 }
 
 function get_user(\Request $request){
@@ -34,13 +37,17 @@ function get_user(\Request $request){
         throw new \NotFoundException("user not found");
     }
 
-    return $user;
+    return new \Response(
+        body: $user
+    );
 }
 
 function get_all_users(\Request $request){
     $request->validateAdminAccess();
     
-    return \UserService\get_all_users();
+    return new \Response(
+        body: ["data"=> \UserService\get_all_users()]
+    );
 }
 
 
@@ -54,27 +61,31 @@ function update_user_rsvp(\Request $request){
     $attendance = $request->body["attendance"];
     $language = $request->body["language"];
    
-    return \UserService\update_user_rsvp(
-        $user_id, 
-        $mail, 
-        $attendance, 
-        $language,
+    return new \Response(
+        body: \UserService\update_user_rsvp(
+            $user_id, 
+            $mail, 
+            $attendance, 
+            $language,
+        )
     );
 }
 
 
 function update_user_core_info(\Request $request){
     $request->validateAdminAccess();
-    $request->validateBodyContainsKeys(["user_id", "name", "role"], TRUE);
+    $request->validateBodyContainsKeys(["name", "role"], TRUE);
 
     $user_id = $request->path_params["user_id"];
     $name = $request->body["name"];
     $role = $request->body["role"];
 
-    return \UserService\update_user_core_info(
-        $user_id, 
-        $name, 
-        $role,
+    return new \Response(
+        body: \UserService\update_user_core_info(
+            $user_id, 
+            $name, 
+            $role,
+        )
     );
 }
 
@@ -96,7 +107,7 @@ function delete_user(\Request $request){
         throw new \ForbiddenException("you are not allowed to delete yourself. ask another admin!");
     }
 
-    return ["success" => \UserService\delete_user($user_id)];
+    return new \Response(body:["success" => \UserService\delete_user($user_id)]);
 }
 
 

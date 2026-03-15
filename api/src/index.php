@@ -2,6 +2,7 @@
 
 require_once 'app.php';
 
-$response = app();
+$request = Request::fromSuperGlobals();
+$response = app($request);
 $response->handle();
 

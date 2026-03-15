@@ -4,13 +4,11 @@ require_once 'controllers/base/base.php';
 require_once 'controllers/base/request.php';
 require_once 'controllers/base/response.php';
 
-function app($request_params = []): Response{
+function app($request): Response{
 	_empty_line();
 	_empty_line();
 
-	$request = new Request(...$request_params);
 	$router = new Router();
-
 	$router->add_route(pattern: '/health', method: GET, parameter_names: [], callback: function(...$args): Response {
 			return new Response(
 				body:["status" => "up"]

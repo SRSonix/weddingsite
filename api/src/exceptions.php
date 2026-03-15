@@ -4,6 +4,10 @@ class HttpException extends Exception {
     public int $statusCode;
 }
 
+class BadRequestException extends HttpException{
+    public int $statusCode = 400;
+}
+
 class UnauthorizedException extends HttpException{
     public int $statusCode = 401;
 }

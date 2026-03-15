@@ -18,20 +18,33 @@ class Request {
     public $user_id;
     public $user_role;
 
-    public function __construct($body = NULL) {
-        $this->origin =array_key_exists("HTTP_ORIGIN", $_SERVER)? $this->origin = $_SERVER["HTTP_ORIGIN"]: NULL;
+    public static function fromSuperGlobals(){
+        $origin =array_key_exists("HTTP_ORIGIN", $_SERVER)? $this->origin = $_SERVER["HTTP_ORIGIN"]: NULL;
 
-        $this->path = parse_url(url: $_SERVER['REQUEST_URI'], component: PHP_URL_PATH);
-        $this->method = $_SERVER['REQUEST_METHOD'];
-        $this->query_params = $_GET;
+        $path = parse_url(url: $_SERVER['REQUEST_URI'], component: PHP_URL_PATH);
+        $method = $_SERVER['REQUEST_METHOD'];
+        $query_params = $_GET;
 
         $json = file_get_contents('php://input');
-        $this->body = $body ?? json_decode($json, associative:true);
+        $body = json_decode($json, associative:true);
 
-        $this->headers = getallheaders();
+        $headers = getallheaders();
 
-        $this->cookies = $_COOKIE;
+        $cookies = $_COOKIE;
 
+        return new Request($origin, $path, $method, $query_params, $body, $headers, $cookies);
+    }
+
+    public function __construct($origin, $path, $method, $query_params, $body, $headers, $cookies) {
+        $this->origin = $origin;
+        $this->path = $path;
+        $this->method = $method;
+        $this->query_params = $query_params;
+        $this->body = $body;
+        $this->headers = $headers;
+        $this->cookies = $cookies;
+
+        # these are set by the base-router or middleware
         $this->user_id = null;
         $this->user_role = null;
         $this->path_params = [];
@@ -66,6 +79,8 @@ class Request {
     function validateBodyContainsKeys(
         $expected_params, $validateNotNull = FALSE,
     ){
+        if (is_null($this->body)) throw new \BadRequestException("no body in request"); 
+
         $missing_parameters = [];
         $nullParameters = [];
         foreach($expected_params as $param){

@@ -9,11 +9,10 @@ class HealthTest extends ApiIntegrationTestCase
     public function testHeathReturns200(): void
     {
         # GIVEN
-        $_SERVER['REQUEST_URI'] = '/health';
-        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $request = parent::createRequest(path:"/health", method:GET);
 
         #WHEN
-        $response = app();
+        $response = app($request);
 
         #THEN
         $this->assertEquals($response->status, 200);
@@ -24,11 +23,10 @@ class HealthTest extends ApiIntegrationTestCase
     public function testBogusPathReturns404(): void
     {
         # GIVEN
-        $_SERVER['REQUEST_URI'] = '/bogus';
-        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $request = parent::createRequest(path:"/bogus", method:GET);
 
         #WHEN
-        $response = app();
+        $response = app($request);
 
         #THEN
         $this->assertEquals($response->status, 404);
@@ -37,11 +35,10 @@ class HealthTest extends ApiIntegrationTestCase
     public function testWrongMetodReturns404(): void
     {
         # GIVEN
-        $_SERVER['REQUEST_URI'] = '/health';
-        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $request = parent::createRequest(path:"/bogus", method:POST);
 
         #WHEN
-        $response = app();
+        $response = app($request);
 
         #THEN
         $this->assertEquals($response->status, 404);
