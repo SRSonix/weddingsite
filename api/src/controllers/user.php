@@ -107,7 +107,9 @@ function delete_user(\Request $request){
         throw new \ForbiddenException("you are not allowed to delete yourself. ask another admin!");
     }
 
-    return new \Response(body:["success" => \UserService\delete_user($user_id)]);
+    \UserService\delete_user($user_id);
+
+    return new \Response(status:204);
 }
 
 
@@ -122,11 +124,14 @@ function add_family_member(\Request $request){
     $diet = $request->body["diet"];
     $is_child = $request->body["is_child"];
    
-    return \UserService\add_family_member(
-        $user_id, 
-        $name, 
-        $diet, 
-        $is_child,
+    return new \Response(
+        status: 201,
+        body:\UserService\add_family_member(
+            $user_id, 
+            $name, 
+            $diet, 
+            $is_child,
+        )
     );
 }
 
@@ -146,12 +151,14 @@ function update_family_member(\Request $request){
     $diet = $request->body["diet"];
     $is_child = $request->body["is_child"];
    
-    return \UserService\update_family_member(
-        $user_id, 
-        $family_member_id,
-        $name, 
-        $diet, 
-        $is_child,
+    return new \Response(
+        body:\UserService\update_family_member(
+            $user_id, 
+            $family_member_id,
+            $name, 
+            $diet, 
+            $is_child,
+        )
     );
 }
 
@@ -161,8 +168,12 @@ function delete_family_member(\Request $request){
     $user_id = $request->path_params["user_id"];
     $family_member_id = $request->path_params["family_member_id"];
 
-    return \UserService\remove_family_member(
+    \UserService\remove_family_member(
         $user_id, 
         $family_member_id,
+    );
+
+    return new \Response(
+        status: 204
     );
 }

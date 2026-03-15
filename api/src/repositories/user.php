@@ -186,6 +186,7 @@ function delete_user($user_id) {
     try {
         $stmt = $session->prepare("DELETE FROM user WHERE id = :user_id; DELETE FROM user_auth WHERE id = :user_id;");
         $stmt->execute(["user_id"=>$user_id]);
+        $affectedRows = $stmt->rowCount();
     }
     catch(\PDOException $e)
     {
@@ -196,5 +197,5 @@ function delete_user($user_id) {
 
     $session = null;
 
-    return true;
+    return $affectedRows;
 }

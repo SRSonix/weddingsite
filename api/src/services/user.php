@@ -92,7 +92,9 @@ function update_user_core_info(
 }
 
 function delete_user($user_id) {
-    return \UserRepository\delete_user($user_id);
+    $affectedRowCount = \UserRepository\delete_user($user_id);
+
+    if ($affectedRowCount == 0) throw new \NotFoundException("");
 }
 
 function add_family_member($user_id, $name, $diet, $is_child){
@@ -126,7 +128,4 @@ function remove_family_member($user_id, $family_member_id){
     $affectedRowCount = \FamilyMemberRepository\delete_family_member($user_id, $family_member_id);
 
     if ($affectedRowCount == 0) throw new \NotFoundException("");
-
-    http_response_code(200);
-    return [];
 }

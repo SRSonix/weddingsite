@@ -25,7 +25,7 @@ function app($request): Response{
 	$router->add_route(pattern: "^/users$", method: GET, parameter_names: [], callback:"UserController\\get_all_users");
 
 	$router->add_route(pattern: "^/user\/(\d+)\/family-member$", method: POST, parameter_names: ["user_id"], callback:"UserController\\add_family_member");
-	$router->add_route(pattern: "^/user\/(\d+)\/family-member\/(\d+)$", method: POST, parameter_names: ["user_id", "family_member_id"], callback:"UserController\\update_family_member");
+	$router->add_route(pattern: "^/user\/(\d+)\/family-member\/(\d+)$", method: PUT, parameter_names: ["user_id", "family_member_id"], callback:"UserController\\update_family_member");
 	$router->add_route(pattern: "^/user\/(\d+)\/family-member\/(\d+)$", method: DELETE, parameter_names: ["user_id", "family_member_id"], callback:"UserController\\delete_family_member");
 
 	$router->add_route(pattern: "^/auth/login$", method: POST, parameter_names: [], callback:"AuthController\\login");

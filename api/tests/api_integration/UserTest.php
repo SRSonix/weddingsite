@@ -476,13 +476,25 @@ class UserTest extends ApiIntegrationTestCase
         $response = app($request);
 
         #THEN
-        $this->assertEquals(200, $response->status);
-        $this->assertEquals("true", $response->body["success"]);
+        $this->assertEquals(204, $response->status);
+        $this->assertEquals(NULL, $response->body);
         $request = $this->createRequest(path:"/users", method:GET);
         $response = app($request);
         $this->assertEquals(1, count($response->body["data"]));
     }
 
+    public function testDeleteUserAdminDeletesNonExistingUserReturns404(): void
+    {
+        # GIVEN
+        parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user/3", method:DELETE);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(404, $response->status);
+    }
 
     public function testDeleteUserAdminCannotDeleteSelf(): void
     {
@@ -498,8 +510,291 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(403, $response->status);
         $this->assertEquals("you are not allowed to delete yourself. ask another admin!", $response->body["message"]);
     }
-}
 
+    public function testAddFamilymemberNoCredentialsReturns403(): void
+    {
+        # GIVEN
+        $request = $this->createRequest(path:"/user/1/family-member", method:POST);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(403, $response->status);
+    }
+
+        
+    public function testAddFamilymemberUserCredentialsOtherUserReturns403(): void
+    {
+        # GIVEN
+        parent::loginAsUser();
+        $request = $this->createRequest(path:"/user/1/family-member", method:POST);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(403, $response->status);
+    }
+
+    
+    public static function validFamilyMemberSetups(): array
+    {
+        return [
+            ["user", "user", 2],
+            ["admin","admin", 1],
+            ["admin","user", 2],
+        ];
+    }
+
+    /**
+     * @dataProvider validFamilyMemberSetups
+     */
+    public function testAddFamilymemberAdds($login_user, $target_user, $target_user_id): void
+    {
+        # GIVEN
+        if ($login_user == "user") parent::loginAsUser();
+        else parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user/$target_user_id/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "is_child"=>True]);
+        $response = app($request);   
+        $this->assertEquals(201, $response->status);
+        
+        #WHEN     
+        $request = $this->createRequest(path:"/user/$target_user_id/family-member", method:POST, body:["name"=>"test-name2", "diet"=>NULL, "is_child"=>False]);
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(201, $response->status);
+        $this->assertInstanceOf(FamilyMember::class, $response->body);
+        if ($target_user == "user") parent::loginAsUser();
+        else parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user", method:GET);
+        $response = app($request);
+        $this->assertInstanceOf(User::class, $response->body);
+        $this->assertCount(2, $response->body->family_members);
+        $this->assertEquals("test-name", $response->body->family_members[0]->name);
+        $this->assertEquals("vegan", $response->body->family_members[0]->diet); 
+        $this->assertEquals(True, $response->body->family_members[0]->is_child);
+        $this->assertEquals("test-name2", $response->body->family_members[1]->name);
+        $this->assertEquals(NULL, $response->body->family_members[1]->diet); 
+        $this->assertEquals(False, $response->body->family_members[1]->is_child);   
+    }
+
+    public function testAddFamilymemberNoBodyReturns400(): void
+    {
+        # GIVEN
+        parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user/1/family-member", method:POST);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(400, $response->status);
+    }
+
+
+    public static function familyMembersPartialBodies(): array
+    {
+        return [
+            [["diet"=>"vegan", "is_child"=>True]],
+            [["name"=>"test-name", "is_child"=>True]],
+            [["name"=>"test-name", "diet"=>"vegan"]],
+            [["name"=>NULL, "diet"=>"vegan", "is_child"=>NULL]],
+        ];
+    }
+
+    /**
+     * @dataProvider familyMembersPartialBodies
+     */
+    public function testAddFamilymemberPartialBodyReturns422($body): void
+    {
+        # GIVEN
+        parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user/1/family-member", method:POST, body:$body);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(422, $response->status);
+    }
+
+    public function testUpdateFamilymemberNoCredentialsReturns403(): void
+    {
+        # GIVEN
+        $request = $this->createRequest(path:"/user/1/family-member/1", method:PUT);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(403, $response->status);
+    }
+
+        
+    public function testUpdateFamilymemberUserCredentialsOtherUserReturns403(): void
+    {
+        # GIVEN
+        parent::loginAsUser();
+        $request = $this->createRequest(path:"/user/1/family-member/1", method:PUT);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(403, $response->status);
+    }
+
+    public function testUpdateNonExistingFamilymemberReturns404(): void
+    {
+        # GIVEN
+        parent::loginAsUser();
+        $request = $this->createRequest(path:"/user/2/family-member/1", method:PUT, body:["name"=>"test-name", "diet"=>"vegan", "is_child"=>True]);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(404, $response->status);
+    }
+
+
+    /**
+     * @dataProvider validFamilyMemberSetups
+     */
+    public function testUpdateFamilymemberReturnUpdates($login_user, $target_user, $target_user_id): void
+    {
+        # GIVEN
+        parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user/$target_user_id/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "is_child"=>True]);
+        $response = app($request);
+        $this->assertEquals(201, $response->status);
+        
+        if ($login_user == "user") parent::loginAsUser();
+        else parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user/$target_user_id/family-member/1", method:PUT, body:["name"=>"test-name2", "diet"=>"meat", "is_child"=>False]);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(200, $response->status);
+        $this->assertInstanceOf(FamilyMember::class, $response->body);
+        if ($target_user == "user") parent::loginAsUser();
+        else parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user", method:GET);
+        $response = app($request);
+        $this->assertInstanceOf(User::class, $response->body);
+        $this->assertEquals("test-name2", $response->body->family_members[0]->name);
+        $this->assertEquals("meat", $response->body->family_members[0]->diet); 
+        $this->assertEquals(False, $response->body->family_members[0]->is_child);  
+    }
+
+    public function testUpdateFamilymemberNoBodyReturns400(): void
+    {
+        # GIVEN
+        parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user/1/rsvp", method:PUT);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(400, $response->status);
+    }
+
+    /**
+     * @dataProvider familyMembersPartialBodies
+     */
+    public function testUpdateFamilymemberPartialBodyReturns422($body): void
+    {
+        # GIVEN
+        parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user/1/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "is_child"=>True]);
+        $response = app($request);
+        $this->assertEquals(201, $response->status);
+        
+        parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user/1/family-member/1", method:PUT, body:$body);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(422, $response->status);
+    }
+
+
+    
+    public function testDeleteFamilymemberNoCredentialsReturns403(): void
+    {
+        # GIVEN
+        $request = $this->createRequest(path:"/user/1/rsvp", method:PUT);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(403, $response->status);
+    }
+
+        
+    public function testDeleteFamilymemberUserCredentialsOtherUserReturns403(): void
+    {
+        # GIVEN
+        parent::loginAsUser();
+        $request = $this->createRequest(path:"/user/1/rsvp", method:PUT);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(403, $response->status);
+    }
+
+    public function testDeleteNonExistingFamilymemberReturns404(): void
+    {
+        # GIVEN
+        parent::loginAsUser();
+        $request = $this->createRequest(path:"/user/2/family-member/1", method:DELETE);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(404, $response->status);
+    }
+
+    /**
+     * @dataProvider validFamilyMemberSetups
+     */
+    public function testDeleteFamilymemberDeletes($login_user, $target_user, $target_user_id): void
+    {
+        # GIVEN
+        parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user/$target_user_id/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "is_child"=>True]);
+        $response = app($request);
+        $this->assertEquals(201, $response->status);
+
+        if ($login_user == "user") parent::loginAsUser();
+        else parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user/$target_user_id/family-member/1", method:DELETE);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(204, $response->status);
+        $this->assertEquals(NULL, $response->body);
+        if ($target_user == "user") parent::loginAsUser();
+        else parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user", method:GET);
+        $response = app($request);
+        $this->assertCount(0, $response->body->family_members);
+    }
+
+}
 
 # TODO: test some endpoints for invalid tokens: language / role etc.
 # TODO: should admin be able to remove himself?

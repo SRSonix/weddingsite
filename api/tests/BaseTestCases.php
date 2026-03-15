@@ -93,6 +93,14 @@ class ApiIntegrationTestCase extends DatabaseTestCase
         return new Request($origin, $path, $method, $query_params, $body, $headers, $cookies);
     }
 
+    protected function logout(){
+        $request = $this->createRequest(path:"/auth/logout", method:POST);
+        $response = app($request);
+
+        $this->assertEquals($response->status, 200);
+        $this->sessionToken = NULL;
+    }
+
     protected function loginAsUser(){
         $request = $this->createRequest(path:"/auth/login", method:POST, body: ["token"=>parent::USER_TOKEN]);
         $response = app($request);
