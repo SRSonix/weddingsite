@@ -31,7 +31,7 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(400, $response->status);
     }
 
-    public static function userPartialBodies(): array
+    public static function invalidUsers(): array
     {
         return [
             [["role"=> "USER", "language"=> "fr"]],
@@ -39,12 +39,14 @@ class UserTest extends ApiIntegrationTestCase
             [["name" => "test-user", "role"=> "USER",]],
             [["name" => NULL, "role"=> "USER", "language"=> "fr"]],
             [["name" => "test-user", "role"=> NULL, "language"=> "fr"]],
-            [["name" => "test-user", "role"=> "USER", "language"=> NULL]]
+            [["name" => "test-user", "role"=> "USER", "language"=> NULL]],
+            [["name" => "test-user", "role"=> "bogus", "language"=> "fr"]],
+            [["name" => "test-user", "role"=> "USER", "language"=> "bogus"]],
         ];
     }
 
     /**
-     * @dataProvider userPartialBodies
+     * @dataProvider invalidUsers
      */
     public function testCreateUserAdminCredentialsPartialBodyReturns422($body): void
     {
@@ -59,11 +61,24 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(422, $response->status);
     }
 
-    public function testCreateUserAdminCredentialsCreatesUser(): void
+
+    public static function validUsers(): array
+    {
+        return [
+            [["name" => "test-user", "role"=> "USER", "language"=> "fr"]],
+            [["name" => "test-user1", "role"=> "USER", "language"=> "de"]],
+            [["name" => "test-user2", "role"=> "ADMIN", "language"=> "de"]],
+        ];
+    }
+
+    /**
+     * @dataProvider validUsers
+     */
+    public function testCreateUserAdminCredentialsCreatesUser($body): void
     {
         # GIVEN
         parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user", method:POST, body:["name" => "test-user", "role"=> "USER", "language"=> "fr"]);
+        $request = $this->createRequest(path:"/user", method:POST, body:$body);
 
         #WHEN
         $response = app($request);
@@ -202,6 +217,33 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(403, $response->status);
     }
 
+
+
+    public static function validUpdateRsvps(): array
+    {
+        return [
+            [["mail"=>"test.mail", "attendance"=>"will_join", "language"=>"fr"]],
+            [["mail"=>"test.mail1", "attendance"=>"will_join", "language"=>"de"]],
+            [["mail"=>"test.mail2", "attendance"=>"will_not_join", "language"=>"de"]],
+            [["mail"=>"test.mail3", "attendance"=>"undecided", "language"=>"de"]],
+        ];
+    }
+
+    /**
+     * @dataProvider validUpdateRsvps
+     */
+    public function testUpdateUserRsvpReturnUpdatesForAllValidRsvps($body): void
+    {
+        # GIVEN
+        parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user/1/rsvp", method:PUT, body:$body);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(200, $response->status);
+    }
     
     public static function validUpdateRsvpSetups(): array
     {
@@ -220,7 +262,7 @@ class UserTest extends ApiIntegrationTestCase
         # GIVEN
         if ($login_user == "user") parent::loginAsUser();
         else parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/$target_user_id/rsvp", method:PUT, body:["mail"=>"test.mail", "attendance"=>"WILL_JOIN", "language"=>"de"]);
+        $request = $this->createRequest(path:"/user/$target_user_id/rsvp", method:PUT, body:["mail"=>"test.mail", "attendance"=>"will_join", "language"=>"de"]);
 
         #WHEN
         $response = app($request);
@@ -261,6 +303,8 @@ class UserTest extends ApiIntegrationTestCase
             [["mail"=>NULL, "attendance"=>"WILL_JOIN", "language"=>"de"]],
             [["mail"=>"test.mail", "attendance"=>NULL, "language"=>"de"]],
             [["mail"=>"test.mail", "attendance"=>"WILL_JOIN", "language"=>NULL]],
+            [["mail"=>"test.mail", "attendance"=>"bogus", "language"=>"fr"]],
+            [["mail"=>"test.mail", "attendance"=>"will_join", "language"=>"bogus"]],
         ];
     }
 
@@ -308,6 +352,30 @@ class UserTest extends ApiIntegrationTestCase
     }
 
     
+    public static function validUpdateCoreBody(): array
+    {
+        return [
+            [["name"=>"user", "role"=>"ADMIN"]],
+            [["name"=>"user2", "role"=>"USER"]],
+        ];
+    }
+
+    /**
+     * @dataProvider validUpdateCoreBody
+     */
+    public function testUpdateUserCoreReturnUpdatesForAllValidUserCore($body): void
+    {
+        # GIVEN
+        parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user/1/core-info", method:PUT, body:$body);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(200, $response->status);
+    }
+
     public static function validUpdateCoreSetups(): array
     {
         return [
@@ -362,6 +430,7 @@ class UserTest extends ApiIntegrationTestCase
             [["name"=>"bogus"]],
             [["name"=>NULL, "role"=>"ADMIN"]],
             [["name"=>"bogus", "role"=>NULL]],
+            [["name"=>"user", "role"=>"bogus"]],
         ];
     }
 
@@ -537,7 +606,6 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(403, $response->status);
     }
 
-    
     public static function validFamilyMemberSetups(): array
     {
         return [
@@ -601,6 +669,7 @@ class UserTest extends ApiIntegrationTestCase
             [["name"=>"test-name", "is_child"=>True]],
             [["name"=>"test-name", "diet"=>"vegan"]],
             [["name"=>NULL, "diet"=>"vegan", "is_child"=>NULL]],
+            [["name"=>NULL, "diet"=>"vegan", "is_child"=>"bogus"]],
         ];
     }
 

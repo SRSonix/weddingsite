@@ -76,6 +76,39 @@ class Request {
         }
     }
 
+    function validateAcceptableValues($acceptable_values_map){
+        $errors = [];
+        foreach($this->body as $key => $value){
+            if (!array_key_exists($key, $acceptable_values_map)) {
+                continue;
+            }
+
+            $acceptable_values = $acceptable_values_map[$key];
+            if (!in_array($value, $acceptable_values)) {
+                $errors[] = "$key must be one of ".join(', ', $acceptable_values);
+            }
+        }
+        if (!empty($errors)){
+            throw new \UnprocessableEntityException(join('; ', $errors));
+        }
+    }
+
+    function validateTypes($acceptable_type_map){
+        $errors = [];
+        foreach($this->body as $key => $value){
+            if (!array_key_exists($key, $acceptable_type_map)) continue;
+
+            $acceptable_type = $acceptable_type_map[$key];
+            if (gettype($value) != $acceptable_type) {
+                $errors[] = "$key must be a $acceptable_type";
+            }
+        }
+        if (!empty($errors)){
+            throw new \UnprocessableEntityException(join('; ', $errors));
+        }
+    }
+
+
     function validateBodyContainsKeys(
         $expected_params, $validateNotNull = FALSE,
     ){

@@ -9,6 +9,7 @@ require_once "controllers/base/response.php";
 function create_user(\Request $request){
     $request->validateAdminAccess();
     $request->validateBodyContainsKeys(["name", "role", "language"], TRUE);
+    $request->validateAcceptableValues(["role"=> ["ADMIN", "USER"], "language"=>["de", "fr"]]);
 
     $name = $request->body["name"];
     $role = $request->body["role"];
@@ -54,6 +55,7 @@ function get_all_users(\Request $request){
 function update_user_rsvp(\Request $request){
     $request->validatePathUserIsAuthorized();
     $request->validateBodyContainsKeys(["mail", "attendance", "language"], TRUE);
+    $request->validateAcceptableValues(["attendance"=> ['will_join', 'will_not_join', 'undecided'], "language"=>["de", "fr"]]);
 
     $user_id = $request->path_params["user_id"];
 
@@ -75,6 +77,7 @@ function update_user_rsvp(\Request $request){
 function update_user_core_info(\Request $request){
     $request->validateAdminAccess();
     $request->validateBodyContainsKeys(["name", "role"], TRUE);
+    $request->validateAcceptableValues(["role"=> ["ADMIN", "USER"]]);
 
     $user_id = $request->path_params["user_id"];
     $name = $request->body["name"];
@@ -117,6 +120,7 @@ function add_family_member(\Request $request){
     $request->validatePathUserIsAuthorized();
     $request->validateBodyContainsKeys(["name", "diet", "is_child"]);
     $request->validateBodyContainsKeys(["name", "is_child"], TRUE);
+    $request->validateTypes(["is_child"=>"boolean"]);
 
     $user_id = $request->path_params["user_id"];
     
@@ -140,6 +144,7 @@ function update_family_member(\Request $request){
     $request->validatePathUserIsAuthorized();
     $request->validateBodyContainsKeys(["name", "diet", "is_child"]);
     $request->validateBodyContainsKeys(["name", "is_child"], TRUE);
+    $request->validateTypes(["is_child"=>"boolean"]);
 
     _log($request->body["name"]);
     _log($request->body["name"]==NULl);
