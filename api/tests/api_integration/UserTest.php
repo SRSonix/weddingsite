@@ -865,5 +865,4 @@ class UserTest extends ApiIntegrationTestCase
 
 }
 
-# TODO: test some endpoints for invalid tokens: language / role etc.
 # TODO: should admin be able to remove himself?
