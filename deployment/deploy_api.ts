@@ -7,7 +7,7 @@ const FTP_HOST = process.env.FTP_HOST
 const FPD_USER = process.env.API_ADMIN_USER
 const FDP_PW = process.env.API_ADMIN_PW
 
-const SRC_BASE_PATH = "../api/"
+const SRC_BASE_PATH = "../api/src/"
 
 async function upload_weddingsite() {
     const client = new Client()
@@ -18,7 +18,14 @@ async function upload_weddingsite() {
             password: FDP_PW,
             secure: false // set to true if using FTPS
         })
-        for (const file_name of ["app.php", "helper.php", ".htaccess", "secrets/.htaccess", "images/.htaccess"]){
+
+        console.log("ensuring directories");
+        for (const directory_name of ["secrets", "images", "controllers", "middleware", "repositories", "services"]){
+            await client.ensureDir("/"+directory_name);
+            await client.cd("/");
+        }
+
+        for (const file_name of ["index.php", "app.php", "helper.php", "exceptions.php", ".htaccess", "secrets/.htaccess", "images/.htaccess"]){
             console.log("Uploading file " + file_name)
 
             await client.remove(file_name, true)
