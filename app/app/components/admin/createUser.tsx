@@ -4,7 +4,7 @@ import { useAllUsers } from "~/providers/allUserProvider";
 import { Language, UserService } from "~/services/userService";
 
 export default function CreateUser(){
-  const [formData, setFormData] = useState({first_name: undefined, last_name: undefined, role: "USER", language: undefined});
+  const [formData, setFormData] = useState({name: undefined, role: "USER", language: undefined});
   const [newUserUrl, setNewUserUrl] = useState<string | undefined>(undefined);
   const [showCreateUser, setShowCreateUser] = useState(false);
   const {reloadAllUsers} = useAllUsers();
@@ -15,18 +15,19 @@ export default function CreateUser(){
 
   function createUser(e: FormEvent){
     e.preventDefault();
-    
-    if (formData.first_name === undefined){
-      alert("first_name missing");
+
+    if (formData.name === undefined){
+      alert("name missing");
       return;
     }
 
-    if (formData.last_name === undefined){
-      alert("last_name missing");
+
+    if (formData.language === undefined){
+      alert("language missing");
       return;
     }
 
-    UserService.createUser({first_name:formData.first_name, last_name:formData.last_name, role:formData.role, language: formData.language}).then(
+    UserService.createUser({name:formData.name, role:formData.role, language: formData.language}).then(
       (token) => {
         if (token !== undefined){
           setNewUserUrl(`${import.meta.env.VITE_WEBSITE_URL}?token=${token}`);
@@ -46,12 +47,8 @@ export default function CreateUser(){
       <div className={showCreateUser ? "": "hidden" +  " mt-2"}>
         <form onSubmit={createUser} className="w-full flex flex-wrap">
           <div className="px-3">
-            <label htmlFor="first_name" className="input-label">username</label>
-            <input id="first_name" type="text" placeholder="first name" onChange={handleChange} className="input-block"></input>
-          </div>
-          <div className="px-3">
-            <label htmlFor="last_name" className="input-label">username</label>
-            <input id="last_name" type="text" placeholder="last name" onChange={handleChange} className="input-block"></input>
+            <label htmlFor="name" className="input-label">username</label>
+            <input id="name" type="text" placeholder="name" onChange={handleChange} className="input-block"></input>
           </div>
           <div className="px-3">
             <label htmlFor="role" className="input-label">role</label>
@@ -62,11 +59,10 @@ export default function CreateUser(){
           </div>
           <div className="px-3">
             <label htmlFor="language" className="input-label">language</label>
-            <select id="language" defaultValue={undefined} onChange={handleChange} className="input-block">
-              <option value={undefined}>Not set</option>
-              <option value={Language.en}>{Language.en}</option>
+            <select id="language" defaultValue={""} onChange={handleChange} className="input-block">
+              <option disabled value={""}>Not set</option>
               <option value={Language.de}>{Language.de}</option>
-              <option value={Language.es}>{Language.es}</option>
+              <option value={Language.fr}>{Language.fr}</option>
             </select>
           </div>
           <div className="px-3 mt-7">

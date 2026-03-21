@@ -1,5 +1,3 @@
-import type { Gift } from "./infoService";
-
 export enum Attandance {
   will_join = "will_join",
   will_not_join="will_not_join",
@@ -12,74 +10,88 @@ export enum Role {
 }
 
 export enum Language {
-  en = "en",
   de = "de",
-  es = "es"
+  fr = "fr",
 }
 
-export enum Drink {
-  white_wine = "white_wine",
-  red_wine = "red_wine",
-  beer = "beer",
-  cocktail = "cocktail",
-  non_alcoholic = "non_alcoholic",
+export class FamilyMemberCore
+{
+  constructor(
+    public name: string | undefined,
+    public diet: string | undefined,
+    public is_child: boolean | undefined,
+  ){}
+
+  static getEmpty(){
+    return new FamilyMemberCore(undefined,undefined, undefined);
+  }
 }
 
-export interface GiftClaim{
-  gift_id: number,
-  amount: number
+export class FamilyMember extends FamilyMemberCore{
+  constructor(
+    public id: number,
+    public user_id: number,
+    public name: string | undefined,
+    public diet: string | undefined,
+    public is_child: boolean | undefined,
+  ){
+    super(name, diet, is_child)
+  }
+
+  public getFamilyMemberCore() {
+    return new FamilyMemberCore(this.name, this.diet, this.is_child);
+  }
+
+  static fromData (data: any){
+    return new FamilyMember(data.id, data.user_id, data.name, data.diet, data.is_child);
+  }
 }
 
 export class RsvpInformation{
   constructor(
-    public diet: string | undefined,
-    public drinks: Drink[],
     public mail: string | undefined,
     public attendance: Attandance | undefined,
     public language: string | undefined,
-    public arrival_date: string | undefined,
-    public departure_date: string | undefined,
-    public seating_preference: string | undefined,
   ){}
 
   static getEmpty(){
-    return new RsvpInformation(undefined, [], undefined, undefined, undefined, undefined, undefined, undefined);
+    return new RsvpInformation(undefined,undefined, undefined);
   }
 }
 
 export class UserCoreInfo{
   constructor(
     public role: string | undefined, 
-    public first_name: string | undefined,
-    public last_name: string | undefined){}
+    public name: string | undefined
+  ){}
 
   static getEmpty(){
-    return new UserCoreInfo(undefined, undefined, undefined);
+    return new UserCoreInfo(undefined, undefined);
   }
 }
 
 export class User extends RsvpInformation{
   constructor(
-    public id: number, 
-    public role: string, 
-    public first_name: string,
-    public last_name: string,
-    diet: string | undefined,
-    drinks: Drink[],
+    public id: number,
+    public role: string,
+    public name: string,
     mail: string | undefined,
     attendance: Attandance | undefined,
     language: string | undefined,
-    arrival_date: string | undefined,
-    departure_date: string | undefined,
-    seating_preference: string | undefined,
     public last_visit: string,
-    public giftClaims: GiftClaim[]
+    public familyMembers: FamilyMember[]
   ){
-    super(diet, drinks, mail, attendance, language, arrival_date, departure_date, seating_preference);
+    super(mail, attendance, language);
   }
 
   public getRsvpInformation() {
-    return new RsvpInformation(this.diet, this.drinks, this.mail, this.attendance, this.language, this.arrival_date, this.departure_date, this.seating_preference);
+    return new RsvpInformation(this.mail, this.attendance, this.language);
+  }
+
+  static fromData (data: any){
+
+    let familyMembers = data.family_members.map((row: any)=>FamilyMember.fromData(row));
+    return new User(data.id, data.role, data.name, data.mail, data.attendance, data.language, data.last_visit, familyMembers);
   }
 }
 
@@ -95,14 +107,14 @@ export class UserService{
         return null;
       }
 
-      return new User(data.id, data.role, data.first_name, data.last_name, data.diet, data.drinks, data.mail, data.attendance, data.language, data.arrival_date, data.departure_date, data.seating_preference, data.last_visit, data.gift_claims);
+      return User.fromData(data);
 
     } catch (error) {
       return null
     }
   };
 
-  static async createUser(body: {first_name: string, last_name: string, role: string, language: string | undefined}){
+  static async createUser(body: {name: string, role: string, language: string}){
     try{
       const response = await fetch(
         `${UserService.BASE_URL}`, 
@@ -134,9 +146,10 @@ export class UserService{
       }
 
       let users: Array<User> = []
-      data.forEach((row: any) =>
+      data["data"].forEach((row: any) =>
         {
-          users.push(new User(row.id, row.role, row.first_name, row.last_name, row.diet, row.drinks, row.mail, row.attendance, row.language, row.arrival_date, row.departure_date, row.seating_preference, row.last_visit, row.gift_claims));
+          console.log(row);
+          users.push(User.fromData(row));
         }
       )
       return users
@@ -158,7 +171,7 @@ export class UserService{
       if (!response.ok){
         return undefined;
       }
-      return new User(data.id, data.role, data.first_name, data.last_name, data.diet, data.drinks, data.mail, data.attendance, data.language, data.arrival_date, data.departure_date, data.seating_preference, data.last_visit, data.gift_claims);
+      return User.fromData(data)
     }catch (error) {
       return undefined
     }
@@ -167,7 +180,7 @@ export class UserService{
   static async updateUserCoreInfo(user_id: number, body:UserCoreInfo){
    try{
       const response = await fetch(
-        `${UserService.BASE_URL}/${user_id}/core_info`,
+        `${UserService.BASE_URL}/${user_id}/core-infoasf`,
         {method: "put", body: JSON.stringify(body), credentials: 'include'},
       )
 
@@ -176,50 +189,30 @@ export class UserService{
       if (!response.ok){
         return undefined;
       }
-      return new User(data.id, data.role, data.first_name, data.last_name, data.diet, data.drinks, data.mail, data.attendance, data.language, data.arrival_date, data.departure_date, data.seating_preference, data.last_visit, data.gift_claims);
+      return User.fromData(data);
     }catch (error) {
       return undefined
     }
   }
 
-  static async deleteUser(user_id: number){
+  static async deleteUser(user_id: number): Promise<boolean>{
    try{
       const response = await fetch(
         `${UserService.BASE_URL}/${user_id}`,
         {method: "delete", credentials: 'include'},
       )
 
-      const data = await response.json()
-
-      if (!response.ok){
-        return undefined;
-      }
-      return data["success"];
+      return response.ok;
     }catch (error) {
-      return undefined
+      return false;
     }
   }
 
-  static async getCustomUserUrl(user_id: number){
-   try{
-      const response = await fetch(
-        `${UserService.BASE_URL}/${user_id}/token`, 
-        {method: "get", credentials: 'include'},
-      )
-
-      const data = await response.json();
-      const token = data.token;
-
-      return `${import.meta.env.VITE_WEBSITE_URL}?token=${token}`;
-    }catch (error) {
-      return undefined
-    }
-  }
 
   static async resetUserToken(user_id: number){
    try{
       const response = await fetch(
-        `${UserService.BASE_URL}/${user_id}/reset_token`, 
+        `${UserService.BASE_URL}/${user_id}/reset-token`, 
         {method: "put", credentials: 'include'},
       )
 
@@ -232,20 +225,35 @@ export class UserService{
     }
   }
 
-
-  static async addGiftClaim(userId: number, giftId: number, amount: number): Promise<boolean>{
+  static async addFamilyMember(userId: number, body: FamilyMemberCore): Promise<FamilyMember | undefined>{
+    
     try {
-      const response = await fetch(`${UserService.BASE_URL}/${userId}/gifts/${giftId}`, {method: "put", body:JSON.stringify({amount}), credentials: 'include'})
-        return response.ok;
+      const response = await fetch(`${UserService.BASE_URL}/${userId}/family-member`, {method: "post", body: JSON.stringify(body), credentials: 'include'})
+      if (!response.ok) return undefined;
 
+      const data = await response.json()
+      return FamilyMember.fromData(data);
+  
     } catch(error){
-      return false;
+      return undefined;
     }
   }
 
-  static async removeGiftClaim(userId: number, giftId: number): Promise<boolean>{
+  static async updateFamilyMember(userId: number, familyMemberId: number, body: FamilyMemberCore): Promise<FamilyMember | undefined>{
     try {
-      const response = await fetch(`${UserService.BASE_URL}/${userId}/gifts/${giftId}`, {method: "delete", credentials: 'include'})
+      const response = await fetch(`${UserService.BASE_URL}/${userId}/family-member/${familyMemberId}`, {method: "put", body: JSON.stringify(body), credentials: 'include'})
+      if (!response.ok) return undefined;
+
+      const data = await response.json()
+      return FamilyMember.fromData(data);
+    } catch(error){
+      return undefined;
+    }
+  }
+
+  static async deleteFamilyMember(userId: number, familyMemberId: number): Promise<boolean>{
+    try {
+      const response = await fetch(`${UserService.BASE_URL}/${userId}/family-member/${familyMemberId}`, {method: "delete", credentials: 'include'});
       
       return response.ok;
     } catch(error){

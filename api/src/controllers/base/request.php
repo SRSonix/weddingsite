@@ -19,7 +19,7 @@ class Request {
     public $user_role;
 
     public static function fromSuperGlobals(){
-        $origin =array_key_exists("HTTP_ORIGIN", $_SERVER)? $this->origin = $_SERVER["HTTP_ORIGIN"]: NULL;
+        $origin = array_key_exists("HTTP_ORIGIN", $_SERVER)? $_SERVER["HTTP_ORIGIN"]: NULL;
 
         $path = parse_url(url: $_SERVER['REQUEST_URI'], component: PHP_URL_PATH);
         $method = $_SERVER['REQUEST_METHOD'];

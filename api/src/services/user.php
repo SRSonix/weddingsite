@@ -116,7 +116,7 @@ function update_family_member(
         $is_child,
     ){
     $affectedRowCount = \FamilyMemberRepository\update_family_member($user_id, $family_member_id, $name, $diet, $is_child);
-
+    # TODO: fix that a no-update gives 404
     if ($affectedRowCount == 0) throw new \NotFoundException("");
     
     http_response_code(response_code: 200);

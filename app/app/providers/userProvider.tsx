@@ -18,6 +18,21 @@ export function UserProvider({ children }: {children: React.ReactNode}) {
   const [user, setUser] = useState<User| undefined | null>(undefined);
   const [searchParams, setSearchParams] = useSearchParams();
 
+  useEffect(() => {
+    const token = searchParams.get("token");
+    setSearchParams({});
+
+    if (token) login_and_fetch_user(token);
+    else fetch_user();
+  }, []);
+
+  useEffect(() => {
+    if (user?.language != undefined) {
+      i18n.changeLanguage(user.language);
+    }
+  }, [user])
+
+
   async function login_and_fetch_user(token: string | null){
     if (token === null) return false;
 
@@ -43,20 +58,6 @@ export function UserProvider({ children }: {children: React.ReactNode}) {
       setUser(undefined);
     });
   }
-
-  useEffect(() => {
-    const token = searchParams.get("token");
-    setSearchParams({});
-
-    if (token) login_and_fetch_user(token);
-    else fetch_user();
-  }, []);
-
-  useEffect(() => {
-    if (user?.language != undefined) {
-      i18n.changeLanguage(user.language);
-    }
-  }, [user])
 
   function updateUserRsvp(user_id: number, body: RsvpInformation){
     UserService.updateUserRsvp(user_id, body).then( 

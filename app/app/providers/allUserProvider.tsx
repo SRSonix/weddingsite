@@ -1,11 +1,14 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { UserCoreInfo, UserService, type User } from "~/services/userService";
+import { FamilyMember, FamilyMemberCore, UserCoreInfo, UserService, type User } from "~/services/userService";
 
 type AllUsersContextType = {
     allUsers: Array<User>;
     reloadAllUsers: () => void;
     updateUserCoreInfo: (user_id: number, userCoreInfo: UserCoreInfo) => void;
     deleteUser: (user_id: number) => void;
+    addFamilyMember: (user_id: number, data: FamilyMemberCore) => void;
+    updateFamilyMember: (user_id: number, familyMemberId: number, data: FamilyMemberCore) => void;
+    deleteFamilyMember: (user_id: number, familyMemberId: number) => void;
 }
 
 const AllUsersContext = createContext<AllUsersContextType | undefined>(undefined);
@@ -25,15 +28,17 @@ export default function AllUsersProvider({children}: {children: React.ReactNode}
         )
     }
 
-    function updateUserCoreInfo(user_id: number, userCoreInfo: UserCoreInfo){
+    function updateUserCoreInfo(user_id: number, userCoreInfo: UserCoreInfo): void{
         UserService.updateUserCoreInfo(user_id, userCoreInfo).then(
             (user) => {
-                if (user) setAllUsers(prev => {
-                    const index = prev.findIndex((user) => user.id === user_id);
-                    const newArray = [...prev];
-                    newArray[index] = user;
-                    return newArray;
-                });
+                if (user){ 
+                    setAllUsers(prev => {
+                        const index = prev.findIndex((user) => user.id === user_id);
+                        const newArray = [...prev];
+                        newArray[index] = user;
+                        return newArray;
+                    });
+                }
             }
         )
     }
@@ -41,18 +46,73 @@ export default function AllUsersProvider({children}: {children: React.ReactNode}
     function deleteUser(user_id: number){
         UserService.deleteUser(user_id).then(
             (success) => {
-                if (success) setAllUsers(prev => {
-                    const index = prev.findIndex((user) => user.id === user_id);
-                    const newArray = [...prev];
-                    newArray.splice(index, 1);
-                    return newArray;
-                });
+                if (success) {
+                    setAllUsers(prev => {
+                        const index = prev.findIndex((user) => user.id === user_id);
+                        const newArray = [...prev];
+                        newArray.splice(index, 1);
+                        return newArray;
+                    });
+                }
             }
         )
     }
     
+
+    function addFamilyMember(user_id: number, data: FamilyMemberCore){
+        console.log(data);
+        UserService.addFamilyMember(user_id, data).then(
+            (familyMember) => {
+                if (familyMember) {
+                    setAllUsers(prev => {
+                        const index = prev.findIndex((user) => user.id === user_id);
+                        const newArray = [...prev];
+                        newArray[index].familyMembers.push(familyMember)
+                        return newArray;
+                    });
+                }
+            }
+        )
+    }
+
+
+    function updateFamilyMember(user_id: number, familyMemberId: number, data: FamilyMemberCore){
+        UserService.updateFamilyMember(user_id, familyMemberId, data).then(
+            (familyMember) => {
+                if (familyMember) {
+                    setAllUsers(prev => {
+                        const userIndex = prev.findIndex((user) => user.id === user_id);
+                        const newArray = [...prev];
+                        const index = newArray[userIndex].familyMembers.findIndex((fm) => fm.id === familyMemberId);
+                        newArray[userIndex].familyMembers[index] = familyMember;
+                        return newArray;
+                    });
+                }
+            }
+        )
+    }
+
+
+    function deleteFamilyMember(user_id: number, familyMemberId: number){
+        UserService.deleteFamilyMember(user_id, familyMemberId).then(
+            (success) => {
+                console.log(success);
+                if (success) {
+                    setAllUsers(prev => {
+                        const userIndex = prev.findIndex((user) => user.id === user_id);
+                        const newArray = [...prev];
+                        const index = newArray[userIndex].familyMembers.findIndex((fm) => fm.id === familyMemberId);
+                        newArray[userIndex].familyMembers.splice(index, 1);
+                        return newArray;
+                    });
+                }
+            }
+        )
+    }
+
+
     return (
-        <AllUsersContext.Provider value={{allUsers, reloadAllUsers, updateUserCoreInfo, deleteUser}}>
+        <AllUsersContext.Provider value={{allUsers, reloadAllUsers, updateUserCoreInfo, deleteUser, addFamilyMember, updateFamilyMember, deleteFamilyMember}}>
             {children}
         </AllUsersContext.Provider>
     )

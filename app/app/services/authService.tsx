@@ -2,6 +2,7 @@ export class AuthService{
   static BASE_URL = `${import.meta.env.VITE_API_URL}/auth`;
 
   static async login(token: string) {
+    console.log(this.BASE_URL);
     try{
       const response = await fetch(
         `${AuthService.BASE_URL}/login`, 

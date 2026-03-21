@@ -180,11 +180,13 @@ function update_user_token_jti(int $user_id, $jti) {
     return true;
 }
 
+# TODO: add test with family member
+
 function delete_user($user_id) {
     $session = create_db_session();
 
     try {
-        $stmt = $session->prepare("DELETE FROM user WHERE id = :user_id; DELETE FROM user_auth WHERE id = :user_id;");
+        $stmt = $session->prepare("DELETE FROM user  WHERE id = :user_id; DELETE FROM user_auth WHERE id = :user_id;");
         $stmt->execute(["user_id"=>$user_id]);
         $affectedRows = $stmt->rowCount();
     }
@@ -192,7 +194,7 @@ function delete_user($user_id) {
     {
         _log($e);
         $session = null;
-        throw \InternalServerError("error deleting user");
+        throw new \InternalServerError("error deleting user");
     }
 
     $session = null;

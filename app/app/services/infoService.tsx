@@ -3,36 +3,13 @@ export class OverviewInfo{
         public date: string,
         public arrival_time: string,
         public location: string,
-        public car_minutes: string,
-        public car_from: string,
-        public pre_wedding_day: string,
-        public pre_wedding_location: string,
-        public post_wedding_day: string,
-        public post_wedding_location: string,
-        public whatsapp: Record<string, string>
+        public phone: Record<string, string>
     ){};
-}
-
-export enum GiftType{
-  fixPrice = "fix_price",
-  upToPrice = "up_to_price",
-  openPrice = "open_price"
-}
-
-export interface Gift{
-  id: number;
-  type: GiftType;
-  title: { [key: string]: string }
-  price_euro: number
-  amount?: number
-  amount_left?: number
-  price_euro_left?: number
 }
 
 export interface AgendaItem{
   "en": string,
-  "de": string,
-  "es": string
+  "fr": string
 }
 
 export interface AgendaData{
@@ -45,13 +22,7 @@ export interface BankDetails{
   bic: string
 }
 
-export interface PayPalDetails{
-  mail: string,
-  username: string,
-}
-
 export interface PaymentDetails{
-  paypal: PayPalDetails
   bank: BankDetails
 }
 
@@ -67,8 +38,7 @@ export class InfoService{
         return undefined;
       }
 
-      const {date, arrival_time, location, car_minutes, car_from, pre_wedding_day, pre_wedding_location, post_wedding_day, post_wedding_location, whatsapp} = data;
-      return new OverviewInfo(date, arrival_time, location, car_minutes, car_from, pre_wedding_day, pre_wedding_location, post_wedding_day, post_wedding_location, whatsapp);
+      data as OverviewInfo;
     } catch (error) {
       return undefined
     }
@@ -104,22 +74,4 @@ export class InfoService{
       return undefined
     }
   };
-
-
-  static async getGifts(): Promise<{[key: number]: Gift}>{
-    try {
-      const response = await fetch(`${InfoService.BASE_URL}/gifts`, {method: "get", credentials: 'include'})
-      
-      if (!response.ok){
-        return {};
-      }
-      const data = await response.json() as Gift[]
-
-      return  Object.fromEntries(
-        data.map(item => [item.id, item])
-      );
-    } catch(error){
-      return {};
-    }
-  }
 };

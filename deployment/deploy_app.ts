@@ -18,6 +18,13 @@ async function upload_weddingsite() {
             password: WEBSITE_ADMIN_PW,
             secure: false // set to true if using FTPS
         })
+
+        console.log("ensuring directories");
+        for (const directory_name of ["assets", "translations"]){
+            await client.ensureDir("/"+directory_name);
+            await client.cd("/");
+        }
+
         for (const file_name of ["index.html", ".htaccess"]){
             console.log("Uploading file " + file_name)
 

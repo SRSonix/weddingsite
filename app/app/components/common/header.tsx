@@ -46,8 +46,6 @@ export function Header() {
                     </button>
                 </div>
                 <Link to="/overview" onClick={closeMobuleHeader} className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">{t("overview")}</Link>
-                <Link to="/gifts" onClick={closeMobuleHeader} className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">{t("gifts")}</Link>
-                <Link to="/traveling" onClick={closeMobuleHeader} className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">{t("traveling")}</Link>
                 {user?.role === "ADMIN" && 
                     <Link to="/admin" onClick={closeMobuleHeader} className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">Admin</Link>
                 }

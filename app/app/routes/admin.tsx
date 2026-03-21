@@ -5,7 +5,6 @@ import CreateUser from "~/components/admin/createUser";
 import AllUsers from "~/components/admin/allUsers";
 import UserStatisticsPanel from "~/components/admin/userStatistics";
 import AllUsersProvider from "~/providers/allUserProvider";
-import GiftsProvider from "~/providers/giftsProvider";
 
 
 export function meta({}: Route.MetaArgs) {
@@ -24,13 +23,11 @@ export default function Admin() {
     <div>
       {user?.role === "ADMIN" ? 
         <AllUsersProvider>
-          <GiftsProvider>
-            <div className="p-3">
-              <UserStatisticsPanel></UserStatisticsPanel>
-              <CreateUser></CreateUser>
-              <AllUsers></AllUsers>
-            </div>
-          </GiftsProvider>
+          <div className="p-3">
+            <UserStatisticsPanel></UserStatisticsPanel>
+            <CreateUser></CreateUser>
+            <AllUsers></AllUsers>
+          </div>
         </AllUsersProvider> 
       :
         <div><p>{t('nothing-to-see')}</p></div>    

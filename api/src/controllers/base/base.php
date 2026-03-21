@@ -27,6 +27,8 @@ class Router {
         _log("ROUTING: ". $request->path);
         _log("origin: ". $request->origin);
 
+        $request = $this->run_middleware_chain($request);
+
         foreach ($this->routes[$request->method] as $pattern => [$callback, $parameter_names]) {            
             if (preg_match(pattern: "#^$pattern$#", subject: $request->path, matches: $matches)) {
                 for ($i = 0; $i < count($parameter_names); $i++) {
@@ -34,7 +36,6 @@ class Router {
                     $request->path_params[$parameter_names[$i]] = $matches[$i+1]; # first element is the full match
                 }
 
-                $request = $this->run_middleware_chain($request);
                 $args["request"] = $request;
                 
                 try{

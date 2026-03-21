@@ -1,23 +1,23 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import { useAllUsers } from "~/providers/allUserProvider";
-import { useGifts } from "~/providers/giftsProvider";
-import { GiftType } from "~/services/infoService";
-import { Role, UserCoreInfo, UserService, type GiftClaim, type User } from "~/services/userService";
+import { Role, UserCoreInfo, UserService, type User } from "~/services/userService";
+import { FamilyMembers } from "../user/familyMembers";
 
 
 export function UserItem({user}: {user:User}){
     const [infoMessage, setInfoMessage] = useState("");
-    const [userUrl, setUserUrl] = useState("");
+    const [userUrl, setUserUrl] = useState<string|undefined>(undefined);
     const [edit, setEdit] = useState(false);
     const [formData, setFormData] = useState<UserCoreInfo>(UserCoreInfo.getEmpty());
-    const {updateUserCoreInfo, deleteUser} = useAllUsers();
-    const {gifts} = useGifts();
+    const {updateUserCoreInfo, deleteUser, updateFamilyMember, deleteFamilyMember, addFamilyMember} = useAllUsers();
 
     const userAgent = window.navigator.userAgent;
     const isSafari = userAgent.includes("Safari") && !userAgent.includes("Chrome");
 
-    function getUserUrl(id: number){
-      const url =  UserService.getCustomUserUrl(id).then(
+    function resetUserToken(id: number){
+      if(!window.confirm('Are you sure you want to update the user token? this will invalidate the past url given to the user!')) return;
+
+      UserService.resetUserToken(id).then(
         (url) => {
            if (url === undefined){
             setInfoMessage("something went wrong copying the info message!");
@@ -25,29 +25,26 @@ export function UserItem({user}: {user:User}){
           }
 
           setUserUrl(url);
+
+          let msg = "The token is reset. Please sent the user the new url as the old one is no longer working."
           
           if (isSafari) {
-            setInfoMessage("token was fetched. click the other button to copy it.")
-            return;
+            msg = msg + "\nClick the other button to copy it."
+          }{
+            msg = msg + "\nThe new url is copied to your clipboard."
+            navigator.clipboard.writeText(url);
           }
-
-          setInfoMessage(url);          
-          navigator.clipboard.writeText(url); 
+          
+          setInfoMessage(msg);   
         }
-      );
-    }
-
-    function resetUserToken(id: number){
-      if(! window.confirm('Are you sure you want to update the user token? this will invalidate the past url given to the user!')) return;
-
-      UserService.resetUserToken(id).then(
-        () =>setInfoMessage("The token is reset. Please sent the user the new url as the old one is no longer working.")
       )
     }
 
     function copyUrl() {
+      if (!userUrl) return;
+
       navigator.clipboard.writeText(userUrl); 
-      setInfoMessage(userUrl);
+      setInfoMessage("user url is copied to your clipboard.");
     }
 
     useEffect(() => {
@@ -55,7 +52,7 @@ export function UserItem({user}: {user:User}){
     }, [user])
 
     function populateFormDataFromUser(){
-      setFormData(new UserCoreInfo(user.role, user.first_name, user.last_name));
+      setFormData(new UserCoreInfo(user.role, user.name));
     }
 
     function handleChange(e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLTextAreaElement>){
@@ -75,34 +72,15 @@ export function UserItem({user}: {user:User}){
     }
 
     function deleteUserHandle(){
-      if(! window.confirm('Are you sure you want to relete this user: ' + user.first_name + ' ' + user.last_name + '?')) return;
+      if(! window.confirm('Are you sure you want to delete this user: ' + user.name + ' ' + '?')) return;
       deleteUser(user.id);
-    }
-
-    function getGiftClaimText(claim: GiftClaim): string{
-      const gift = gifts[claim.gift_id];
-       if (gift.type == GiftType.fixPrice){
-            return `${gift.title.en} ${claim.amount}x${gift.price_euro}€ (${claim.amount*gift.price_euro}€)`;
-        }
-        if (gift.type == GiftType.openPrice){
-            return `${gift.title.en}: ${claim.amount}€`;
-        }
-        if (gift.type == GiftType.upToPrice){
-            return `${gift.title.en}: ${claim.amount}€`;
-        }
-
-        throw Error()
     }
 
     return(
       <div className="mb-3 border p-3">
         <div className="flex align-center w-full">
-            <label htmlFor="diet">first_name</label>:<br/>
-            <input disabled={!edit} placeholder="first_name" value={formData.first_name == undefined ? "": formData.first_name} id="first_name" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
-        </div>
-        <div className="flex align-center w-full">
-            <label htmlFor="diet">last_name</label>:<br/>
-            <input disabled={!edit} placeholder="last_name" value={formData.last_name == undefined ? "": formData.last_name} id="last_name" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
+            <label htmlFor="diet">name</label>:<br/>
+            <input disabled={!edit} placeholder="name" value={formData.name == undefined ? "": formData.name} id="name" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
         </div>
         <div className="flex align-center w-full">
             <label htmlFor="role">role</label>:
@@ -114,19 +92,21 @@ export function UserItem({user}: {user:User}){
         <p>
           attendance: {user.attendance || "attendance not set"} <br/>
           mail: {user.mail || "mail not set"} <br/>
-          arrival_date: {user.arrival_date || "arrival_date not set"} <br/>
-          departure_date: {user.departure_date || "departure_date not set"} <br/>
           language: {user.language || "language not set"} <br/>
-          diet: {user.diet || "diet not set"} <br/>
-          drinks: {user.drinks.join(", ") || "drinks not set"} <br/>
-          seating_preference: {user.seating_preference || "seating_preference not set"} <br/>
           last_visit: {user.last_visit || "has not visited"} <br/>
-          gift_claims: {user.giftClaims.length == 0 && "has not set a gift"}
         </p>
-        <ul className="list-disc list-outside pl-5"> {user.giftClaims.map((claim)=> <li>{getGiftClaimText(claim)}</li>)} </ul>
+        <div>
+          family_members: {user.familyMembers.length}
+          <FamilyMembers 
+            user_id={user.id}
+            addCallback={(coreData) => addFamilyMember(user.id, coreData)} 
+            updateCallback={(id, coreData)=>updateFamilyMember(user.id, id, coreData)} 
+            deleteCallback={(id)=>deleteFamilyMember(user.id, id)} 
+            familyMembers={user.familyMembers}>
+          </FamilyMembers>
+        </div>
         <div className="mt-2">
-          <button className="btn btn-small mr-2 btn-gray" onClick={() => getUserUrl(user.id)}>{isSafari ? "fetch user token" : "load custom user url"}</button>
-          {isSafari &&  <button className="btn btn-small mr-2 btn-gray" onClick={copyUrl}>copy token to clipboard</button> }
+          {userUrl &&  <button className="btn btn-small mr-2 btn-gray" onClick={copyUrl}>copy url to clipboard</button> }
           <button className="btn btn-small btn-red" onClick={() => resetUserToken(user.id)}>reset token</button>
           <p>{infoMessage}</p>
         </div>
