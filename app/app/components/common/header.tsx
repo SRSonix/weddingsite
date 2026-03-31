@@ -1,59 +1,44 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import i18n from "i18next";
 import { useUser } from "~/providers/userProvider";
-import { Link } from "react-router";
+import { InfoService, type OverviewInfo } from "~/services/infoService";
 import ReactCountryFlag from "react-country-flag";
-import { useTranslation } from "react-i18next";
 
 export function Header() {
-    const {t} = useTranslation(["common"]);
-    const [expandNav, setexpandNav] = useState<boolean>(false);
-    const {user, logout} = useUser();
+    const {user} = useUser();
+    const [overviewInfo, setOverviewInfo] = useState<OverviewInfo | undefined>(undefined);
 
-    function toggle_mobile_header(){
-        setexpandNav(!expandNav);
-    }
+    useEffect(() => {
+        if (user != null) {
+            InfoService.getOverviewInfo().then(setOverviewInfo);
+        }
+    }, [user]);
 
-    function closeMobuleHeader(){
-        setexpandNav(false);
-    }
+    const daysToGo = overviewInfo?.date
+        ? Math.ceil((new Date(overviewInfo.date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+        : null;
 
     const changeLanguage = (lng: string) => {
         i18n.changeLanguage(lng);
-    }
+    };
 
     return (
-        <header className="flex flex-wrap bg-yellow-700/70 text-white px-6 py-4">
-            <div className="flex-grow font-semibold mr-6 py-2"><h1 className="text-3xl text-white">Regina & Yannic &#x2764;&#xFE0F;</h1></div>
-           
-            <div className="lg:hidden flex items-center">
-                <button className="px-3 py-2 border rounded hover:text-yellow-200 hover:border-yellow-200 text-white border-white" onClick={toggle_mobile_header}>
-                <svg className="fill-current h-3 w-3" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>Menu</title><path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"/></svg>
+        <header className="text-center py-8 bg-white border-b border-olive-200">
+            {user && overviewInfo?.date && (
+                <p className="text-olive-600 text-base mb-1">{overviewInfo.date}</p>
+            )}
+            <p className="font-wedding text-7xl text-olive-700">Alexine & Michael</p>
+            {user && daysToGo !== null && (
+                <p className="text-olive-500 text-sm mt-1">{daysToGo} days to go</p>
+            )}
+            <div className="mt-5 flex justify-center gap-3">
+                <button onClick={() => changeLanguage('de')} className="hover:opacity-70 transition-opacity">
+                    <ReactCountryFlag countryCode="DE" svg style={{width: '1.5rem', height: '1.5rem'}} title="German" />
+                </button>
+                <button onClick={() => changeLanguage('fr')} className="hover:opacity-70 transition-opacity">
+                    <ReactCountryFlag countryCode="FR" svg style={{width: '1.5rem', height: '1.5rem'}} title="French" />
                 </button>
             </div>
-            <nav className={"w-full lg:flex lg:items-center lg:w-auto " + (!expandNav ? "max-lg:hidden " : "")}> 
-                <div className="mr-3 text-right mt-4 lg:mt-0">
-                    <button onClick={() => changeLanguage('de')} className="hover:text-yellow-200 text-white px-2 lg:h-full">
-                        <ReactCountryFlag countryCode="DE" svg style={{width: '1.5rem', height: '1.5rem'}} title="German"></ReactCountryFlag>
-                    </button>   
-                    <span className="pt-[0.25rem]">|</span>
-                    <button onClick={() => changeLanguage('en')} className="hover:text-yellow-200 text-white px-2 lg:h-full">
-                        <ReactCountryFlag countryCode="GB" svg style={{width: '1.5rem', height: '1.5rem'}} title="German"></ReactCountryFlag>
-                    </button>
-                    <span className="pt-[0.25rem]">|</span>
-                    <button onClick={() => changeLanguage('es')} className="hover:text-yellow-200 text-white px-2 lg:h-full">
-                        <ReactCountryFlag countryCode="ES" svg style={{width: '1.5rem', height: '1.5rem'}} title="German"></ReactCountryFlag>
-                    </button>
-                </div>
-                <Link to="/" onClick={closeMobuleHeader} className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">{t("overview")}</Link>
-                {user?.role === "ADMIN" &&
-                    <Link to="/admin" onClick={closeMobuleHeader} className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">Admin</Link>
-                }
-                {user
-                    ? <button onClick={logout} className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">&#x1F464; {user.first_name} ({t("logout")})</button>
-                    : <Link to="/login" onClick={closeMobuleHeader} className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">&#x1F464; Login</Link>
-                }
-            </nav>
         </header>
-    )
+    );
 }

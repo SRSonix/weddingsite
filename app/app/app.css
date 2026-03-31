@@ -1,8 +1,28 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Cookie";
+  src: url("/fonts/Cookie-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-wedding: "Cookie", cursive;
+
+  --color-olive-50:  #f6f6ee;
+  --color-olive-100: #eaeacc;
+  --color-olive-200: #d3d39a;
+  --color-olive-300: #b8b868;
+  --color-olive-400: #9c9c42;
+  --color-olive-500: #7f7f2e;
+  --color-olive-600: #636320;
+  --color-olive-700: #4f4f19;
+  --color-olive-800: #3d3d14;
+  --color-olive-900: #2e2e0f;
 }
 
 @layer base {
@@ -12,33 +32,33 @@
   }
 
   h1, h2, h3 {
-    @apply  text-yellow-800/80
+    @apply text-olive-700;
   }
 
   h2 {
-    @apply text-2xl mt-2 text-yellow-800/80
+    @apply text-2xl mt-2 text-olive-700;
   }
 
   h3 {
-    @apply text-xl mt-1
+    @apply text-xl mt-1;
   }
 
   h4 {
-    @apply text-lg mt-1 font-bold
+    @apply text-lg mt-1 font-bold;
   }
 
   h5 {
-    @apply mt-1 font-bold
+    @apply mt-1 font-bold;
   }
 }
 
 @layer components {
   .btn {
-    @apply bg-transparent hover:bg-yellow-700/80 text-yellow-700/80 font-semibold hover:text-white py-2 px-4 border border-yellow-700/80 hover:border-transparent rounded
+    @apply bg-transparent hover:bg-olive-600/80 text-olive-600/80 font-semibold hover:text-white py-2 px-4 border border-olive-600/80 hover:border-transparent rounded
   }
 
   .btn-small {
-    @apply  py-0
+    @apply py-0
   }
 
   .btn-red {
@@ -58,7 +78,7 @@
   }
 
   .input-block {
-    @apply bg-gray-200 border border-gray-200 text-gray-700 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 block py-3 px-4 
+    @apply bg-gray-200 border border-gray-200 text-gray-700 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 block py-3 px-4
   }
 
   .input-label {

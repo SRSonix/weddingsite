@@ -29,8 +29,8 @@ weddingsite/
 
 | Route       | Component           | Access   | Purpose                        |
 |-------------|---------------------|----------|--------------------------------|
-| `/overview` | overview.tsx        | Public   | Event info, agenda, payment    |
-| `/user`     | user.tsx            | Auth     | RSVP, family members           |
+| `/`         | index.tsx           | Public   | Event info, agenda, RSVP       |
+| `/login`    | login.tsx           | Public   | Token-based login              |
 | `/admin`    | admin.tsx           | Admin    | Guest management, statistics   |
 | `/imprint`  | imprint.tsx         | Public   | Legal                          |
 
@@ -77,7 +77,7 @@ Images:
 ## Auth Model
 
 - Admin creates a user → one-time invite token generated
-- Guest visits `/user?token=<token>` → frontend calls `POST /auth/login`
+- Guest visits `/login?token=<token>` → frontend calls `POST /auth/login`
 - Backend validates token, sets httponly session cookie
 - `resolve_user` middleware validates cookie on every subsequent request
 - Two roles: `USER` and `ADMIN`

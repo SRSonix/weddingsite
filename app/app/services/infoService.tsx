@@ -38,7 +38,7 @@ export class InfoService{
         return undefined;
       }
 
-      data as OverviewInfo;
+      return data as OverviewInfo;
     } catch (error) {
       return undefined
     }
@@ -62,7 +62,7 @@ export class InfoService{
 
   static async getPaymentDetails(): Promise<PaymentDetails | undefined>{
     try{
-      const response = await fetch(`${InfoService.BASE_URL}/payment_details`, {method: "get", credentials: 'include'})
+      const response = await fetch(`${InfoService.BASE_URL}/payment-details`, {method: "get", credentials: 'include'})
       const data = await response.json()
 
       if (!response.ok){

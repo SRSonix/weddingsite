@@ -3,8 +3,8 @@ import type { Route } from "../+types/root";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Little Mexican Wedding" },
-    { name: "description", content: "Welcome to our little mexican wedding!" },
+    { title: "Brautkleid bleibt Blaukraut" },
+    { name: "description", content: "Brautkleid bleibt Blaukraut" },
   ];
 }
 

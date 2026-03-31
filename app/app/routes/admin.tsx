@@ -9,8 +9,8 @@ import AllUsersProvider from "~/providers/allUserProvider";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Little Mexican Wedding - ADMIN" },
-    { name: "description", content: "Welcome to our little mexican wedding!" },
+    { title: "Brautkleid bleibt Blaukraut - ADMIN" },
+    { name: "description", content: "Brautkleid bleibt Blaukraut" },
   ];
 }
 

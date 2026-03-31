@@ -1,5 +1,6 @@
 import {
   isRouteErrorResponse,
+  Link,
   Links,
   Meta,
   Outlet,
@@ -14,7 +15,7 @@ import {Header} from "./components/common/header";
 import type { Route } from "./+types/root";
 import "./app.css";
 import { Footer } from "./components/common/footer";
-import { UserProvider } from "./providers/userProvider";
+import { UserProvider, useUser } from "./providers/userProvider";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 
@@ -55,13 +56,37 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+function AdminBanner() {
+  const {user} = useUser();
+  if (user?.role !== "ADMIN") return null;
+  return (
+    <div className="max-w-5xl mx-auto px-4 py-2 flex items-center justify-between text-sm text-olive-700 bg-olive-50 border border-olive-200 rounded mt-4">
+      <span>You are admin.</span>
+      <Link to="/admin" className="text-olive-600 hover:underline">Go to admin page →</Link>
+    </div>
+  );
+}
+
+function LogoutBanner() {
+  const {user, logout} = useUser();
+  if (!user) return null;
+  return (
+    <div className="max-w-5xl mx-auto px-4 py-3 mt-6 flex items-center justify-between text-sm text-olive-600 border-t border-olive-200">
+      <span className="italic">This page is personalized for {user.name}.</span>
+      <button onClick={logout} className="btn btn-small">Logout</button>
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <UserProvider>
       <Header />
-      <main className="h-full">
+      <AdminBanner />
+      <main className="h-full max-w-5xl mx-auto px-4">
         <Outlet />
       </main>
+      <LogoutBanner />
       <Footer />
     </UserProvider>
   );
