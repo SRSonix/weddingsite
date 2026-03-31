@@ -1,11 +1,12 @@
 import { useEffect, useState, type ChangeEvent } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { useUser } from "~/providers/userProvider";
 import { Attandance, Language, RsvpInformation } from "~/services/userService";
+import { FamilyMembers } from "./familyMembers";
 
 export function Rsvp() {
     const {t} = useTranslation(["user", "common"])
-    const {user, updateUserRsvp} = useUser();
+    const {user, updateUserRsvp, addFamilyMember, updateFamilyMember, deleteFamilyMember} = useUser();
     const [edit, setEdit] = useState(false);
     const [formData, setFormData] = useState<RsvpInformation>(RsvpInformation.getEmpty());
 
@@ -13,7 +14,7 @@ export function Rsvp() {
         if (user != undefined) setFormData(user.getRsvpInformation())
     }, [user]);
 
-    function handleChange(e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLTextAreaElement>){
+    function handleChange(e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>){
         const id = e.target.id
         const new_value = (e.target.value !== "" ?  e.target.value : undefined)
         setFormData((prev) => ({...prev, [id]: new_value}));
@@ -57,29 +58,11 @@ export function Rsvp() {
                         <option value={Language.fr}>{t(Language.fr)}</option>
                     </select>
                 </li>
-                <li className="flex align-center w-full mb-2">
-                    <label htmlFor="arrival">{t("arrival")}</label>:
-                    <input disabled={!edit} type="date" value={formData.arrival_date == undefined ? "": formData.arrival_date} id="arrival_date" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
-                </li>
-                <li className="flex align-center w-full mb-2">
-                    <label htmlFor="departure">{t("departure")}</label>:
-                    <input disabled={!edit} type="date" value={formData.departure_date == undefined ? "": formData.departure_date} id="departure_date" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
-                </li>
-                <li className="mb-2">
-                    <label htmlFor="diet">{t("diet")}</label>:<br/>
-                    <p className="text-[0.8rem]/4 text-gray-700"><Trans i18nKey="user:diet_info"></Trans></p>
-                    <input disabled={!edit} placeholder={t("diet")} value={formData.diet == undefined ? "": formData.diet} id="diet" onChange={handleChange} className={"w-full " + (edit ? "input-inline" : "")}/>
-                </li>
-                <li className="mb-2">
-                    <label htmlFor="seating_preference">{t("seating_preference")}</label>:<br/>
-                    <p className="text-[0.8rem]/4 text-gray-700"><Trans i18nKey="user:seating_preference_info"></Trans></p>
-                    <textarea disabled={!edit} style={{ resize: "none" }}  rows={2} placeholder={t("seating_preference")} value={formData.seating_preference == undefined ? "": formData.seating_preference} id="seating_preference" onChange={handleChange} className={"w-full " + (edit ? "input-inline" : "")}/>
-                </li>
             </ul>
             <div className="pt-3">
                 {!edit && <button onClickCapture={() => setEdit(true)} className="btn">
                     {t("edit_rsvp")}
-                </button>} 
+                </button>}
                 {edit && <button onClickCapture={submitRsvp} className="btn btn-green mr-2">
                     {t("submit")}
                 </button>}
@@ -87,6 +70,16 @@ export function Rsvp() {
                     {t("cancel")}
                 </button>}
             </div>
+            {user && <div className="mt-6">
+                <p className="font-bold mb-2">{t("family_members")}</p>
+                <FamilyMembers
+                    user_id={user.id}
+                    familyMembers={user.familyMembers}
+                    addCallback={addFamilyMember}
+                    updateCallback={updateFamilyMember}
+                    deleteCallback={deleteFamilyMember}
+                />
+            </div>}
         </div>
     )
 }

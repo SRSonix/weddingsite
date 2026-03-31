@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 export function Header() {
     const {t} = useTranslation(["common"]);
     const [expandNav, setexpandNav] = useState<boolean>(false);
-    const {user} = useUser();
+    const {user, logout} = useUser();
 
     function toggle_mobile_header(){
         setexpandNav(!expandNav);
@@ -45,11 +45,14 @@ export function Header() {
                         <ReactCountryFlag countryCode="ES" svg style={{width: '1.5rem', height: '1.5rem'}} title="German"></ReactCountryFlag>
                     </button>
                 </div>
-                <Link to="/overview" onClick={closeMobuleHeader} className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">{t("overview")}</Link>
-                {user?.role === "ADMIN" && 
+                <Link to="/" onClick={closeMobuleHeader} className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">{t("overview")}</Link>
+                {user?.role === "ADMIN" &&
                     <Link to="/admin" onClick={closeMobuleHeader} className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">Admin</Link>
                 }
-                <Link to="/user" onClick={closeMobuleHeader} className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">&#x1F464; {user?.first_name || "Login"}</Link>
+                {user
+                    ? <button onClick={logout} className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">&#x1F464; {user.first_name} ({t("logout")})</button>
+                    : <Link to="/login" onClick={closeMobuleHeader} className="block mr-4 lg:inline-block hover:text-yellow-200 text-white text-right mt-2 lg:mt-0">&#x1F464; Login</Link>
+                }
             </nav>
         </header>
     )

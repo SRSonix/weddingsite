@@ -7,6 +7,7 @@ import { EmptyState } from "~/components/common/empty_state";
 import { InfoService, OverviewInfo } from "~/services/infoService";
 import { useEffect, useState } from "react";
 import { Agenda } from "~/components/overview/agenda";
+import { Rsvp } from "~/components/user/rsvp";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -32,11 +33,6 @@ export default function Overview() {
    <>
     <EmptyState>
       <div className="content-tile-wrap">
-         <ContentTile>
-          <div className="flex items-center justify-center h-full min-h-60 max-h-150 lg:min-w-60">
-            <img src={import.meta.env.VITE_API_URL + "/image/overview/portrait_1.jpg"} className="max-h-full  max-w-full"></img>
-          </div>
-        </ContentTile>
         <ContentTile header={t("need_to_know")}>
           <div className="lg:min-w-120">
             <ul className="list-disc list-outside pl-5">
@@ -46,10 +42,10 @@ export default function Overview() {
             <li><span className="font-bold">{t("climate")}</span>: {t("climate_text")}</li>
             <li><span className="font-bold">{t("getting_there")}</span>: {overviewInfo?.car_minutes} {t("minutes_by_car")} {overviewInfo?.car_from}</li>
             <li><span className="font-bold">{t("parking")}</span>: {t("parking_text")}</li>
-            <li><span className="font-bold">{t("gifts")}</span>: <Trans i18nKey="overview:gifts_text">text<Link className="text-interact" to="/gifts">text</Link>text</Trans></li> 
+            <li><span className="font-bold">{t("gifts")}</span>: <Trans i18nKey="overview:gifts_text">text<Link className="text-interact" to="/gifts">text</Link>text</Trans></li>
             <li><span className="font-bold">{t("pre_wedding")}</span>: {t("pre_wedding_text")} {overviewInfo?.pre_wedding_day} - {overviewInfo?.pre_wedding_location}</li>
             <li><span className="font-bold">{t("post_wedding")}</span>: {t("post_wedding_text")} {overviewInfo?.post_wedding_location} {t("on")} {t(overviewInfo?.post_wedding_day || "")}</li>
-              <li><span className="font-bold align-top">WhatsApp</span>: 
+              <li><span className="font-bold align-top">WhatsApp</span>:
                 <div className="inline-block align-top ml-2"> {
                   Object.entries(overviewInfo?.whatsapp || []).map(([key, value]) => <span className="block">{key}: {value}</span>)
                 }</div>
@@ -58,21 +54,9 @@ export default function Overview() {
           </div>
         </ContentTile>
         <ContentTile header={t("agenda")}><Agenda></Agenda></ContentTile>
-         <ContentTile header={t("rsvp")}>
-          <div className="lg:min-w-120">
-            <p>{t("hey_there")}</p>
-            <p className="mt-2"><Trans i18nKey="overview:rsvp_help_us_with">text<Link className="text-interact" to="/user">text</Link>text</Trans></p>
-            <p className="mt-2">{t("rsvp_for_no_show")}</p>
-            <p className="mt-2">{t("rsvp_why_we_need")}</p>
-          </div>
-        </ContentTile>
-        <ContentTile>
-          <div className="flex items-center justify-center h-full min-h-60 max-h-120 lg:min-w-180">
-            <img src={import.meta.env.VITE_API_URL + "/image/overview/landscape_1.jpg"} className="max-h-full max-w-full"></img>
-          </div>
-        </ContentTile>
+        <ContentTile header={t("rsvp")}><Rsvp></Rsvp></ContentTile>
       </div>
     </EmptyState>
     </>
   )
-} 
+}

@@ -9,7 +9,7 @@ export function EmptyState({children}: {children: React.ReactNode})
         
     useEffect(() => {
         if (user == null) {
-            navigate("/user", { replace: true });
+            navigate("/login", { replace: true });
         }
     }, [navigate, user]);
 
@@ -18,7 +18,7 @@ export function EmptyState({children}: {children: React.ReactNode})
         <>
             {(user === undefined) || (user === null) ? 
             <div>
-                Please log in <Link className="text-blue-600" to="/user">here</Link> to see content.
+                Please log in <Link className="text-blue-600" to="/login">here</Link> to see content.
             </div>
             : children
             }
