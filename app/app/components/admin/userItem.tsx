@@ -8,6 +8,7 @@ export function UserItem({user}: {user:User}){
     const [infoMessage, setInfoMessage] = useState("");
     const [userUrl, setUserUrl] = useState<string|undefined>(undefined);
     const [edit, setEdit] = useState(false);
+    const [showFamily, setShowFamily] = useState(false);
     const [formData, setFormData] = useState<UserCoreInfo>(UserCoreInfo.getEmpty());
     const {updateUserCoreInfo, deleteUser, updateFamilyMember, deleteFamilyMember, addFamilyMember} = useAllUsers();
 
@@ -96,14 +97,17 @@ export function UserItem({user}: {user:User}){
           last_visit: {user.last_visit || "has not visited"} <br/>
         </p>
         <div>
-          family_members: {user.familyMembers.length}
-          <FamilyMembers 
+          family_members: {user.familyMembers.length} ↑{user.familyMembers.filter(fm => !fm.is_child).length} ↓{user.familyMembers.filter(fm => fm.is_child).length}
+          <button className="btn btn-small ml-2" onClick={() => setShowFamily(p => !p)}>
+            {showFamily ? "hide" : "show"} family
+          </button>
+          {showFamily && <FamilyMembers
             user_id={user.id}
-            addCallback={(coreData) => addFamilyMember(user.id, coreData)} 
-            updateCallback={(id, coreData)=>updateFamilyMember(user.id, id, coreData)} 
-            deleteCallback={(id)=>deleteFamilyMember(user.id, id)} 
+            addCallback={(coreData) => addFamilyMember(user.id, coreData)}
+            updateCallback={(id, coreData)=>updateFamilyMember(user.id, id, coreData)}
+            deleteCallback={(id)=>deleteFamilyMember(user.id, id)}
             familyMembers={user.familyMembers}>
-          </FamilyMembers>
+          </FamilyMembers>}
         </div>
         <div className="mt-2">
           {userUrl &&  <button className="btn btn-small mr-2 btn-gray" onClick={copyUrl}>copy url to clipboard</button> }

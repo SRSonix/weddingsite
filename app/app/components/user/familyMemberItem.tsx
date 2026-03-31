@@ -20,17 +20,21 @@ export function FamilyMemberItem({familyMember, updateCallback, deleteCallback}:
 export function FamilyMemberForm({id, defaultData, submitChanges, cancelCallback}: {id: number | undefined, defaultData: FamilyMemberCore, submitChanges: (coreData: FamilyMemberCore)=>void, cancelCallback?: ()=>void}){
     const [edit, setEdit] = useState(false);
     const [formData, setFormData] = useState<FamilyMemberCore>(FamilyMemberCore.getEmpty());
+    const [errors, setErrors] = useState<Partial<Record<keyof FamilyMemberCore, string>>>({});
 
     useEffect(() => {
         setFormData(defaultData);
+        setErrors({});
         setEdit(id===undefined);
     }, [defaultData])
 
     function handleChange(e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLTextAreaElement>){
         const id = e.target.id
-        let new_value: any
+        let new_value: any =  e.target.value;
         
-        if (id !== "diet") {new_value = (e.target.value !== "" ?  e.target.value : undefined)}
+        if (id !== "diet") { 
+            new_value = (e.target.value !== "" ? e.target.value : undefined); 
+        }
         if (id==="is_child" && new_value !== undefined){
             new_value = (new_value==="true");
         }
@@ -39,34 +43,47 @@ export function FamilyMemberForm({id, defaultData, submitChanges, cancelCallback
 
     function cancel(){
         setFormData(defaultData);
+        setErrors({});
         setEdit(false);
         cancelCallback?.();
     }
 
-    // TODO: form validation and user feedback
+    function validate(): boolean {
+        const newErrors: Partial<Record<keyof FamilyMemberCore, string>> = {};
+        if (!formData.name?.trim()) newErrors.name = "name is required";
+        if (formData.is_child === undefined) newErrors.is_child = "please select";
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    }
+
+    function handleSubmit(){
+        if (validate()) submitChanges(formData);
+    }
 
     return <div>
-         <div className="flex align-center w-full">
-            <label htmlFor="diet">name</label>:<br/>
-            <input disabled={!edit} placeholder="name" value={formData.name == undefined ? "": formData.name} id="name" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
+        <div className="flex align-center w-full">
+            <label htmlFor="name">name</label>:<br/>
+            <input disabled={!edit} placeholder="name" value={formData.name == undefined ? "": formData.name} id="name" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "") + (errors.name ? " border-red-500" : "")}/>
         </div>
+        {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
         <div className="flex align-center w-full">
             <label htmlFor="diet">diet</label>:<br/>
             <input disabled={!edit} placeholder="diet" value={formData.diet == undefined ? "": formData.diet} id="diet" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
         </div>
         <div className="flex align-center w-full">
-            <label htmlFor="diet">is_child</label>:<br/>
-            <select disabled={!edit} value={formData.is_child == undefined ? "": formData.is_child.toString()} id="is_child" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "appearance-none")}>
+            <label htmlFor="is_child">is_child</label>:<br/>
+            <select disabled={!edit} value={formData.is_child == undefined ? "": formData.is_child.toString()} id="is_child" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "appearance-none") + (errors.is_child ? " border-red-500" : "")}>
                 <option disabled value={""}>please_select</option>
                 <option value={"true"}>True</option>
                 <option value={"false"}>False</option>
-            </select>        
+            </select>
         </div>
+        {errors.is_child && <p className="text-red-500 text-sm">{errors.is_child}</p>}
         <div className="pt-3">
         {!edit && <button onClickCapture={() => setEdit(true)} className="btn mr-2 btn-small">
             edit
-        </button>} 
-        {edit && <button onClickCapture={()=>submitChanges(formData)} className="btn btn-green mr-2 btn-small">
+        </button>}
+        {edit && <button onClickCapture={handleSubmit} className="btn btn-green mr-2 btn-small">
             submit
         </button>}
         {edit && <button onClickCapture={cancel} className="btn btn-red mr-2 btn-small">

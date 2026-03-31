@@ -23,7 +23,7 @@ export class FamilyMemberCore
   ){}
 
   static getEmpty(){
-    return new FamilyMemberCore(undefined,undefined, undefined);
+    return new FamilyMemberCore(undefined, "", false);
   }
 }
 

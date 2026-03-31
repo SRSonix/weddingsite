@@ -17,7 +17,7 @@ export function FamilyMembers({user_id, familyMembers, addCallback, updateCallba
         {!showNewMember && <button className="btn btn-small" onClick={()=>setShowNewMember(true)}>add person</button>}
         {showNewMember && <div>
                 <p>New Family Member</p>
-                <FamilyMemberForm id={undefined} defaultData={new FamilyMemberCore(undefined, "", undefined)} submitChanges={addFamilyMember} cancelCallback={()=>setShowNewMember(false)}></FamilyMemberForm>
+                <FamilyMemberForm id={undefined} defaultData={FamilyMemberCore.getEmpty()} submitChanges={addFamilyMember} cancelCallback={()=>setShowNewMember(false)}></FamilyMemberForm>
         </div>}
     </div>
 }

@@ -64,12 +64,11 @@ export default function AllUsersProvider({children}: {children: React.ReactNode}
         UserService.addFamilyMember(user_id, data).then(
             (familyMember) => {
                 if (familyMember) {
-                    setAllUsers(prev => {
-                        const index = prev.findIndex((user) => user.id === user_id);
-                        const newArray = [...prev];
-                        newArray[index].familyMembers.push(familyMember)
-                        return newArray;
-                    });
+                    setAllUsers(prev => prev.map((user) =>
+                        user.id === user_id
+                            ? {...user, familyMembers: [...user.familyMembers, familyMember]}
+                            : user
+                    ));
                 }
             }
         )
@@ -80,13 +79,11 @@ export default function AllUsersProvider({children}: {children: React.ReactNode}
         UserService.updateFamilyMember(user_id, familyMemberId, data).then(
             (familyMember) => {
                 if (familyMember) {
-                    setAllUsers(prev => {
-                        const userIndex = prev.findIndex((user) => user.id === user_id);
-                        const newArray = [...prev];
-                        const index = newArray[userIndex].familyMembers.findIndex((fm) => fm.id === familyMemberId);
-                        newArray[userIndex].familyMembers[index] = familyMember;
-                        return newArray;
-                    });
+                    setAllUsers(prev => prev.map((user) =>
+                        user.id === user_id
+                            ? {...user, familyMembers: user.familyMembers.map((fm) => fm.id === familyMemberId ? familyMember : fm)}
+                            : user
+                    ));
                 }
             }
         )
@@ -98,13 +95,11 @@ export default function AllUsersProvider({children}: {children: React.ReactNode}
             (success) => {
                 console.log(success);
                 if (success) {
-                    setAllUsers(prev => {
-                        const userIndex = prev.findIndex((user) => user.id === user_id);
-                        const newArray = [...prev];
-                        const index = newArray[userIndex].familyMembers.findIndex((fm) => fm.id === familyMemberId);
-                        newArray[userIndex].familyMembers.splice(index, 1);
-                        return newArray;
-                    });
+                    setAllUsers(prev => prev.map((user) =>
+                        user.id === user_id
+                            ? {...user, familyMembers: user.familyMembers.filter((fm) => fm.id !== familyMemberId)}
+                            : user
+                    ));
                 }
             }
         )
