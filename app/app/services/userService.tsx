@@ -180,7 +180,7 @@ export class UserService{
   static async updateUserCoreInfo(user_id: number, body:UserCoreInfo){
    try{
       const response = await fetch(
-        `${UserService.BASE_URL}/${user_id}/core-infoasf`,
+        `${UserService.BASE_URL}/${user_id}/core-info`,
         {method: "put", body: JSON.stringify(body), credentials: 'include'},
       )
 
