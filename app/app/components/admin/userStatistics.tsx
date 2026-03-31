@@ -45,6 +45,17 @@ export default function UserStatisticsPanel(){
             <button onClick={reloadAllUsers} className="btn mr-3">reload users</button>
             <button onClick={exportAllUsersCsv} className="btn">export users</button>
             <div>
+                <h4>invite overview</h4>
+                invited <br/>
+                user-count: {allUsers.length} <br/>
+                adult-count {allUsers.map((user)=>user.familyMembers.filter((member)=>member.is_child==false).length).reduce((a, b)=>a+b, 0)} <br/>
+                child-count {allUsers.map((user)=>user.familyMembers.filter((member)=>member.is_child==true).length).reduce((a, b)=>a+b, 0)} <br/>
+                attending <br/>
+                user-count: {allUsers.filter((user) => (user.attendance==Attandance.will_join)).length} <br/>
+                adult-count {allUsers.filter((user) => (user.attendance==Attandance.will_join)).map((user)=>user.familyMembers.filter((member)=>member.is_child==false).length).reduce((a, b)=>a+b, 0)} <br/>
+                child-count {allUsers.filter((user) => (user.attendance==Attandance.will_join)).map((user)=>user.familyMembers.filter((member)=>member.is_child==true).length).reduce((a, b)=>a+b, 0)} <br/>
+            </div>
+            <div>
                 <h4>attendance overview</h4>
                 user-count: {allUsers.length} <br/>
                 joining user-count: {allUsers.filter((user) => (user.attendance==Attandance.will_join)).length} <br/>

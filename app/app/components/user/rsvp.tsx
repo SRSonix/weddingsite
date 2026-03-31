@@ -1,7 +1,7 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useUser } from "~/providers/userProvider";
-import { Attandance, Drink, Language, RsvpInformation } from "~/services/userService";
+import { Attandance, Language, RsvpInformation } from "~/services/userService";
 
 export function Rsvp() {
     const {t} = useTranslation(["user", "common"])
@@ -17,16 +17,6 @@ export function Rsvp() {
         const id = e.target.id
         const new_value = (e.target.value !== "" ?  e.target.value : undefined)
         setFormData((prev) => ({...prev, [id]: new_value}));
-    }
-
-    function handleDrinkCheckbox(e: ChangeEvent<HTMLInputElement>){
-        const checked = e.target.checked;
-        const drink = Drink[e.target.id as keyof typeof Drink];
-
-        let drinks = formData.drinks.filter(d => d != drink);
-        if (checked) drinks.push(drink);
-        
-        setFormData((prev) => ({...prev, ["drinks"]: drinks}));
     }
 
     function submitRsvp(){
@@ -63,9 +53,8 @@ export function Rsvp() {
                     <label htmlFor="language">{t("language")}</label>:
                     <select disabled={!edit} value={formData.language == undefined ? "": formData.language} id="language" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "appearance-none")}>
                         <option value={""}>{t("not_set")}</option>
-                        <option value={Language.en}>{t(Language.en)}</option>
                         <option value={Language.de}>{t(Language.de)}</option>
-                        <option value={Language.es}>{t(Language.es)}</option>
+                        <option value={Language.fr}>{t(Language.fr)}</option>
                     </select>
                 </li>
                 <li className="flex align-center w-full mb-2">
@@ -80,20 +69,6 @@ export function Rsvp() {
                     <label htmlFor="diet">{t("diet")}</label>:<br/>
                     <p className="text-[0.8rem]/4 text-gray-700"><Trans i18nKey="user:diet_info"></Trans></p>
                     <input disabled={!edit} placeholder={t("diet")} value={formData.diet == undefined ? "": formData.diet} id="diet" onChange={handleChange} className={"w-full " + (edit ? "input-inline" : "")}/>
-                </li>
-                <li className="flex align-center w-full mb-2">
-                    <label htmlFor="drinks">{t("drinks")}</label>:
-                    <div className="flex-grow ml-1">
-                        {edit ? 
-                            Object.keys(Drink).map(
-                                (key: string) => (<div>
-                                    <input disabled={!edit} type="checkbox" id={key} checked={formData.drinks.includes(Drink[key as keyof typeof Drink])} onChange={handleDrinkCheckbox} className="mr-2"/><label>{t(key)}</label>
-                                </div>))
-                            :
-                            formData.drinks.map(
-                                (drink: Drink) => (<div><label>{t(drink)}</label></div>))
-                    }
-                    </div>
                 </li>
                 <li className="mb-2">
                     <label htmlFor="seating_preference">{t("seating_preference")}</label>:<br/>
