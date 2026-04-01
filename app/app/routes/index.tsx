@@ -5,8 +5,8 @@ import { useUser } from "~/providers/userProvider";
 import { EmptyState } from "~/components/common/empty_state";
 import { InfoService, OverviewInfo, type PaymentDetails } from "~/services/infoService";
 import { useEffect, useState } from "react";
-import { Agenda } from "~/components/overview/agenda";
-import { Rsvp } from "~/components/user/rsvp";
+import { Agenda } from "~/components/index/agenda";
+import { Rsvp } from "~/components/index/rsvp";
 
 export function meta({}: Route.MetaArgs) {
   return [

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useUser } from "~/providers/userProvider";
-import { UserLogin } from "~/components/user/login";
+import { UserLogin } from "~/components/login/login";
 import { ContentTile } from "~/components/common/content_tile";
 
 export default function Login() {
