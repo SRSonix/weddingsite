@@ -9,6 +9,7 @@ export function Rsvp() {
     const {user, updateUserRsvp, addFamilyMember, updateFamilyMember, deleteFamilyMember} = useUser();
     const [edit, setEdit] = useState(false);
     const [formData, setFormData] = useState<RsvpInformation>(RsvpInformation.getEmpty());
+    const [errors, setErrors] = useState<Partial<Record<keyof RsvpInformation, string>>>({});
 
     useEffect(() => {
         if (user != undefined) setFormData(user.getRsvpInformation())
@@ -20,44 +21,55 @@ export function Rsvp() {
         setFormData((prev) => ({...prev, [id]: new_value}));
     }
 
+    function validate(): boolean {
+        const newErrors: Partial<Record<keyof RsvpInformation, string>> = {};
+        if (!formData.attendance) newErrors.attendance = t("error_attendance_required", "Please select your attendance.");
+        if (!formData.language) newErrors.language = t("error_language_required", "Please select a language.");
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    }
+
     function submitRsvp(){
-        if (edit && user?.id){
-            updateUserRsvp(user?.id, formData);
-        }
+        if (!validate()) return;
+        if (edit && user?.id) updateUserRsvp(user?.id, formData);
+        setErrors({});
         setEdit(false);
     }
 
     function resetRsvp(){
         if (user !== null && user !== undefined) setFormData(() => (user.getRsvpInformation()));
         else setFormData(() => (RsvpInformation.getEmpty()));
+        setErrors({});
         setEdit(false);
     }
 
     return (
         <div>
-            {edit && <p className="text-l/4 text-red-900 pb-3">{t("save_reminder", "Please note that no changes will be saved until you press submit!")}</p> }
+            {edit && <p className="text-l/4 text-red-900 pb-3">{t("save_reminder", "Please note that no changes will be saved until you press submit!")}</p>}
             <ul>
                 <li className="flex align-center w-full mb-2">
                     <label htmlFor="attendance">{t("attendance", "Attendance")}</label>:
-                    <select disabled={!edit} value={formData.attendance == undefined ? "": formData.attendance} id="attendance" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "appearance-none")}>
-                        <option value={""}>{t("not_set", "Not set")}</option>
+                    <select disabled={!edit} value={formData.attendance == undefined ? "": formData.attendance} id="attendance" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "appearance-none") + (errors.attendance ? " border-red-500" : "")}>
+                        <option disabled value={""}>{t("not_set", "Not set")}</option>
                         <option value={Attandance.undecided}>{t(Attandance.undecided, "Undecided")}</option>
                         <option value={Attandance.will_join}>{t(Attandance.will_join, "I will join the wedding!")}</option>
                         <option value={Attandance.will_not_join}>{t(Attandance.will_not_join, "I will not be able to join.")}</option>
                     </select>
                 </li>
+                {errors.attendance && <p className="text-red-500 text-sm">{errors.attendance}</p>}
                 <li className="flex align-center w-full mb-2">
                     <label htmlFor="mail">{t("mail", "Email")}</label>:
                     <input disabled={!edit} placeholder={t("mail", "Email")} value={formData.mail == undefined ? "": formData.mail} id="mail" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
                 </li>
                 <li className="flex align-center w-full mb-2">
                     <label htmlFor="language">{t("language", "Language")}</label>:
-                    <select disabled={!edit} value={formData.language == undefined ? "": formData.language} id="language" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "appearance-none")}>
-                        <option value={""}>{t("not_set", "Not set")}</option>
+                    <select disabled={!edit} value={formData.language == undefined ? "": formData.language} id="language" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "appearance-none") + (errors.language ? " border-red-500" : "")}>
+                        <option disabled value={""}>{t("not_set", "Not set")}</option>
                         <option value={Language.de}>{t(Language.de, "German")}</option>
                         <option value={Language.fr}>{t(Language.fr, "French")}</option>
                     </select>
                 </li>
+                {errors.language && <p className="text-red-500 text-sm">{errors.language}</p>}
             </ul>
             <div className="pt-3">
                 {!edit && <button onClickCapture={() => setEdit(true)} className="btn">

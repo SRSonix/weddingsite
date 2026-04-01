@@ -54,7 +54,7 @@ function get_all_users(\Request $request){
 
 function update_user_rsvp(\Request $request){
     $request->validatePathUserIsAuthorized();
-    $request->validateBodyContainsKeys(["mail", "attendance", "language"], TRUE);
+    $request->validateBodyContainsKeys(["mail", "attendance", "language"]);
     $request->validateAcceptableValues(["attendance"=> ['will_join', 'will_not_join', 'undecided'], "language"=>["de", "fr"]]);
 
     $user_id = $request->path_params["user_id"];

@@ -16,7 +16,8 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Overview() {
-  const {t} = useTranslation("app");
+  const {t, i18n} = useTranslation("app");
+  const lang = i18n.language as "de" | "fr";
   const {user} = useUser();
 
   const [overviewInfo, setOverviewInfo] = useState<OverviewInfo | undefined>(undefined);
@@ -46,7 +47,11 @@ export default function Overview() {
             </div>
             <div>
               <h4>{t("location", "Location")}</h4>
-              <p className="text-sm mt-1">{overviewInfo?.location}</p>
+              <p className="text-sm mt-1">
+                {overviewInfo?.location_maps_link
+                  ? <a href={overviewInfo.location_maps_link} target="_blank" rel="noreferrer">{overviewInfo.location}</a>
+                  : overviewInfo?.location}
+              </p>
             </div>
             <div>
               <h4>{t("dress_code", "Dress code")}</h4>
@@ -56,25 +61,25 @@ export default function Overview() {
               <h4>{t("parking", "Parking")}</h4>
               <p className="text-sm mt-1">{t("parking_text", "Parking is available at the venue.")}</p>
             </div>
-            {overviewInfo?.hotels && overviewInfo.hotels.length > 0 && (
+            {overviewInfo?.hotels?.[lang] && overviewInfo.hotels[lang].length > 0 && (
               <div>
                 <h4>{t("hotels", "Accommodation")}</h4>
                 <div className="text-sm mt-1">
-                  {overviewInfo.hotels.map((hotel) => (
+                  {overviewInfo.hotels[lang].map((hotel) => (
                     <p key={hotel}>{hotel}</p>
                   ))}
                   <p className="italic">{t("hotels_contact_us", "For other options or questions, feel free to reach out to us.")}</p>
                 </div>
               </div>
             )}
-            {overviewInfo?.public_transport && (
+            {overviewInfo?.public_transport?.[lang] && (
               <div>
                 <h4>{t("public_transport", "Public Transport")}</h4>
-                <p className="text-sm mt-1">{overviewInfo.public_transport}</p>
+                <p className="text-sm mt-1">{overviewInfo.public_transport[lang]}</p>
               </div>
             )}
             <div>
-              <h4>Phone</h4>
+              <h4>{t("phone", "Phone")}</h4>
               <div className="text-sm mt-1">
                 {Object.entries(overviewInfo?.phone || {}).map(([name, number]) => (
                   <p key={name}>{name}: {number}</p>

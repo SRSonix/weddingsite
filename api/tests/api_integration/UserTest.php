@@ -223,6 +223,8 @@ class UserTest extends ApiIntegrationTestCase
     {
         return [
             [["mail"=>"test.mail", "attendance"=>"will_join", "language"=>"fr"]],
+            [["mail"=>"", "attendance"=>"will_join", "language"=>"fr"]],
+            [["mail"=>NULL, "attendance"=>"will_join", "language"=>"fr"]],
             [["mail"=>"test.mail1", "attendance"=>"will_join", "language"=>"de"]],
             [["mail"=>"test.mail2", "attendance"=>"will_not_join", "language"=>"de"]],
             [["mail"=>"test.mail3", "attendance"=>"undecided", "language"=>"de"]],
@@ -297,12 +299,11 @@ class UserTest extends ApiIntegrationTestCase
     public static function userUpdateRsvpPartialBodies(): array
     {
         return [
-            [["attendance"=>"WILL_JOIN", "language"=>"de"]],
+            [["attendance"=>"will_join", "language"=>"de"]],
             [["mail"=>"test.mail", "language"=>"de"]],
-            [["mail"=>"test.mail", "attendance"=>"WILL_JOIN"]],
-            [["mail"=>NULL, "attendance"=>"WILL_JOIN", "language"=>"de"]],
+            [["mail"=>"test.mail", "attendance"=>"will_join"]],
             [["mail"=>"test.mail", "attendance"=>NULL, "language"=>"de"]],
-            [["mail"=>"test.mail", "attendance"=>"WILL_JOIN", "language"=>NULL]],
+            [["mail"=>"test.mail", "attendance"=>"will_join", "language"=>NULL]],
             [["mail"=>"test.mail", "attendance"=>"bogus", "language"=>"fr"]],
             [["mail"=>"test.mail", "attendance"=>"will_join", "language"=>"bogus"]],
         ];

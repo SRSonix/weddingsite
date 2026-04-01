@@ -3,9 +3,10 @@ export class OverviewInfo{
         public date: string,
         public arrival_time: string,
         public location: string,
+        public location_maps_link: string,
         public phone: Record<string, string>,
-        public hotels: string[],
-        public public_transport: string
+        public hotels: Record<string, string[]>,
+        public public_transport: Record<string, string>
     ){};
 }
 
