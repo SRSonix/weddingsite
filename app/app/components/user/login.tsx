@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import { useUser } from "~/providers/userProvider";
 
 export function UserLogin(){
-  const {t} = useTranslation(["user", "common"])
+  const {t} = useTranslation("app")
   const {login} = useUser();
   const navigate = useNavigate();
   const [userToken, setuserToken] = useState('');
@@ -29,8 +29,8 @@ export function UserLogin(){
 
     return (
         <div>
-          <h3>{t("login")}</h3>
-          <p>{t("please_log_in")}</p>
+          <h3>{t("login", "Login")}</h3>
+          <p>{t("please_log_in", "Please log in to see the content of this website.")}</p>
             { errorMessage &&  <div>
                 <p className="text-red-700">{errorMessage}</p>
             </div>}
@@ -47,7 +47,7 @@ export function UserLogin(){
                 />
               </div>
               <div className="px-3 mt-7">
-                <button type="submit" className="btn">{t("login")}</button>
+                <button type="submit" className="btn">{t("login", "Login")}</button>
               </div>
             </form>
         </div>

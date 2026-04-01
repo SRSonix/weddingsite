@@ -5,7 +5,7 @@ import { Attandance, Language, RsvpInformation } from "~/services/userService";
 import { FamilyMembers } from "./familyMembers";
 
 export function Rsvp() {
-    const {t} = useTranslation(["user", "common"])
+    const {t} = useTranslation("app")
     const {user, updateUserRsvp, addFamilyMember, updateFamilyMember, deleteFamilyMember} = useUser();
     const [edit, setEdit] = useState(false);
     const [formData, setFormData] = useState<RsvpInformation>(RsvpInformation.getEmpty());
@@ -35,43 +35,46 @@ export function Rsvp() {
 
     return (
         <div>
-            {edit && <p className="text-l/4 text-red-900 pb-3">{t("save_reminder")}</p> }
+            {edit && <p className="text-l/4 text-red-900 pb-3">{t("save_reminder", "Please note that no changes will be saved until you press submit!")}</p> }
             <ul>
                 <li className="flex align-center w-full mb-2">
-                    <label htmlFor="attendance">{t("attendance")}</label>:
+                    <label htmlFor="attendance">{t("attendance", "Attendance")}</label>:
                     <select disabled={!edit} value={formData.attendance == undefined ? "": formData.attendance} id="attendance" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "appearance-none")}>
-                        <option value={""}>{t("not_set")}</option>
-                        <option value={Attandance.undecided}>{t(Attandance.undecided)}</option>
-                        <option value={Attandance.will_join}>{t(Attandance.will_join)}</option>
-                        <option value={Attandance.will_not_join}>{t(Attandance.will_not_join)}</option>
+                        <option value={""}>{t("not_set", "Not set")}</option>
+                        <option value={Attandance.undecided}>{t(Attandance.undecided, "Undecided")}</option>
+                        <option value={Attandance.will_join}>{t(Attandance.will_join, "I will join the wedding!")}</option>
+                        <option value={Attandance.will_not_join}>{t(Attandance.will_not_join, "I will not be able to join.")}</option>
                     </select>
                 </li>
                 <li className="flex align-center w-full mb-2">
-                    <label htmlFor="mail">{t("mail")}</label>:
-                    <input disabled={!edit} placeholder={t("mail")} value={formData.mail == undefined ? "": formData.mail} id="mail" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
+                    <label htmlFor="mail">{t("mail", "Email")}</label>:
+                    <input disabled={!edit} placeholder={t("mail", "Email")} value={formData.mail == undefined ? "": formData.mail} id="mail" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
                 </li>
                 <li className="flex align-center w-full mb-2">
-                    <label htmlFor="language">{t("language")}</label>:
+                    <label htmlFor="language">{t("language", "Language")}</label>:
                     <select disabled={!edit} value={formData.language == undefined ? "": formData.language} id="language" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "appearance-none")}>
-                        <option value={""}>{t("not_set")}</option>
-                        <option value={Language.de}>{t(Language.de)}</option>
-                        <option value={Language.fr}>{t(Language.fr)}</option>
+                        <option value={""}>{t("not_set", "Not set")}</option>
+                        <option value={Language.de}>{t(Language.de, "German")}</option>
+                        <option value={Language.fr}>{t(Language.fr, "French")}</option>
                     </select>
                 </li>
             </ul>
             <div className="pt-3">
                 {!edit && <button onClickCapture={() => setEdit(true)} className="btn">
-                    {t("edit_rsvp")}
+                    {t("edit_rsvp", "Edit RSVP")}
                 </button>}
                 {edit && <button onClickCapture={submitRsvp} className="btn btn-green mr-2">
-                    {t("submit")}
+                    {t("submit", "Submit")}
                 </button>}
                 {edit && <button onClickCapture={resetRsvp} className="btn btn-red">
-                    {t("cancel")}
+                    {t("cancel", "Cancel")}
                 </button>}
             </div>
             {user && <div className="mt-6">
-                <p className="font-bold mb-2">{t("family_members")}</p>
+                <p className="font-bold mb-2">{t("party", "Your Party")}</p>
+                <div className="bg-olive-100 border border-olive-300 rounded-lg p-3 mb-3 text-sm">
+                  {t("party_text", "This list should include everyone in your group attending the wedding — including yourself. Please add or remove people as needed, as we plan seating and catering based on these entries.")}
+                </div>
                 <FamilyMembers
                     user_id={user.id}
                     familyMembers={user.familyMembers}

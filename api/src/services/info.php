@@ -5,12 +5,16 @@ namespace InfoService;
 function get_overview(){
     $info = [
         "date" => "2026-10-31",
-        "arrival_time" => "14:0ß",
+        "arrival_time" => "14:00",
         "location"=> "Reitpark Mergenthau, Mergenthau 2, 86438 Kissing",
         "phone"=> [
             "Alexine" => "+49 152 33521759",
             "Michael" => "+49 157 87061643"
-        ]
+        ],
+        "hotels" => [
+            "Hotel Reitpark Mergenthau"
+        ],
+        "public_transport" => "Reachable by foot from Kissing Bahnhof"
     ];
 
     return $info;

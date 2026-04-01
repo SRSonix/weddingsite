@@ -16,7 +16,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Overview() {
-  const {t} = useTranslation(["overview", "common"]);
+  const {t} = useTranslation("app");
   const {user} = useUser();
 
   const [overviewInfo, setOverviewInfo] = useState<OverviewInfo | undefined>(undefined);
@@ -38,36 +38,69 @@ export default function Overview() {
             photo
           </div>
         </ContentTile>
-        <ContentTile header={t("need_to_know")}>
-          <div className="lg:min-w-120">
-            <ul className="list-disc list-outside pl-5">
-              <li><span className="font-bold">{t("date_and_time")}</span>: {overviewInfo?.date}, {t("arrival")} {overviewInfo?.arrival_time}</li>
-              <li><span className="font-bold">{t("location")}</span>: {overviewInfo?.location}</li>
-              <li><span className="font-bold">{t("dress_code")}</span>: {t("dress_text")}</li>
-              <li><span className="font-bold">{t("parking")}</span>: {t("parking_text")}</li>
-              <li><span className="font-bold align-top">Phone</span>:
-                <div className="inline-block align-top ml-2">
-                  {Object.entries(overviewInfo?.phone || {}).map(([name, number]) => (
-                    <span key={name} className="block">{name}: {number}</span>
+        <ContentTile header={t("need_to_know", "Need to Know")}>
+          <div className="lg:min-w-120 space-y-4">
+            <div>
+              <h4>{t("date_and_time", "Date and Time")}</h4>
+              <p className="text-sm mt-1">{overviewInfo?.date ? new Date(overviewInfo.date).toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit', year: 'numeric'}) : ''}, {t("arrival", "Arrival")} {overviewInfo?.arrival_time}</p>
+            </div>
+            <div>
+              <h4>{t("location", "Location")}</h4>
+              <p className="text-sm mt-1">{overviewInfo?.location}</p>
+            </div>
+            <div>
+              <h4>{t("dress_code", "Dress code")}</h4>
+              <p className="text-sm mt-1">{t("dress_text", "Elegant, but no strict dress code — wear what makes you feel good!")}</p>
+            </div>
+            <div>
+              <h4>{t("parking", "Parking")}</h4>
+              <p className="text-sm mt-1">{t("parking_text", "Parking is available at the venue.")}</p>
+            </div>
+            {overviewInfo?.hotels && overviewInfo.hotels.length > 0 && (
+              <div>
+                <h4>{t("hotels", "Accommodation")}</h4>
+                <div className="text-sm mt-1">
+                  {overviewInfo.hotels.map((hotel) => (
+                    <p key={hotel}>{hotel}</p>
                   ))}
+                  <p className="italic">{t("hotels_contact_us", "For other options or questions, feel free to reach out to us.")}</p>
                 </div>
-              </li>
-            </ul>
-            <h4 className="mt-4">{t("gifts")}</h4>
-            <p className="text-sm mt-1">
-              We truly have everything we need — but if you'd like to contribute towards our wedding expenses, we'd be very grateful. You can make a bank transfer to:
-            </p>
-            {paymentDetails && (
-              <ul className="list-none mt-2 text-sm space-y-1">
-                <li><span className="font-bold">Name:</span> {paymentDetails.bank.name}</li>
-                <li><span className="font-bold">IBAN:</span> {paymentDetails.bank.iban}</li>
-                <li><span className="font-bold">BIC:</span> {paymentDetails.bank.bic}</li>
-              </ul>
+              </div>
             )}
+            {overviewInfo?.public_transport && (
+              <div>
+                <h4>{t("public_transport", "Public Transport")}</h4>
+                <p className="text-sm mt-1">{overviewInfo.public_transport}</p>
+              </div>
+            )}
+            <div>
+              <h4>Phone</h4>
+              <div className="text-sm mt-1">
+                {Object.entries(overviewInfo?.phone || {}).map(([name, number]) => (
+                  <p key={name}>{name}: {number}</p>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h4>{t("companions", "Partners & Children")}</h4>
+              <p className="text-sm mt-1">{t("companions_text", "Please add anyone you would like to bring and remove anyone who will not be joining. We plan with these people, so it is important to keep this list up to date.")}</p>
+            </div>
+            <div>
+              <h4>{t("gifts", "Gifts")}</h4>
+              <p className="text-sm mt-1">{t("gifts_intro", "We truly have everything we need — but if you'd like to contribute towards our wedding expenses, we'd be very grateful. You can make a bank transfer to:")}</p>
+              {paymentDetails && (
+                <ul className="list-none mt-2 text-sm space-y-1">
+                  <li><span className="font-bold">Name:</span> {paymentDetails.bank.name}</li>
+                  <li><span className="font-bold">IBAN:</span> {paymentDetails.bank.iban}</li>
+                  <li><span className="font-bold">BIC:</span> {paymentDetails.bank.bic}</li>
+                </ul>
+              )}
+              <p className="text-sm mt-2">{t("gifts_cash", "Cash at the wedding is also very welcome!")}</p>
+            </div>
           </div>
         </ContentTile>
-        <ContentTile header={t("agenda")}><Agenda></Agenda></ContentTile>
-        <ContentTile header={t("rsvp")} fullWidth><Rsvp></Rsvp></ContentTile>
+        <ContentTile header={t("agenda", "Programme")}><Agenda></Agenda></ContentTile>
+<ContentTile header={t("rsvp", "Please fill out RSVP")} fullWidth><Rsvp></Rsvp></ContentTile>
       </div>
     </EmptyState>
     </>

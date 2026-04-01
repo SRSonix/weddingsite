@@ -8,7 +8,7 @@ import { InfoService, type AgendaData, type AgendaItem } from "~/services/infoSe
 export function Agenda(){
     const [agenda, setAgenda] = useState<AgendaData | undefined>(undefined)
     const {user} = useUser();
-    const {i18n} = useTranslation(["gifts", "common"]);
+    const {i18n} = useTranslation("app");
 
     function getAgendaString(agenda: AgendaItem): string{
         return agenda[i18n.language] || agenda.en;

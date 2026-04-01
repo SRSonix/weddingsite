@@ -89,3 +89,9 @@ the deployment is to be done by the user and **never** by the agent.
 ## Testing
 
 tests are to run manually and not by the agent
+
+## Translations
+
+Supported languages: **German (de)** and **French (fr)**. English and Spanish are not supported.
+
+**Rule: TSX files must only contain English text.** All user-visible strings must use `t("key", "English fallback text")`. The English fallback string is the source of truth for what the English text should say, and makes missing translations immediately visible when browsing without a language set.

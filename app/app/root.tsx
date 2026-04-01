@@ -6,6 +6,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "react-router";
 import Backend from 'i18next-http-backend';
 import detector from "i18next-browser-languagedetector";
@@ -28,8 +29,9 @@ i18n
     backend: {
       loadPath: 'translations/{{ns}}/{{lng}}.json'
     },
-    ns: ['common'],
-    fallbackLng: "en",
+    ns: ['app'],
+    defaultNS: 'app',
+    fallbackLng: false,
     interpolation: {
       escapeValue: false
     }
@@ -58,11 +60,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 function AdminBanner() {
   const {user} = useUser();
+  const {pathname} = useLocation();
   if (user?.role !== "ADMIN") return null;
+  const onAdmin = pathname === "/admin";
   return (
     <div className="max-w-5xl mx-auto px-4 py-2 flex items-center justify-between text-sm text-olive-700 bg-olive-50 border border-olive-200 rounded mt-4">
       <span>You are admin.</span>
-      <Link to="/admin" className="text-olive-600 hover:underline">Go to admin page →</Link>
+      {onAdmin
+        ? <Link to="/" className="text-olive-600 hover:underline">← Back to index</Link>
+        : <Link to="/admin" className="text-olive-600 hover:underline">Go to admin page →</Link>
+      }
     </div>
   );
 }

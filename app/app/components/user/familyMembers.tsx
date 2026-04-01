@@ -10,14 +10,16 @@ export function FamilyMembers({user_id, familyMembers, addCallback, updateCallba
         setShowNewMember(false);
     }
 
-    return <div className="border-1 border-dashed">
+    return <div className="flex flex-col gap-3">
         {familyMembers.map(
-            (item: FamilyMember) => (<FamilyMemberItem updateCallback={updateCallback} deleteCallback={deleteCallback} familyMember={item}></FamilyMemberItem>)
+            (item: FamilyMember) => (<FamilyMemberItem key={item.id} updateCallback={updateCallback} deleteCallback={deleteCallback} familyMember={item}></FamilyMemberItem>)
         )}
-        {!showNewMember && <button className="btn btn-small" onClick={()=>setShowNewMember(true)}>add person</button>}
-        {showNewMember && <div>
-                <p>New Family Member</p>
+        {!showNewMember && <button className="btn btn-small self-start" onClick={()=>setShowNewMember(true)}>add person</button>}
+        {showNewMember && (
+            <div className="bg-olive-50 border border-olive-100 rounded-lg p-4 shadow-sm">
+                <p className="font-semibold text-olive-700 mb-2">New Family Member</p>
                 <FamilyMemberForm id={undefined} defaultData={FamilyMemberCore.getEmpty()} submitChanges={addFamilyMember} cancelCallback={()=>setShowNewMember(false)}></FamilyMemberForm>
-        </div>}
+            </div>
+        )}
     </div>
 }

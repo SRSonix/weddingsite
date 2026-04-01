@@ -20,7 +20,7 @@ async function upload_weddingsite() {
         })
 
         console.log("ensuring directories");
-        for (const directory_name of ["assets", "translations"]){
+        for (const directory_name of ["assets", "translations", "fonts"]){
             await client.ensureDir("/"+directory_name);
             await client.cd("/");
         }
@@ -32,7 +32,7 @@ async function upload_weddingsite() {
             await client.uploadFrom(SRC_BASE_PATH + file_name, "/"+ file_name)
         }
 
-        for (const directory_name of ["assets", "translations"]){
+        for (const directory_name of ["assets", "translations", "fonts"]){
             console.log("Uploading directory " + directory_name)
 
             await client.removeDir(directory_name)

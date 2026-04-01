@@ -1,5 +1,4 @@
 import { useEffect, useState, type ChangeEvent } from "react";
-import type { UserConfig } from "vite";
 import { FamilyMember, FamilyMemberCore } from "~/services/userService";
 
 export function FamilyMemberItem({familyMember, updateCallback, deleteCallback}:{familyMember:FamilyMember, updateCallback: (id: number, data: FamilyMemberCore) => void, deleteCallback: (id: number) => void}){
@@ -7,17 +6,14 @@ export function FamilyMemberItem({familyMember, updateCallback, deleteCallback}:
         updateCallback(familyMember.id, coreData);
     }
 
-    return <div className="border-1 border-dotted">
-        <FamilyMemberForm id={familyMember.id} defaultData={familyMember.getFamilyMemberCore()} submitChanges={updateFamilyMember}></FamilyMemberForm>
-        <div className="pt-3">
-              <button onClickCapture={()=>{deleteCallback(familyMember.id)}} className="btn btn-red btn-small">
-                  delete person
-              </button>
-          </div>
-    </div>
+    return (
+        <div className="bg-olive-50 border border-olive-100 rounded-lg p-4 shadow-sm">
+            <FamilyMemberForm id={familyMember.id} defaultData={familyMember.getFamilyMemberCore()} submitChanges={updateFamilyMember} deleteCallback={() => deleteCallback(familyMember.id)}></FamilyMemberForm>
+        </div>
+    );
 }
 
-export function FamilyMemberForm({id, defaultData, submitChanges, cancelCallback}: {id: number | undefined, defaultData: FamilyMemberCore, submitChanges: (coreData: FamilyMemberCore)=>void, cancelCallback?: ()=>void}){
+export function FamilyMemberForm({id, defaultData, submitChanges, cancelCallback, deleteCallback}: {id: number | undefined, defaultData: FamilyMemberCore, submitChanges: (coreData: FamilyMemberCore)=>void, cancelCallback?: ()=>void, deleteCallback?: ()=>void}){
     const [edit, setEdit] = useState(false);
     const [formData, setFormData] = useState<FamilyMemberCore>(FamilyMemberCore.getEmpty());
     const [errors, setErrors] = useState<Partial<Record<keyof FamilyMemberCore, string>>>({});
@@ -31,9 +27,9 @@ export function FamilyMemberForm({id, defaultData, submitChanges, cancelCallback
     function handleChange(e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLTextAreaElement>){
         const id = e.target.id
         let new_value: any =  e.target.value;
-        
-        if (id !== "diet") { 
-            new_value = (e.target.value !== "" ? e.target.value : undefined); 
+
+        if (id !== "diet") {
+            new_value = (e.target.value !== "" ? e.target.value : undefined);
         }
         if (id==="is_child" && new_value !== undefined){
             new_value = (new_value==="true");
@@ -79,16 +75,21 @@ export function FamilyMemberForm({id, defaultData, submitChanges, cancelCallback
             </select>
         </div>
         {errors.is_child && <p className="text-red-500 text-sm">{errors.is_child}</p>}
-        <div className="pt-3">
-        {!edit && <button onClickCapture={() => setEdit(true)} className="btn mr-2 btn-small">
-            edit
-        </button>}
-        {edit && <button onClickCapture={handleSubmit} className="btn btn-green mr-2 btn-small">
-            submit
-        </button>}
-        {edit && <button onClickCapture={cancel} className="btn btn-red mr-2 btn-small">
-            cancel
-        </button>}
+        <div className="pt-3 flex items-center gap-2">
+            {!edit && <button onClickCapture={() => setEdit(true)} className="btn btn-small">
+                edit
+            </button>}
+            {edit && <button onClickCapture={handleSubmit} className="btn btn-green btn-small">
+                save
+            </button>}
+            {edit && <button onClickCapture={cancel} className="btn btn-small">
+                cancel
+            </button>}
+            {edit && id !== undefined && deleteCallback && (
+                <button onClickCapture={deleteCallback} className="btn btn-red btn-small ml-auto">
+                    delete
+                </button>
+            )}
         </div>
     </div>
 }

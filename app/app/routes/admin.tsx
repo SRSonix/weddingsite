@@ -16,7 +16,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Admin() {
   const {user} = useUser();
-  const {t} = useTranslation("admin");
+  const {t} = useTranslation("app");
 
 
   return (
@@ -30,7 +30,7 @@ export default function Admin() {
           </div>
         </AllUsersProvider> 
       :
-        <div><p>{t('nothing-to-see')}</p></div>    
+        <div><p>{t('nothing-to-see', 'You are not an admin!')}</p></div>
       }
     </div>
   )
