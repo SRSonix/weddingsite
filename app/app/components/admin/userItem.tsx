@@ -1,7 +1,7 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import { useAllUsers } from "~/providers/allUserProvider";
 import { Role, UserCoreInfo, UserService, type User } from "~/services/userService";
-import { FamilyMembers } from "../user/familyMembers";
+import { FamilyMembers } from "../index/familyMembers";
 
 
 export function UserItem({user}: {user:User}){

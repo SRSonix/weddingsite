@@ -40,18 +40,18 @@ export default function Overview() {
           </div>
         </ContentTile>
         <ContentTile header={t("need_to_know", "Need to Know")}>
-          <div className="lg:min-w-120 space-y-4">
+          <div className="space-y-4">
             <div>
               <h4>{t("date_and_time", "Date and Time")}</h4>
               <p className="text-sm mt-1">{overviewInfo?.date ? new Date(overviewInfo.date).toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit', year: 'numeric'}) : ''}, {t("arrival", "Arrival")} {overviewInfo?.arrival_time}</p>
             </div>
             <div>
               <h4>{t("location", "Location")}</h4>
-              <p className="text-sm mt-1">
-                {overviewInfo?.location_maps_link
-                  ? <a href={overviewInfo.location_maps_link} target="_blank" rel="noreferrer">{overviewInfo.location}</a>
-                  : overviewInfo?.location}
-              </p>
+              <div className="text-sm mt-1">
+                <p className="font-medium">{overviewInfo?.location?.split(",")[0]}</p>
+                <p>{overviewInfo?.location?.split(",").slice(1).join(",").trim()}</p>
+                {overviewInfo?.location_maps_link && <a href={overviewInfo.location_maps_link} target="_blank" rel="noreferrer" className="underline text-olive-500 text-xs mt-0.5 inline-block">{t("maps", "Maps")}</a>}
+              </div>
             </div>
             <div>
               <h4>{t("dress_code", "Dress code")}</h4>
@@ -61,14 +61,18 @@ export default function Overview() {
               <h4>{t("parking", "Parking")}</h4>
               <p className="text-sm mt-1">{t("parking_text", "Parking is available at the venue.")}</p>
             </div>
-            {overviewInfo?.hotels?.[lang] && overviewInfo.hotels[lang].length > 0 && (
+            {overviewInfo?.hotels && overviewInfo.hotels.length > 0 && (
               <div>
                 <h4>{t("hotels", "Accommodation")}</h4>
                 <div className="text-sm mt-1">
-                  {overviewInfo.hotels[lang].map((hotel) => (
-                    <p key={hotel}>{hotel}</p>
+                  {overviewInfo.hotels.map((hotel) => (
+                    <div key={hotel.name}>
+                      <p className="font-medium">{hotel.name}</p>
+                      <p>{hotel.note[lang]}</p>
+                      <p>Tel: {hotel.tel} &middot; <a href={`${hotel.web}`} target="_blank" rel="noreferrer" className="underline">{hotel.web}</a></p>
+                    </div>
                   ))}
-                  <p className="italic">{t("hotels_contact_us", "For other options or questions, feel free to reach out to us.")}</p>
+                  <p className="italic mt-1">{t("hotels_contact_us", "For other options or questions, feel free to reach out to us.")}</p>
                 </div>
               </div>
             )}
@@ -94,13 +98,13 @@ export default function Overview() {
               <h4>{t("gifts", "Gifts")}</h4>
               <p className="text-sm mt-1">{t("gifts_intro", "We truly have everything we need — but if you'd like to contribute towards our wedding expenses, we'd be very grateful. You can make a bank transfer to:")}</p>
               {paymentDetails && (
-                <ul className="list-none mt-2 text-sm space-y-1">
-                  <li><span className="font-bold">Name:</span> {paymentDetails.bank.name}</li>
-                  <li><span className="font-bold">IBAN:</span> {paymentDetails.bank.iban}</li>
-                  <li><span className="font-bold">BIC:</span> {paymentDetails.bank.bic}</li>
-                </ul>
+                <div className="text-sm mt-1 leading-snug">
+                  <p><span className="font-bold">Name:</span> {paymentDetails.bank.name}</p>
+                  <p><span className="font-bold">IBAN:</span> {paymentDetails.bank.iban}</p>
+                  <p><span className="font-bold">BIC:</span> {paymentDetails.bank.bic}</p>
+                </div>
               )}
-              <p className="text-sm mt-2">{t("gifts_cash", "Cash at the wedding is also very welcome!")}</p>
+              <p className="text-sm mt-1">{t("gifts_cash", "Cash at the wedding is also very welcome!")}</p>
             </div>
           </div>
         </ContentTile>

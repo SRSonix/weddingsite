@@ -7,14 +7,21 @@ function get_overview(){
         "date" => "2026-10-31",
         "arrival_time" => "14:00",
         "location"=> "Reitpark Mergenthau, Mergenthau 2, 86438 Kissing",
-        "location_maps_link" => "https://maps.app.goo.gl/example",
+        "location_maps_link" => "https://maps.app.goo.gl/7SRGo6cvHnD9aFqCA",
         "phone"=> [
             "Alexine" => "+49 152 33521759",
             "Michael" => "+49 157 87061643"
         ],
         "hotels" => [
-            "de" => ["Hotel Reitpark Mergenthau"],
-            "fr" => ["Hotel Reitpark Mergenthau"]
+            [
+                "name" => "TODO",
+                "tel" => "TODO",
+                "web" => "TODO",
+                "note" => [
+                    "de" => "TODO",
+                    "fr" => "TOO"
+                ]
+            ]
         ],
         "public_transport" => [
             "de" => "Vom Bahnhof Kissing zu Fuß erreichbar",

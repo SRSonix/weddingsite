@@ -5,6 +5,7 @@
   "date_and_time": "Datum und Uhrzeit",
   "arrival": "Ankunft",
   "location": "Ort",
+  "maps": "Maps",
   "dress_code": "Kleiderordnung",
   "dress_text": "Elegant, aber kein strikter Dresscode – trag, was dich gut fühlen lässt!",
   "parking": "Parken",
@@ -21,7 +22,8 @@
   "agenda": "Programm",
   "rsvp": "Bitte fülle das RSVP aus",
 
-  "save_reminder": "Bitte beachten Sie, dass keine Änderungen gespeichert werden, bis Sie auf Senden drücken!",
+  "save_reminder": "Bitte beachte, dass keine Änderungen gespeichert werden, bis du auf Speichern drückst!",
+  "rsvp_note": "Deine Teilnahme gilt für die gesamte Gruppe. Wir werden deine E-Mail-Adresse nutzen, um dich bei Bedarf zu kontaktieren.",
   "attendance": "Teilnahme",
   "not_set": "Nicht gesetzt!",
   "undecided": "Ich weiß noch nicht, ob ich kommen kann.",
@@ -37,6 +39,7 @@
   "edit": "Bearbeiten",
   "save": "Speichern",
   "delete": "Löschen",
+  "delete_person": "Person entfernen",
   "error_attendance_required": "Bitte wähle deine Teilnahme aus.",
   "error_language_required": "Bitte wähle eine Sprache aus.",
   "party": "Eure Gruppe",
@@ -46,6 +49,7 @@
   "new_family_member": "Neue Person",
   "name": "Name",
   "diet": "Ernährung",
+  "diet_placeholder": "Keine Allergien / Präferenzen",
   "is_child": "Kind",
   "please_select": "Bitte wählen",
   "yes": "Ja",
@@ -54,5 +58,7 @@
   "error_please_select": "Bitte wählen",
 
   "login": "Anmelden",
-  "please_log_in": "Bitte melden Sie sich an, um den Inhalt dieser Webseite zu sehen."
+  "please_log_in": "Bitte melden Sie sich an, um den Inhalt dieser Webseite zu sehen.",
+  "page_personalized_for": "Diese Seite ist personalisiert für {{name}} und verwendet einen Session-Token.",
+  "logout": "Abmelden"
 }

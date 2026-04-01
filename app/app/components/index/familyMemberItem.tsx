@@ -66,7 +66,7 @@ export function FamilyMemberForm({id, defaultData, submitChanges, cancelCallback
         {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
         <div className="flex align-center w-full">
             <label htmlFor="diet">{t("diet", "Diet")}</label>:<br/>
-            <input disabled={!edit} placeholder={t("diet", "Diet")} value={formData.diet == undefined ? "": formData.diet} id="diet" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
+            <input disabled={!edit} placeholder={t("diet_placeholder", "No allergies / preferences")} value={formData.diet == undefined ? "": formData.diet} id="diet" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
         </div>
         <div className="flex align-center w-full">
             <label htmlFor="is_child">{t("is_child", "Child")}</label>:<br/>
@@ -89,7 +89,7 @@ export function FamilyMemberForm({id, defaultData, submitChanges, cancelCallback
             </button>}
             {edit && id !== undefined && deleteCallback && (
                 <button onClickCapture={deleteCallback} className="btn btn-red btn-small ml-auto">
-                    {t("delete", "Delete")}
+                    {t("delete_person", "Remove person")}
                 </button>
             )}
         </div>

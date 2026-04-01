@@ -8,6 +8,7 @@ import {
   ScrollRestoration,
   useLocation,
 } from "react-router";
+import { useTranslation } from "react-i18next";
 import Backend from 'i18next-http-backend';
 import detector from "i18next-browser-languagedetector";
 
@@ -76,11 +77,12 @@ function AdminBanner() {
 
 function LogoutBanner() {
   const {user, logout} = useUser();
+  const {t} = useTranslation("app");
   if (!user) return null;
   return (
     <div className="max-w-5xl mx-auto px-4 py-3 mt-6 flex items-center justify-between text-sm text-olive-600 border-t border-olive-200">
-      <span className="italic">This page is personalized for {user.name}.</span>
-      <button onClick={logout} className="btn btn-small">Logout</button>
+      <span className="italic">{t("page_personalized_for", "This page is personalized for {{name}} using a session token.", {name: user.name})}</span>
+      <button onClick={logout} className="btn btn-small">{t("logout", "Logout")}</button>
     </div>
   );
 }

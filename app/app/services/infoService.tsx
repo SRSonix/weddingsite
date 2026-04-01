@@ -1,3 +1,10 @@
+export interface HotelInfo{
+    name: string,
+    tel: string,
+    web: string,
+    note: Record<string, string>
+}
+
 export class OverviewInfo{
     constructor(
         public date: string,
@@ -5,7 +12,7 @@ export class OverviewInfo{
         public location: string,
         public location_maps_link: string,
         public phone: Record<string, string>,
-        public hotels: Record<string, string[]>,
+        public hotels: HotelInfo[],
         public public_transport: Record<string, string>
     ){};
 }

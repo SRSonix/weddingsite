@@ -45,9 +45,12 @@ export function Rsvp() {
 
     return (
         <div>
-            {edit && <p className="text-l/4 text-red-900 pb-3">{t("save_reminder", "Please note that no changes will be saved until you press submit!")}</p>}
-            <ul>
-                <li className="flex align-center w-full mb-2">
+            <div className="bg-olive-50 border border-olive-100 rounded-lg p-4 shadow-sm mb-4">
+                <div className="bg-olive-100 border border-olive-300 rounded-lg p-3 mb-3 text-sm">
+                    {t("rsvp_note", "Your attendance applies to the whole group. We will use your email address to contact you if needed.")}
+                </div>
+                {edit && <p className="text-sm text-red-900 pb-3">{t("save_reminder", "Please note that no changes will be saved until you press save!")}</p>}
+                <div className="flex align-center w-full mb-2">
                     <label htmlFor="attendance">{t("attendance", "Attendance")}</label>:
                     <select disabled={!edit} value={formData.attendance == undefined ? "": formData.attendance} id="attendance" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "appearance-none") + (errors.attendance ? " border-red-500" : "")}>
                         <option disabled value={""}>{t("not_set", "Not set")}</option>
@@ -55,32 +58,32 @@ export function Rsvp() {
                         <option value={Attandance.will_join}>{t(Attandance.will_join, "I will join the wedding!")}</option>
                         <option value={Attandance.will_not_join}>{t(Attandance.will_not_join, "I will not be able to join.")}</option>
                     </select>
-                </li>
+                </div>
                 {errors.attendance && <p className="text-red-500 text-sm">{errors.attendance}</p>}
-                <li className="flex align-center w-full mb-2">
+                <div className="flex align-center w-full mb-2">
                     <label htmlFor="mail">{t("mail", "Email")}</label>:
                     <input disabled={!edit} placeholder={t("mail", "Email")} value={formData.mail == undefined ? "": formData.mail} id="mail" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
-                </li>
-                <li className="flex align-center w-full mb-2">
+                </div>
+                <div className="flex align-center w-full mb-2">
                     <label htmlFor="language">{t("language", "Language")}</label>:
                     <select disabled={!edit} value={formData.language == undefined ? "": formData.language} id="language" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "appearance-none") + (errors.language ? " border-red-500" : "")}>
                         <option disabled value={""}>{t("not_set", "Not set")}</option>
                         <option value={Language.de}>{t(Language.de, "German")}</option>
                         <option value={Language.fr}>{t(Language.fr, "French")}</option>
                     </select>
-                </li>
+                </div>
                 {errors.language && <p className="text-red-500 text-sm">{errors.language}</p>}
-            </ul>
-            <div className="pt-3">
-                {!edit && <button onClickCapture={() => setEdit(true)} className="btn">
-                    {t("edit_rsvp", "Edit RSVP")}
-                </button>}
-                {edit && <button onClickCapture={submitRsvp} className="btn btn-green mr-2">
-                    {t("submit", "Submit")}
-                </button>}
-                {edit && <button onClickCapture={resetRsvp} className="btn btn-red">
-                    {t("cancel", "Cancel")}
-                </button>}
+                <div className="pt-3 flex items-center gap-2">
+                    {!edit && <button onClickCapture={() => setEdit(true)} className="btn btn-small">
+                        {t("edit_rsvp", "Edit RSVP")}
+                    </button>}
+                    {edit && <button onClickCapture={submitRsvp} className="btn btn-green btn-small">
+                        {t("save", "Save")}
+                    </button>}
+                    {edit && <button onClickCapture={resetRsvp} className="btn btn-small">
+                        {t("cancel", "Cancel")}
+                    </button>}
+                </div>
             </div>
             {user && <div className="mt-6">
                 <p className="font-bold mb-2">{t("party", "Your Party")}</p>
