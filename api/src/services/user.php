@@ -7,10 +7,10 @@ require_once "repositories/family_member.php";
 require_once "services/auth.php";
 require_once "exceptions.php";
 
-function create_user($name, $role, $language) {
+function create_user($name, $role, $language, $invited_by = NULL) {
 	$jti = \AuthService\generate_jti();
 
-    $user_id = \UserRepository\create_user($name, $role, $language, $jti);
+    $user_id = \UserRepository\create_user($name, $role, $language, $jti, $invited_by);
 
     if ($user_id === NULL) {
         throw new \InternalServerError("unable to create user.");
@@ -31,13 +31,15 @@ function update_user_token($user_id) {
     return \AuthService\generate_user_token($user_id, $jti);
 }
 
-function get_user($user_id) {
-    \UserRepository\update_last_visited($user_id);
-
+function fetch_user($user_id) {
     $user = \UserRepository\get_user_by_id($user_id);
     $user->family_members = \FamilyMemberRepository\get_family_members($user_id);
-
     return $user;
+}
+
+function get_user($user_id) {
+    \UserRepository\update_last_visited($user_id);
+    return fetch_user($user_id);
 }
 
 function get_all_users(){
@@ -68,27 +70,29 @@ function update_user_rsvp(
         throw new \InternalServerError("unable to update user RSVP.");
     }
 
-    return get_user($user_id);
+    return fetch_user($user_id);
 }
 
 
 function update_user_core_info(
-    $user_id, 
+    $user_id,
     $name,
     $role,
+    $invited_by = NULL,
     ){
 
     $success = \UserRepository\update_user_core_info(
-        $user_id, 
-        $name, 
+        $user_id,
+        $name,
         $role,
+        $invited_by,
     );
 
     if (!$success){
         throw new \InternalServerError("unable to update user core.");
     }
 
-    return get_user($user_id);
+    return fetch_user($user_id);
 }
 
 function delete_user($user_id) {

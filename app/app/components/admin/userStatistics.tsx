@@ -1,68 +1,90 @@
-import { useEffect, useState } from "react";
 import { useAllUsers } from "~/providers/allUserProvider";
-import { Attandance } from "~/services/userService";
+import { Attandance, InvitedBy, User } from "~/services/userService";
 
+const INVITED_BY_COLS = [
+    { key: "total",          label: "Total" },
+    { key: InvitedBy.both,   label: "Both" },
+    { key: InvitedBy.groom,  label: "Groom" },
+    { key: InvitedBy.bride,  label: "Bride" },
+] as const;
 
-export default function UserStatisticsPanel(){
-    const {allUsers, reloadAllUsers} = useAllUsers();
+const ATTENDANCE_ROWS = [
+    { key: "total",                    label: "Total" },
+    { key: null,                       label: "Not set" },
+    { key: Attandance.undecided,       label: "Unknown" },
+    { key: Attandance.will_join,       label: "Coming" },
+    { key: Attandance.will_not_join,   label: "Not coming" },
+] as const;
 
-    function exportAllUsersCsv(){
-        const fields: string[] = [
-            "name", 
-            "attendance",
-            "diet",
-            "drinks",
-            "mail", 
-            "seating_preference",
-        ]
+type ColKey = typeof INVITED_BY_COLS[number]["key"];
+type RowKey = typeof ATTENDANCE_ROWS[number]["key"];
 
-        let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent = csvContent + fields.join(",") + "\n";
-        csvContent = csvContent + allUsers.map(
-            (user) => {
-                let row =  fields.map((field) =>{
-                    if(field === "drinks"){
-                        return user[field].join("/")
-                    }
-                    return user[field]?.replace(/(\r\n|\n|\r)/gm, "");
-                }).join(",");
-                return row;
-            }
-        ).join("\n");
+function matchesCol(user: User, col: ColKey): boolean {
+    if (col === "total") return true;
+    return user.invited_by === col;
+}
 
-        var encodedUri = encodeURI(csvContent);
-        var link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "users-" + new Date().toISOString().split('.')[0].replaceAll(":", "-")+"Z"+ ".csv");
-        document.body.appendChild(link);
+function matchesRow(user: User, row: RowKey): boolean {
+    if (row === "total") return true;
+    if (row === null) return user.attendance == null;
+    return user.attendance === row;
+}
 
-        link.click();
-    }
-    
+function countUsers(users: User[], row: RowKey, col: ColKey): number {
+    return users.filter(u => matchesRow(u, row) && matchesCol(u, col)).length;
+}
+
+function countFamilyMembers(users: User[], row: RowKey, col: ColKey): number {
+    return users
+        .filter(u => matchesRow(u, row) && matchesCol(u, col))
+        .reduce((sum, u) => sum + u.familyMembers.length, 0);
+}
+
+function StatsTable({ title, getValue }: { title: string; getValue: (row: RowKey, col: ColKey) => number }) {
+    return (
+        <div className="mb-6">
+            <h4 className="font-semibold mb-2">{title}</h4>
+            <table className="border-collapse text-sm">
+                <thead>
+                    <tr>
+                        <th className="border border-gray-400 px-3 py-1 bg-gray-100"></th>
+                        {INVITED_BY_COLS.map(col => (
+                            <th key={col.key} className="border border-gray-400 px-3 py-1 bg-gray-100">{col.label}</th>
+                        ))}
+                    </tr>
+                </thead>
+                <tbody>
+                    {ATTENDANCE_ROWS.map(row => (
+                        <tr key={String(row.key)}>
+                            <td className="border border-gray-400 px-3 py-1 font-medium bg-gray-50">{row.label}</td>
+                            {INVITED_BY_COLS.map(col => (
+                                <td key={col.key} className="border border-gray-400 px-3 py-1 text-center">
+                                    {getValue(row.key, col.key)}
+                                </td>
+                            ))}
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
+}
+
+export default function UserStatisticsPanel() {
+    const { allUsers } = useAllUsers();
+
     return (
         <div>
-            <h2 className="text-black mb-3">User Statistics</h2>
-            <button onClick={reloadAllUsers} className="btn mr-3">reload users</button>
-            <button onClick={exportAllUsersCsv} className="btn">export users</button>
-            <div>
-                <h4>invite overview</h4>
-                invited <br/>
-                user-count: {allUsers.length} <br/>
-                adult-count {allUsers.map((user)=>user.familyMembers.filter((member)=>member.is_child==false).length).reduce((a, b)=>a+b, 0)} <br/>
-                child-count {allUsers.map((user)=>user.familyMembers.filter((member)=>member.is_child==true).length).reduce((a, b)=>a+b, 0)} <br/>
-                attending <br/>
-                user-count: {allUsers.filter((user) => (user.attendance==Attandance.will_join)).length} <br/>
-                adult-count {allUsers.filter((user) => (user.attendance==Attandance.will_join)).map((user)=>user.familyMembers.filter((member)=>member.is_child==false).length).reduce((a, b)=>a+b, 0)} <br/>
-                child-count {allUsers.filter((user) => (user.attendance==Attandance.will_join)).map((user)=>user.familyMembers.filter((member)=>member.is_child==true).length).reduce((a, b)=>a+b, 0)} <br/>
-            </div>
-            <div>
-                <h4>attendance overview</h4>
-                user-count: {allUsers.length} <br/>
-                joining user-count: {allUsers.filter((user) => (user.attendance==Attandance.will_join)).length} <br/>
-                not joining user-count: {allUsers.filter((user) => (user.attendance==Attandance.will_not_join)).length} <br/>
-                undecided user-count: {allUsers.filter((user) => (user.attendance==Attandance.undecided)).length} <br/>
-                attendance not set user-count: {allUsers.filter((user) => (user.attendance===null)).length} <br/><br/>  
+            <div className="mt-4">
+                <StatsTable
+                    title="Users by attendance and invited by"
+                    getValue={(row, col) => countUsers(allUsers, row, col)}
+                />
+                <StatsTable
+                    title="Family members by attendance and invited by"
+                    getValue={(row, col) => countFamilyMembers(allUsers, row, col)}
+                />
             </div>
         </div>
-    )
+    );
 }

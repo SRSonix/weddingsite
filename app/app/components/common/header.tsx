@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react"
+import { useTranslation } from "react-i18next";
 import { useUser } from "~/providers/userProvider";
 import { InfoService, type OverviewInfo } from "~/services/infoService";
 
 export function Header() {
     const {user} = useUser();
+    const {t} = useTranslation("app");
     const [overviewInfo, setOverviewInfo] = useState<OverviewInfo | undefined>(undefined);
 
     useEffect(() => {
@@ -13,7 +15,13 @@ export function Header() {
     }, [user]);
 
     const daysToGo = overviewInfo?.date
-        ? Math.ceil((new Date(overviewInfo.date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+        ? (() => {
+            // Compare calendar dates in German timezone (Europe/Berlin)
+            const todayBerlin = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin' }).format(new Date());
+            const weddingMs = new Date(overviewInfo.date.split('T')[0]).getTime();
+            const todayMs = new Date(todayBerlin).getTime();
+            return Math.ceil((weddingMs - todayMs) / (1000 * 60 * 60 * 24));
+        })()
         : null;
 
     return (
@@ -23,7 +31,7 @@ export function Header() {
             )}
             <p className="font-wedding text-7xl text-olive-700">Alexine & Michael</p>
             {user && daysToGo !== null && (
-                <p className="text-olive-500 text-sm mt-1">{daysToGo} days to go</p>
+                <p className="text-olive-500 text-sm mt-1">{t("days_to_go", "{{count}} days to go", {count: daysToGo})}</p>
             )}
         </header>
     );

@@ -62,5 +62,7 @@
   "please_log_in": "Veuillez vous connecter pour voir le contenu de ce site.",
   "page_personalized_for": "Cette page est personnalisée pour {{name}} et utilise un jeton de session.",
   "logout": "Se déconnecter",
-  "privacy_policy": "Politique de confidentialité"
+  "privacy_policy": "Politique de confidentialité",
+  "days_to_go_one": "Plus que {{count}} jour",
+  "days_to_go_other": "Plus que {{count}} jours"
 }

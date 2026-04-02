@@ -34,14 +34,17 @@ class UserTest extends ApiIntegrationTestCase
     public static function invalidUsers(): array
     {
         return [
-            [["role"=> "USER", "language"=> "fr"]],
-            [["name" => "test-user","language"=> "fr"]],
-            [["name" => "test-user", "role"=> "USER",]],
-            [["name" => NULL, "role"=> "USER", "language"=> "fr"]],
-            [["name" => "test-user", "role"=> NULL, "language"=> "fr"]],
-            [["name" => "test-user", "role"=> "USER", "language"=> NULL]],
-            [["name" => "test-user", "role"=> "bogus", "language"=> "fr"]],
-            [["name" => "test-user", "role"=> "USER", "language"=> "bogus"]],
+            [["role"=> "USER", "language"=> "fr", "invited_by"=>"both"]],
+            [["name" => "test-user","language"=> "fr", "invited_by"=>"both"]],
+            [["name" => "test-user", "role"=> "USER", "invited_by"=>"both"]],
+            [["name" => "test-user", "role"=> "USER", "language"=> "fr"]],
+            [["name" => NULL, "role"=> "USER", "language"=> "fr", "invited_by"=>"both"]],
+            [["name" => "test-user", "role"=> NULL, "language"=> "fr", "invited_by"=>"both"]],
+            [["name" => "test-user", "role"=> "USER", "language"=> NULL, "invited_by"=>"both"]],
+            [["name" => "test-user", "role"=> "USER", "language"=> "fr", "invited_by"=> NULL]],
+            [["name" => "test-user", "role"=> "bogus", "language"=> "fr", "invited_by"=>"both"]],
+            [["name" => "test-user", "role"=> "USER", "language"=> "bogus", "invited_by"=>"both"]],
+            [["name" => "test-user", "role"=> "USER", "language"=> "fr", "invited_by"=> "bogus"]],
         ];
     }
 
@@ -65,9 +68,9 @@ class UserTest extends ApiIntegrationTestCase
     public static function validUsers(): array
     {
         return [
-            [["name" => "test-user", "role"=> "USER", "language"=> "fr"]],
-            [["name" => "test-user1", "role"=> "USER", "language"=> "de"]],
-            [["name" => "test-user2", "role"=> "ADMIN", "language"=> "de"]],
+            [["name" => "test-user", "role"=> "USER", "language"=> "fr", "invited_by"=> "groom"]],
+            [["name" => "test-user1", "role"=> "USER", "language"=> "de", "invited_by"=> "bride"]],
+            [["name" => "test-user2", "role"=> "ADMIN", "language"=> "de", "invited_by"=> "both"]],
         ];
     }
 
@@ -353,11 +356,26 @@ class UserTest extends ApiIntegrationTestCase
     }
 
     
+    public function testUpdateUserCoreAdminCannotUpdateSelf(): void
+    {
+        # GIVEN
+        parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user/1/core-info", method:PUT, body:["name"=>"bogus", "role"=>"USER", "invited_by"=>"both"]);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(403, $response->status);
+        $this->assertEquals("you are not allowed to update your own core info. ask another admin!", $response->body["message"]);
+    }
+
     public static function validUpdateCoreBody(): array
     {
         return [
-            [["name"=>"user", "role"=>"ADMIN"]],
-            [["name"=>"user2", "role"=>"USER"]],
+            [["name"=>"user", "role"=>"ADMIN", "invited_by"=>"groom"]],
+            [["name"=>"user2", "role"=>"USER", "invited_by"=>"bride"]],
+            [["name"=>"user3", "role"=>"USER", "invited_by"=>"both"]],
         ];
     }
 
@@ -368,7 +386,7 @@ class UserTest extends ApiIntegrationTestCase
     {
         # GIVEN
         parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/1/core-info", method:PUT, body:$body);
+        $request = $this->createRequest(path:"/user/2/core-info", method:PUT, body:$body);
 
         #WHEN
         $response = app($request);
@@ -377,23 +395,12 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(200, $response->status);
     }
 
-    public static function validUpdateCoreSetups(): array
-    {
-        return [
-            ["admin","admin", 1],
-            ["admin","user", 2],
-        ];
-    }
 
-    /**
-     * @dataProvider validUpdateCoreSetups
-     */
-    public function testUpdateUserCoreReturnUpdates($login_user, $target_user, $target_user_id): void
+    public function testUpdateUserCoreReturnUpdates(): void
     {
         # GIVEN
-        if ($login_user == "user") parent::loginAsUser();
-        else parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/$target_user_id/core-info", method:PUT, body:["name"=>"bogus", "role"=>"ADMIN"]);
+        parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user/2/core-info", method:PUT, body:["name"=>"bogus", "role"=>"ADMIN", "invited_by"=>"both"]);
 
         #WHEN
         $response = app($request);
@@ -401,13 +408,69 @@ class UserTest extends ApiIntegrationTestCase
         #THEN
         $this->assertEquals(200, $response->status);
         $this->assertInstanceOf(User::class, $response->body);
-        if ($target_user == "user") parent::loginAsUser();
-        else parent::loginAsAdmin();
+        parent::loginAsUser();
         $request = $this->createRequest(path:"/user", method:GET);
         $response = app($request);
         $this->assertInstanceOf(User::class, $response->body);
         $this->assertEquals("bogus", $response->body->name);
         $this->assertEquals("ADMIN", $response->body->role);
+    }
+
+    public function testGetUserUpdatesLastVisit(): void
+    {
+        # GIVEN
+        parent::loginAsUser();
+        $request = $this->createRequest(path:"/user", method:GET);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(200, $response->status);
+        $this->assertNotNull($response->body->last_visit);
+    }
+
+    private function getLastVisit(int $user_id): ?string {
+        $session = create_db_session();
+        $stmt = $session->prepare("SELECT last_visit FROM user WHERE id = :id;");
+        $stmt->execute(["id" => $user_id]);
+        return $stmt->fetch()["last_visit"];
+    }
+
+    public static function endpointsNotAffectingLastVisit(): array {
+        return [
+            ["/users",                  GET,    NULL,                                                           2, false],
+            ["/user",                   POST,   ["name"=>"n", "role"=>"USER", "language"=>"fr", "invited_by"=>"both"],  3, false],
+            ["/user/2/rsvp",            PUT,    ["mail"=>"m", "attendance"=>"will_join", "language"=>"de"],      2, false],
+            ["/user/2/core-info",       PUT,    ["name"=>"n", "role"=>"USER", "invited_by"=>"both"],             2, false],
+            ["/user/2/reset-token",     PUT,    NULL,                                                           2, false],
+            ["/user/2/family-member",   POST,   ["name"=>"n", "diet"=>NULL, "is_child"=>false],                  2, false],
+            ["/user/2/family-member/1", PUT,    ["name"=>"n", "diet"=>NULL, "is_child"=>false],                  2, true],
+         ];
+    }
+
+    /**
+     * @dataProvider endpointsNotAffectingLastVisit
+     */
+    public function testEndpointDoesNotUpdateLastVisit(string $path, string $method, ?array $body, int $user_id, bool $needs_family_member): void
+    {
+        # GIVEN
+        parent::loginAsAdmin();
+
+        if ($needs_family_member) {
+            $setup = $this->createRequest(path:"/user/2/family-member", method:POST, body:["name"=>"setup", "diet"=>NULL, "is_child"=>false]);
+            app($setup);
+        }
+
+        $request = $this->createRequest(path:$path, method:$method, body:$body);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertGreaterThanOrEqual(200, $response->status);
+        $this->assertLessThan(300, $response->status);
+        $this->assertNull($this->getLastVisit(2));
     }
 
     public function testUpdateUserCoreNoBodyReturns400(): void
@@ -427,11 +490,14 @@ class UserTest extends ApiIntegrationTestCase
     public static function userUpdateCorePartialBodies(): array
     {
         return [
-            [["role"=>"ADMIN"]],
-            [["name"=>"bogus"]],
-            [["name"=>NULL, "role"=>"ADMIN"]],
-            [["name"=>"bogus", "role"=>NULL]],
-            [["name"=>"user", "role"=>"bogus"]],
+            [["role"=>"ADMIN", "invited_by"=>"both"]],
+            [["name"=>"bogus", "invited_by"=>"both"]],
+            [["name"=>"bogus", "role"=>"ADMIN"]],
+            [["name"=>NULL, "role"=>"ADMIN", "invited_by"=>"both"]],
+            [["name"=>"bogus", "role"=>NULL, "invited_by"=>"both"]],
+            [["name"=>"bogus", "role"=>"ADMIN", "invited_by"=>NULL]],
+            [["name"=>"user", "role"=>"bogus", "invited_by"=>"both"]],
+            [["name"=>"bogus", "role"=>"ADMIN", "invited_by"=>"bogus"]],
         ];
     }
 
@@ -865,5 +931,3 @@ class UserTest extends ApiIntegrationTestCase
     }
 
 }
-
-# TODO: should admin be able to remove himself?

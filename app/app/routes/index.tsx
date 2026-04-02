@@ -1,5 +1,5 @@
 import { ContentTile } from "~/components/common/content_tile";
-import type { Route } from "./+types/overview";
+import type { Route } from "./+types/index";
 import { useTranslation } from "react-i18next";
 import { useUser } from "~/providers/userProvider";
 import { EmptyState } from "~/components/common/empty_state";
@@ -106,7 +106,7 @@ export default function Overview() {
           </div>
         </ContentTile>
         <ContentTile header={t("agenda", "Programme")}><Agenda></Agenda></ContentTile>
-<ContentTile header={t("rsvp", "Please fill out RSVP")} fullWidth><Rsvp></Rsvp></ContentTile>
+        <ContentTile header={t("rsvp", "Please fill out RSVP")} fullWidth><Rsvp></Rsvp></ContentTile>
       </div>
     </EmptyState>
     </>

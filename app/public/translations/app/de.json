@@ -62,5 +62,7 @@
   "please_log_in": "Bitte melden Sie sich an, um den Inhalt dieser Webseite zu sehen.",
   "page_personalized_for": "Diese Seite ist personalisiert für {{name}} und verwendet einen Session-Token.",
   "logout": "Abmelden",
-  "privacy_policy": "Datenschutzerklärung"
+  "privacy_policy": "Datenschutzerklärung",
+  "days_to_go_one": "Noch {{count}} Tag",
+  "days_to_go_other": "Noch {{count}} Tage"
 }

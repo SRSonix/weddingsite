@@ -8,23 +8,24 @@ require_once "controllers/base/response.php";
 
 function create_user(\Request $request){
     $request->validateAdminAccess();
-    $request->validateBodyContainsKeys(["name", "role", "language"], TRUE);
-    $request->validateAcceptableValues(["role"=> ["ADMIN", "USER"], "language"=>["de", "fr"]]);
+    $request->validateBodyContainsKeys(["name", "role", "language", "invited_by"], TRUE);
+    $request->validateAcceptableValues(["role"=> ["ADMIN", "USER"], "language"=>["de", "fr"], "invited_by"=>["groom", "bride", "both"]]);
 
     $name = $request->body["name"];
     $role = $request->body["role"];
     $language = $request->body["language"];
+    $invited_by = $request->body["invited_by"];
 
-    _log("creating: user $name / $role / $language");
+    _log("creating: user $name / $role / $language / $invited_by");
 
-    $token = \UserService\create_user($name, $role, $language);
+    $token = \UserService\create_user($name, $role, $language, $invited_by);
 
-    if ($token === NULL) {        
+    if ($token === NULL) {
         throw new \InternalServerError("error creating user");
     }
 
     return new \Response(
-        body: ["token"=>$token], 
+        body: ["token"=>$token],
         status: 201
     );
 }
@@ -76,18 +77,24 @@ function update_user_rsvp(\Request $request){
 
 function update_user_core_info(\Request $request){
     $request->validateAdminAccess();
-    $request->validateBodyContainsKeys(["name", "role"], TRUE);
-    $request->validateAcceptableValues(["role"=> ["ADMIN", "USER"]]);
+    $request->validateBodyContainsKeys(["name", "role", "invited_by"], TRUE);
+    $request->validateAcceptableValues(["role"=> ["ADMIN", "USER"], "invited_by"=>["groom", "bride", "both"]]);
 
     $user_id = $request->path_params["user_id"];
+
+    if ($user_id == $request->user_id) {
+        throw new \ForbiddenException("you are not allowed to update your own core info. ask another admin!");
+    }
     $name = $request->body["name"];
     $role = $request->body["role"];
+    $invited_by = $request->body["invited_by"];
 
     return new \Response(
         body: \UserService\update_user_core_info(
-            $user_id, 
-            $name, 
+            $user_id,
+            $name,
             $role,
+            $invited_by,
         )
     );
 }

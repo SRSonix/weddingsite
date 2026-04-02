@@ -1,3 +1,9 @@
+export enum InvitedBy {
+  groom = "groom",
+  bride = "bride",
+  both = "both",
+}
+
 export enum Attandance {
   will_join = "will_join",
   will_not_join="will_not_join",
@@ -61,12 +67,13 @@ export class RsvpInformation{
 
 export class UserCoreInfo{
   constructor(
-    public role: string | undefined, 
-    public name: string | undefined
+    public role: string | undefined,
+    public name: string | undefined,
+    public invited_by: InvitedBy | null | undefined,
   ){}
 
   static getEmpty(){
-    return new UserCoreInfo(undefined, undefined);
+    return new UserCoreInfo(undefined, undefined, undefined);
   }
 }
 
@@ -79,7 +86,8 @@ export class User extends RsvpInformation{
     attendance: Attandance | undefined,
     language: string | undefined,
     public last_visit: string,
-    public familyMembers: FamilyMember[]
+    public familyMembers: FamilyMember[],
+    public invited_by: InvitedBy | null,
   ){
     super(mail, attendance, language);
   }
@@ -89,9 +97,8 @@ export class User extends RsvpInformation{
   }
 
   static fromData (data: any){
-
     let familyMembers = data.family_members.map((row: any)=>FamilyMember.fromData(row));
-    return new User(data.id, data.role, data.name, data.mail, data.attendance, data.language, data.last_visit, familyMembers);
+    return new User(data.id, data.role, data.name, data.mail, data.attendance, data.language, data.last_visit, familyMembers, data.invited_by);
   }
 }
 
@@ -114,7 +121,7 @@ export class UserService{
     }
   };
 
-  static async createUser(body: {name: string, role: string, language: string}){
+  static async createUser(body: {name: string, role: string, language: string, invited_by: string}){
     try{
       const response = await fetch(
         `${UserService.BASE_URL}`, 

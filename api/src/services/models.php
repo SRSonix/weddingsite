@@ -9,16 +9,18 @@ class User{
     public $language;
     public $last_visit;
     public $family_members;
+    public $invited_by;
 
     public function __construct(
-            $id, 
-            $role, 
-            $name, 
-            $mail, 
-            $attendance, 
-            $language, 
+            $id,
+            $role,
+            $name,
+            $mail,
+            $attendance,
+            $language,
             $last_visit,
             $family_members,
+            $invited_by = NULL,
         ){
         $this->id = $id;
         $this->role = $role;
@@ -28,6 +30,7 @@ class User{
         $this->language = $language;
         $this->last_visit = $last_visit;
         $this->family_members = $family_members;
+        $this->invited_by = $invited_by;
     }
 }
 

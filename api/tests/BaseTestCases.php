@@ -19,7 +19,8 @@ class DatabaseTestCase extends TestCase
             attendance ENUM('will_join', 'will_not_join', 'undecided'),
             language ENUM('fr', 'de'),
             last_visit TIMESTAMP,
-            seating_preference TEXT
+            seating_preference TEXT,
+            invited_by ENUM('groom', 'bride', 'both') NOT NULL
             );
 
             CREATE TABLE user_auth (
@@ -40,9 +41,9 @@ class DatabaseTestCase extends TestCase
                 (1, 'ca6b1fb1a7e0e48523c1875eab7a130a47942b05'),
                 (2, 'b4801afabd2ee11a411b1c1ad9de8058e835650b')
             ;
-            INSERT INTO user (id, role, name) VALUES 
-                (1, 'ADMIN', 'ADMIN'),
-                (2, 'USER', 'USER')
+            INSERT INTO user (id, role, name, invited_by) VALUES 
+                (1, 'ADMIN', 'ADMIN', 'both'),
+                (2, 'USER', 'USER', 'both')
             ;
         SQL;
 

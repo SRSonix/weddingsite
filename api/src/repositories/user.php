@@ -9,12 +9,13 @@ function user_from_row($row){
     return new \User(
         id: $row["id"],
         role: $row["role"],
-        name: $row["name"], 
-        mail: $row["mail"], 
-        attendance: $row["attendance"] , 
-        language: $row["language"] , 
+        name: $row["name"],
+        mail: $row["mail"],
+        attendance: $row["attendance"],
+        language: $row["language"],
         last_visit: $row["last_visit"],
         family_members: NULL,
+        invited_by: $row["invited_by"],
     );
 }
 
@@ -75,17 +76,17 @@ function get_user_token_jti($user_id) {
     return $result[0]["jti"];
 }
 
-function create_user($name, $role, $language, $jti) {
-    $session = create_db_session();    
+function create_user($name, $role, $language, $jti, $invited_by = NULL) {
+    $session = create_db_session();
 
     try {
-        $stmt = $session->prepare("INSERT INTO user_auth(jti) VALUES (:jti);");       
+        $stmt = $session->prepare("INSERT INTO user_auth(jti) VALUES (:jti);");
         $stmt->execute(["jti"=>$jti]);
         $lastInsertId = $session->lastInsertId();
-        $stmt = $session->prepare("INSERT INTO user (id, role, name, language) VALUES(:id, :role, :name, :language);");
-        $stmt->execute(["id"=>$lastInsertId, "role"=> $role, "name"=>$name, "language"=>$language]);
+        $stmt = $session->prepare("INSERT INTO user (id, role, name, language, invited_by) VALUES(:id, :role, :name, :language, :invited_by);");
+        $stmt->execute(["id"=>$lastInsertId, "role"=> $role, "name"=>$name, "language"=>$language, "invited_by"=>$invited_by]);
     }
-    catch(\PDOException $e) 
+    catch(\PDOException $e)
     {
         _log($e);
         $session = null;
@@ -97,23 +98,24 @@ function create_user($name, $role, $language, $jti) {
 }
 
 function update_user_core_info(
-    $user_id, 
-    $name, 
+    $user_id,
+    $name,
     $role,
+    $invited_by = NULL,
     ){
-    $session = create_db_session();    
+    $session = create_db_session();
 
     try {
-        $stmt = $session->prepare("UPDATE user SET name = :name, role = :role WHERE id = :user_id;");
-        $stmt->execute(["user_id"=>$user_id, "name"=>$name, "role"=> $role]);
+        $stmt = $session->prepare("UPDATE user SET name = :name, role = :role, invited_by = :invited_by WHERE id = :user_id;");
+        $stmt->execute(["user_id"=>$user_id, "name"=>$name, "role"=> $role, "invited_by"=>$invited_by]);
     }
-    catch(\PDOException $e) 
+    catch(\PDOException $e)
     {
         _log($e);
         $session = null;
         return False;
     }
-    
+
     $session = null;
 
     return True;
