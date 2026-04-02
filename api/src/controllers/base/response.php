@@ -23,6 +23,10 @@ class Response
         http_response_code($this->status);
         header('Content-Type: '.$this->contentType);
 
+        if ($this->contentType == 'application/json') {
+            header('Cache-Control: no-store');
+        }
+
         foreach ($this->cookies as $cookie){
             setcookie(...$cookie);
         }

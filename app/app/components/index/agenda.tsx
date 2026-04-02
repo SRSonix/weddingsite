@@ -2,13 +2,14 @@ import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next";
 import { useUser } from "~/providers/userProvider";
 
+
 import { InfoService, type AgendaData, type AgendaItem } from "~/services/infoService";
 
 
 export function Agenda(){
     const [agenda, setAgenda] = useState<AgendaData | undefined>(undefined)
     const {user} = useUser();
-    const {i18n} = useTranslation("app");
+    const {t, i18n} = useTranslation("app");
 
     function getAgendaString(agenda: AgendaItem): string{
         const lang = i18n.language as keyof AgendaItem;
@@ -24,6 +25,7 @@ export function Agenda(){
     }, [user])
 
     return <div className="space-y-3">
+        <p className="text-sm text-olive-600/70 italic">{t("agenda_placeholder", "The final programme will be published here soon.")}</p>
         {
             agenda !== undefined  &&
             Object.entries(agenda.items).map(([key, value]) => (

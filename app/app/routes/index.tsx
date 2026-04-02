@@ -35,16 +35,14 @@ export default function Overview() {
     <EmptyState>
       <div className="content-tile-wrap">
         <ContentTile fullWidth>
-          <div className="w-full aspect-[4/3] rounded-lg bg-olive-50 border-2 border-dashed border-olive-600/40 flex items-center justify-center text-olive-600/40 text-sm">
-            photo
-          </div>
+          <img
+            src={`${import.meta.env.VITE_API_URL}/image/couple.jpeg`}
+            alt={t("couple_photo_alt", "Photo of the couple")}
+            className="w-full rounded-lg"
+          />
         </ContentTile>
         <ContentTile header={t("need_to_know", "Need to Know")}>
           <div className="space-y-4">
-            <div>
-              <h4>{t("date_and_time", "Date and Time")}</h4>
-              <p className="text-sm mt-1">{overviewInfo?.date ? new Date(overviewInfo.date).toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit', year: 'numeric'}) : ''}, {t("arrival", "Arrival")} {overviewInfo?.arrival_time}</p>
-            </div>
             <div>
               <h4>{t("location", "Location")}</h4>
               <div className="text-sm mt-1">
@@ -68,7 +66,6 @@ export default function Overview() {
                   {overviewInfo.hotels.map((hotel) => (
                     <div key={hotel.name}>
                       <p className="font-medium">{hotel.name}</p>
-                      <p>{hotel.note[lang]}</p>
                       <p>Tel: {hotel.tel} &middot; <a href={`${hotel.web}`} target="_blank" rel="noreferrer" className="underline">{hotel.web}</a></p>
                     </div>
                   ))}
@@ -93,10 +90,11 @@ export default function Overview() {
             <div>
               <h4>{t("companions", "Partners & Children")}</h4>
               <p className="text-sm mt-1">{t("companions_text", "Please add anyone you would like to bring and remove anyone who will not be joining. We plan with these people, so it is important to keep this list up to date.")}</p>
+              <p className="text-sm mt-1">{t("companions_children", "Children are counted as children between the ages of 4 and 12.")}</p>
             </div>
             <div>
               <h4>{t("gifts", "Gifts")}</h4>
-              <p className="text-sm mt-1">{t("gifts_intro", "We truly have everything we need — but if you'd like to contribute towards our wedding expenses, we'd be very grateful. You can make a bank transfer to:")}</p>
+              <p className="text-sm mt-1">{t("gifts_intro", "We truly have everything we need — but if you'd like to contribute towards our wedding expenses, we'd be very grateful. Cash at the wedding or a bank transfer are both very welcome:")}</p>
               {paymentDetails && (
                 <div className="text-sm mt-1 leading-snug">
                   <p><span className="font-bold">Name:</span> {paymentDetails.bank.name}</p>
@@ -104,7 +102,6 @@ export default function Overview() {
                   <p><span className="font-bold">BIC:</span> {paymentDetails.bank.bic}</p>
                 </div>
               )}
-              <p className="text-sm mt-1">{t("gifts_cash", "Cash at the wedding is also very welcome!")}</p>
             </div>
           </div>
         </ContentTile>

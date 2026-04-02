@@ -16,10 +16,11 @@
   "phone": "Téléphone",
   "companions": "Partenaires & Enfants",
   "companions_text": "Veuillez ajouter toute personne que vous souhaitez amener et supprimer toute personne qui ne pourra pas venir. Nous planifions avec ces personnes, il est donc important de garder cette liste à jour.",
+  "companions_children": "Les enfants sont comptés comme enfants entre 4 et 12 ans.",
   "gifts": "Cadeaux",
-  "gifts_intro": "Nous avons vraiment tout ce dont nous avons besoin — mais si vous souhaitez contribuer à nos frais de mariage, nous en serions très reconnaissants. Vous pouvez effectuer un virement bancaire à :",
-  "gifts_cash": "Les espèces lors du mariage sont également les bienvenues !",
+  "gifts_intro": "Nous avons vraiment tout ce dont nous avons besoin — mais si vous souhaitez contribuer à nos frais de mariage, nous en serions très reconnaissants. Les espèces lors du mariage ou un virement bancaire sont les deux très bienvenus :",
   "agenda": "Programme",
+  "agenda_placeholder": "Le programme définitif sera publié ici prochainement.",
   "rsvp": "Veuillez remplir le RSVP",
 
   "save_reminder": "Veuillez noter qu'aucune modification ne sera enregistrée avant d'avoir cliqué sur Enregistrer !",
@@ -60,5 +61,6 @@
   "login": "Se connecter",
   "please_log_in": "Veuillez vous connecter pour voir le contenu de ce site.",
   "page_personalized_for": "Cette page est personnalisée pour {{name}} et utilise un jeton de session.",
-  "logout": "Se déconnecter"
+  "logout": "Se déconnecter",
+  "privacy_policy": "Politique de confidentialité"
 }

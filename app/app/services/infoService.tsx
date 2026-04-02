@@ -1,8 +1,7 @@
 export interface HotelInfo{
     name: string,
     tel: string,
-    web: string,
-    note: Record<string, string>
+    web: string
 }
 
 export class OverviewInfo{

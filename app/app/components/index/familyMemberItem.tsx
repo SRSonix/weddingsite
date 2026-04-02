@@ -61,23 +61,23 @@ export function FamilyMemberForm({id, defaultData, submitChanges, cancelCallback
     return <div>
         <div className="flex align-center w-full">
             <label htmlFor="name">{t("name", "Name")}</label>:<br/>
-            <input disabled={!edit} placeholder={t("name", "Name")} value={formData.name == undefined ? "": formData.name} id="name" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "") + (errors.name ? " border-red-500" : "")}/>
+            <input disabled={!edit} placeholder={t("name", "Name")} value={formData.name == undefined ? "": formData.name} id="name" onChange={handleChange} className={"flex-grow ml-1 min-w-0 " + (edit ?"input-inline" : "") + (errors.name ? " border-red-500" : "")}/>
         </div>
         {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
         <div className="flex align-center w-full">
             <label htmlFor="diet">{t("diet", "Diet")}</label>:<br/>
-            <input disabled={!edit} placeholder={t("diet_placeholder", "No allergies / preferences")} value={formData.diet == undefined ? "": formData.diet} id="diet" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
+            <input disabled={!edit} placeholder={t("diet_placeholder", "No allergies / preferences")} value={formData.diet == undefined ? "": formData.diet} id="diet" onChange={handleChange} className={"flex-grow ml-1 min-w-0 " + (edit ?"input-inline" : "")}/>
         </div>
         <div className="flex align-center w-full">
             <label htmlFor="is_child">{t("is_child", "Child")}</label>:<br/>
-            <select disabled={!edit} value={formData.is_child == undefined ? "": formData.is_child.toString()} id="is_child" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "appearance-none") + (errors.is_child ? " border-red-500" : "")}>
+            <select disabled={!edit} value={formData.is_child == undefined ? "": formData.is_child.toString()} id="is_child" onChange={handleChange} className={"flex-grow ml-1 min-w-0 " + (edit ?"input-inline" : "appearance-none") + (errors.is_child ? " border-red-500" : "")}>
                 <option disabled value={""}>{t("please_select", "Please select")}</option>
                 <option value={"true"}>{t("yes", "Yes")}</option>
                 <option value={"false"}>{t("no", "No")}</option>
             </select>
         </div>
         {errors.is_child && <p className="text-red-500 text-sm">{errors.is_child}</p>}
-        <div className="pt-3 flex items-center gap-2">
+        <div className="pt-3 flex flex-wrap items-center gap-2">
             {!edit && <button onClickCapture={() => setEdit(true)} className="btn btn-small">
                 {t("edit", "Edit")}
             </button>}

@@ -16,10 +16,11 @@
   "phone": "Telefon",
   "companions": "Partner & Kinder",
   "companions_text": "Bitte füge alle Personen, die du mitbringen möchtest, hinzu und entferne alle, die nicht kommen werden. Wir planen mit diesen Personen, daher ist es wichtig, diese Liste aktuell zu halten.",
+  "companions_children": "Kinder zählen als Kinder im Alter von 4 bis 12 Jahren.",
   "gifts": "Geschenke",
-  "gifts_intro": "Wir haben wirklich alles, was wir brauchen – aber wenn ihr zu unseren Hochzeitskosten beitragen möchtet, würden wir uns sehr freuen. Ihr könnt eine Banküberweisung vornehmen an:",
-  "gifts_cash": "Bargeld bei der Hochzeit ist ebenfalls sehr willkommen!",
+  "gifts_intro": "Wir haben wirklich alles, was wir brauchen – aber wenn ihr zu unseren Hochzeitskosten beitragen möchtet, würden wir uns sehr freuen. Bargeld an der Hochzeit oder eine Banküberweisung sind uns gleichermaßen willkommen:",
   "agenda": "Programm",
+  "agenda_placeholder": "Das endgültige Programm wird hier in Kürze veröffentlicht.",
   "rsvp": "Bitte fülle das RSVP aus",
 
   "save_reminder": "Bitte beachte, dass keine Änderungen gespeichert werden, bis du auf Speichern drückst!",
@@ -60,5 +61,6 @@
   "login": "Anmelden",
   "please_log_in": "Bitte melden Sie sich an, um den Inhalt dieser Webseite zu sehen.",
   "page_personalized_for": "Diese Seite ist personalisiert für {{name}} und verwendet einen Session-Token.",
-  "logout": "Abmelden"
+  "logout": "Abmelden",
+  "privacy_policy": "Datenschutzerklärung"
 }

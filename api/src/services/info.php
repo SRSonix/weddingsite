@@ -14,13 +14,9 @@ function get_overview(){
         ],
         "hotels" => [
             [
-                "name" => "TODO",
-                "tel" => "TODO",
-                "web" => "TODO",
-                "note" => [
-                    "de" => "TODO",
-                    "fr" => "TOO"
-                ]
+                "name" => "Schlosserwirt in Mering",
+                "tel" => " +49 8233 9504",
+                "web" => "https://schlosserwirt.de/"
             ]
         ],
         "public_transport" => [
@@ -35,37 +31,10 @@ function get_overview(){
 function get_agenda() {
     $info = [
         "14:00" => [
-            "en" => "Arrival & Welcome Drinks",
             "de" => "Ankunft & Willkommensgetränke",
             "fr" => "Arrivée & Cocktail de bienvenue"
         ],
-        "15:00" => [
-            "en" => "Wedding Ceremony",
-            "de" => "Trauzeremonie",
-            "fr" => "Cérémonie de mariage"
-        ],
-        "16:00" => [
-            "en" => "Cocktail Hour & Photos",
-            "de" => "Sektempfang & Fotos",
-            "fr" => "Cocktail & Photos"
-        ],
-        "17:30" => [
-            "en" => "Dinner",
-            "de" => "Abendessen",
-            "fr" => "Dîner"
-        ],
-        "19:30" => [
-            "en" => "Speeches & Cake",
-            "de" => "Reden & Hochzeitstorte",
-            "fr" => "Discours & Gâteau"
-        ],
-        "20:30" => [
-            "en" => "Dancing",
-            "de" => "Tanz",
-            "fr" => "Danse"
-        ],
-        "01:30" => [
-            "en" => "End",
+        "01:00" => [
             "de" => "Ende",
             "fr" => "Fin"
         ]

@@ -49,10 +49,9 @@ export function Rsvp() {
                 <div className="bg-olive-100 border border-olive-300 rounded-lg p-3 mb-3 text-sm">
                     {t("rsvp_note", "Your attendance applies to the whole group. We will use your email address to contact you if needed.")}
                 </div>
-                {edit && <p className="text-sm text-red-900 pb-3">{t("save_reminder", "Please note that no changes will be saved until you press save!")}</p>}
-                <div className="flex align-center w-full mb-2">
+<div className="flex align-center w-full mb-2">
                     <label htmlFor="attendance">{t("attendance", "Attendance")}</label>:
-                    <select disabled={!edit} value={formData.attendance == undefined ? "": formData.attendance} id="attendance" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "appearance-none") + (errors.attendance ? " border-red-500" : "")}>
+                    <select disabled={!edit} value={formData.attendance == undefined ? "": formData.attendance} id="attendance" onChange={handleChange} className={"flex-grow ml-1 min-w-0 " + (edit ?"input-inline" : "appearance-none") + (errors.attendance ? " border-red-500" : "")}>
                         <option disabled value={""}>{t("not_set", "Not set")}</option>
                         <option value={Attandance.undecided}>{t(Attandance.undecided, "Undecided")}</option>
                         <option value={Attandance.will_join}>{t(Attandance.will_join, "I will join the wedding!")}</option>
@@ -61,19 +60,19 @@ export function Rsvp() {
                 </div>
                 {errors.attendance && <p className="text-red-500 text-sm">{errors.attendance}</p>}
                 <div className="flex align-center w-full mb-2">
-                    <label htmlFor="mail">{t("mail", "Email")}</label>:
-                    <input disabled={!edit} placeholder={t("mail", "Email")} value={formData.mail == undefined ? "": formData.mail} id="mail" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
+                    <label htmlFor="mail" className="whitespace-nowrap">{t("mail", "Email")}</label>:
+                    <input disabled={!edit} placeholder={t("mail", "Email")} value={formData.mail == undefined ? "": formData.mail} id="mail" onChange={handleChange} className={"flex-grow ml-1 min-w-0 " + (edit ?"input-inline" : "")}/>
                 </div>
                 <div className="flex align-center w-full mb-2">
                     <label htmlFor="language">{t("language", "Language")}</label>:
-                    <select disabled={!edit} value={formData.language == undefined ? "": formData.language} id="language" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "appearance-none") + (errors.language ? " border-red-500" : "")}>
+                    <select disabled={!edit} value={formData.language == undefined ? "": formData.language} id="language" onChange={handleChange} className={"flex-grow ml-1 min-w-0 " + (edit ?"input-inline" : "appearance-none") + (errors.language ? " border-red-500" : "")}>
                         <option disabled value={""}>{t("not_set", "Not set")}</option>
                         <option value={Language.de}>{t(Language.de, "German")}</option>
                         <option value={Language.fr}>{t(Language.fr, "French")}</option>
                     </select>
                 </div>
                 {errors.language && <p className="text-red-500 text-sm">{errors.language}</p>}
-                <div className="pt-3 flex items-center gap-2">
+                <div className="pt-3 flex flex-wrap items-center gap-2">
                     {!edit && <button onClickCapture={() => setEdit(true)} className="btn btn-small">
                         {t("edit_rsvp", "Edit RSVP")}
                     </button>}
