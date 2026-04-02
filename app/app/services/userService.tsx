@@ -258,6 +258,18 @@ export class UserService{
     }
   }
 
+  static async loginAsUser(userId: number): Promise<boolean> {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/auth/login-as/${userId}`,
+        {method: "post", credentials: 'include'},
+      );
+      return response.ok;
+    } catch (error) {
+      return false;
+    }
+  }
+
   static async deleteFamilyMember(userId: number, familyMemberId: number): Promise<boolean>{
     try {
       const response = await fetch(`${UserService.BASE_URL}/${userId}/family-member/${familyMemberId}`, {method: "delete", credentials: 'include'});

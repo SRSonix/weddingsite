@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class UserTest extends ApiIntegrationTestCase
 {
-    public function testCreateUserNoCredentialsReturns403(): void
+    public function testCreateUserNoCredentialsReturns401(): void
     {
         # GIVEN
         $request = $this->createRequest(path:"/user", method:POST);
@@ -15,7 +15,7 @@ class UserTest extends ApiIntegrationTestCase
         $response = app($request);
 
         #THEN
-        $this->assertEquals(403, $response->status);
+        $this->assertEquals(401, $response->status);
     }
 
     public function testCreateUserAdminCredentialsNoBodyReturns400(): void
@@ -108,7 +108,7 @@ class UserTest extends ApiIntegrationTestCase
     }
 
     
-    public function testGetUserNoCredentialsReturns403(): void
+    public function testGetUserNoCredentialsReturns401(): void
     {
         # GIVEN
         $request = $this->createRequest(path:"/user", method:GET);
@@ -117,7 +117,7 @@ class UserTest extends ApiIntegrationTestCase
         $response = app($request);
 
         #THEN
-        $this->assertEquals(403, $response->status);
+        $this->assertEquals(401, $response->status);
     }
 
     
@@ -150,7 +150,7 @@ class UserTest extends ApiIntegrationTestCase
     }
 
 
-    public function testGetAllUsersNoCredentialsReturns403(): void
+    public function testGetAllUsersNoCredentialsReturns401(): void
     {
         # GIVEN
         $request = $this->createRequest(path:"/users", method:GET);
@@ -159,7 +159,7 @@ class UserTest extends ApiIntegrationTestCase
         $response = app($request);
 
         #THEN
-        $this->assertEquals(403, $response->status);
+        $this->assertEquals(401, $response->status);
     }
 
     
@@ -194,7 +194,7 @@ class UserTest extends ApiIntegrationTestCase
     }
 
 
-    public function testUpdateUserRsvpNoCredentialsReturns403(): void
+    public function testUpdateUserRsvpNoCredentialsReturns401(): void
     {
         # GIVEN
         $request = $this->createRequest(path:"/user/1/rsvp", method:PUT);
@@ -203,7 +203,7 @@ class UserTest extends ApiIntegrationTestCase
         $response = app($request);
 
         #THEN
-        $this->assertEquals(403, $response->status);
+        $this->assertEquals(401, $response->status);
     }
 
         
@@ -329,7 +329,7 @@ class UserTest extends ApiIntegrationTestCase
     }
 
     
-    public function testUpdateUserCoreNoCredentialsReturns403(): void
+    public function testUpdateUserCoreNoCredentialsReturns401(): void
     {
         # GIVEN
         $request = $this->createRequest(path:"/user/1/core-info", method:PUT);
@@ -338,7 +338,7 @@ class UserTest extends ApiIntegrationTestCase
         $response = app($request);
 
         #THEN
-        $this->assertEquals(403, $response->status);
+        $this->assertEquals(401, $response->status);
     }
 
         
@@ -518,7 +518,7 @@ class UserTest extends ApiIntegrationTestCase
     }
 
 
-    public function testUpdateUserTokenNoCredentialsReturns403(): void
+    public function testUpdateUserTokenNoCredentialsReturns401(): void
     {
         # GIVEN
         $request = $this->createRequest(path:"/user/1/reset-token", method:PUT);
@@ -527,7 +527,7 @@ class UserTest extends ApiIntegrationTestCase
         $response = app($request);
 
         #THEN
-        $this->assertEquals(403, $response->status);
+        $this->assertEquals(401, $response->status);
     }
 
         
@@ -575,7 +575,7 @@ class UserTest extends ApiIntegrationTestCase
     }
 
 
-    public function testDeleteUserNoCredentialsReturns403(): void
+    public function testDeleteUserNoCredentialsReturns401(): void
     {
         # GIVEN
         $request = $this->createRequest(path:"/user/1", method:DELETE);
@@ -584,7 +584,7 @@ class UserTest extends ApiIntegrationTestCase
         $response = app($request);
 
         #THEN
-        $this->assertEquals(403, $response->status);
+        $this->assertEquals(401, $response->status);
     }
 
         
@@ -647,7 +647,7 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals("you are not allowed to delete yourself. ask another admin!", $response->body["message"]);
     }
 
-    public function testAddFamilymemberNoCredentialsReturns403(): void
+    public function testAddFamilymemberNoCredentialsReturns401(): void
     {
         # GIVEN
         $request = $this->createRequest(path:"/user/1/family-member", method:POST);
@@ -656,7 +656,7 @@ class UserTest extends ApiIntegrationTestCase
         $response = app($request);
 
         #THEN
-        $this->assertEquals(403, $response->status);
+        $this->assertEquals(401, $response->status);
     }
 
         
@@ -756,7 +756,7 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(422, $response->status);
     }
 
-    public function testUpdateFamilymemberNoCredentialsReturns403(): void
+    public function testUpdateFamilymemberNoCredentialsReturns401(): void
     {
         # GIVEN
         $request = $this->createRequest(path:"/user/1/family-member/1", method:PUT);
@@ -765,7 +765,7 @@ class UserTest extends ApiIntegrationTestCase
         $response = app($request);
 
         #THEN
-        $this->assertEquals(403, $response->status);
+        $this->assertEquals(401, $response->status);
     }
 
         
@@ -863,7 +863,7 @@ class UserTest extends ApiIntegrationTestCase
 
 
     
-    public function testDeleteFamilymemberNoCredentialsReturns403(): void
+    public function testDeleteFamilymemberNoCredentialsReturns401(): void
     {
         # GIVEN
         $request = $this->createRequest(path:"/user/1/rsvp", method:PUT);
@@ -872,7 +872,7 @@ class UserTest extends ApiIntegrationTestCase
         $response = app($request);
 
         #THEN
-        $this->assertEquals(403, $response->status);
+        $this->assertEquals(401, $response->status);
     }
 
         

@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class ImageTest extends ApiIntegrationTestCase
 {
-    public function testGetImageNoCredentialsreturns403(){
+    public function testGetImageNoCredentialsreturns401(){
         # GIVEN
         $request = $this->createRequest(path:"/image/test_image.png", method:GET);
 
@@ -14,8 +14,8 @@ class ImageTest extends ApiIntegrationTestCase
         $response = app($request);
 
         #THEN
-        $this->assertEquals(403, $response->status);
-   
+        $this->assertEquals(401, $response->status);
+
     }
 
     public function assertValidImageResponse($response){

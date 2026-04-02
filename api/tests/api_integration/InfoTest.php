@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class InfoTest extends ApiIntegrationTestCase
 {
-    public function testGetOverviewNoCredentialsreturns403(){
+    public function testGetOverviewNoCredentialsreturns401(){
         # GIVEN
         $request = $this->createRequest(path:"/info/overview", method:GET);
 
@@ -14,8 +14,8 @@ class InfoTest extends ApiIntegrationTestCase
         $response = app($request);
 
         #THEN
-        $this->assertEquals(403, $response->status);
-   
+        $this->assertEquals(401, $response->status);
+
     }
 
 
@@ -54,7 +54,7 @@ class InfoTest extends ApiIntegrationTestCase
     }
 
 
-    public function testGetAgendaNoCredentialsreturns403(){
+    public function testGetAgendaNoCredentialsreturns401(){
         # GIVEN
         $request = $this->createRequest(path:"/info/overview", method:GET);
 
@@ -62,8 +62,8 @@ class InfoTest extends ApiIntegrationTestCase
         $response = app($request);
 
         #THEN
-        $this->assertEquals(403, $response->status);
-   
+        $this->assertEquals(401, $response->status);
+
     }
 
     public function assertValidAgenda($agenda){
@@ -102,7 +102,7 @@ class InfoTest extends ApiIntegrationTestCase
     }
 
 
-    public function testGetPaymentDetailsNoCredentialsreturns403(){
+    public function testGetPaymentDetailsNoCredentialsreturns401(){
         # GIVEN
         $request = $this->createRequest(path:"/info/payment-details", method:GET);
 
@@ -110,8 +110,8 @@ class InfoTest extends ApiIntegrationTestCase
         $response = app($request);
 
         #THEN
-        $this->assertEquals(403, $response->status);
-   
+        $this->assertEquals(401, $response->status);
+
     }
 
     public function assertValidPaymentDetails($paymentDetails){

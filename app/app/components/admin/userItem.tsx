@@ -1,16 +1,20 @@
 import { useEffect, useState, type ChangeEvent } from "react";
+import { useNavigate } from "react-router";
 import { useAllUsers } from "~/providers/allUserProvider";
 import { InvitedBy, Role, UserCoreInfo, UserService, type User } from "~/services/userService";
 import { FamilyMembers } from "../index/familyMembers";
+import { useUser } from "~/providers/userProvider";
 
 
 export function UserItem({user}: {user:User}){
+    const {reloadUser} = useUser();
     const [infoMessage, setInfoMessage] = useState("");
     const [userUrl, setUserUrl] = useState<string|undefined>(undefined);
     const [edit, setEdit] = useState(false);
     const [showFamily, setShowFamily] = useState(false);
     const [formData, setFormData] = useState<UserCoreInfo>(UserCoreInfo.getEmpty());
     const {updateUserCoreInfo, deleteUser, updateFamilyMember, deleteFamilyMember, addFamilyMember} = useAllUsers();
+    const navigate = useNavigate();
 
     const userAgent = window.navigator.userAgent;
     const isSafari = userAgent.includes("Safari") && !userAgent.includes("Chrome");
@@ -77,6 +81,16 @@ export function UserItem({user}: {user:User}){
       deleteUser(user.id);
     }
 
+    async function loginAsUserHandle(){
+      const ok = await UserService.loginAsUser(user.id);
+      if (ok) {
+        reloadUser();
+        navigate("/");
+      } else {
+        setInfoMessage("failed to login as user");
+      }
+    }
+
     return(
       <div className="bg-olive-50 border border-olive-100 rounded-lg p-4 shadow-sm mb-3">
         <div className="flex align-center w-full">
@@ -138,7 +152,7 @@ export function UserItem({user}: {user:User}){
             </button>
             <button className="btn btn-small btn-red" onClick={() => resetUserToken(user.id)}>reset token</button>
             {userUrl && <button className="btn btn-small btn-gray" onClick={copyUrl}>copy url</button>}
-            <button disabled className="btn btn-small btn-gray opacity-50 cursor-not-allowed">login as user</button>
+            <button className="btn btn-small btn-gray" onClick={loginAsUserHandle}>login as user</button>
         </div>
         {infoMessage && <p className="text-sm mt-1">{infoMessage}</p>}
       </div>

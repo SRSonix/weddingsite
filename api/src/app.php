@@ -30,6 +30,7 @@ function app($request): Response{
 
 	$router->add_route(pattern: "^/auth/login$", method: POST, parameter_names: [], callback:"AuthController\\login");
 	$router->add_route(pattern: "^/auth/logout$", method: POST, parameter_names: [], callback:"AuthController\\logout");
+	$router->add_route(pattern: "^/auth/login-as\/(\d+)$", method: POST, parameter_names: ["user_id"], callback:"AuthController\\login_as");
 
 	$router->add_route(pattern: "^/info/overview$", method: GET, parameter_names: [], callback:"InfoController\\get_overview");
 	$router->add_route(pattern: "^/info/agenda$", method: GET, parameter_names: [], callback:"InfoController\\get_agenda");

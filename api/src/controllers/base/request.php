@@ -52,13 +52,16 @@ class Request {
 
     function getUserIdOrRaise(){
         if ($this->user_id === NULL){
-            throw new \ForbiddenException("forbidden");
+            throw new \UnauthorizedException("unauthorized");
         }
 
         return $this->user_id;
     }
 
     function validateAdminAccess(){
+        if ($this->user_id === NULL) {
+            throw new \UnauthorizedException("unauthorized");
+        }
         if ($this->user_role != "ADMIN") {
             throw new \ForbiddenException("forbidden");
         }
@@ -67,6 +70,10 @@ class Request {
     function validatePathUserIsAuthorized(
         $allowAdminAcces = TRUE
     ){
+        if ($this->user_id === NULL) {
+            throw new \UnauthorizedException("unauthorized");
+        }
+
         if ($allowAdminAcces and $this->user_role == "ADMIN"){
             return;
         }

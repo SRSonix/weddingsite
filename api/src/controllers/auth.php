@@ -33,10 +33,32 @@ function login(\Request $request){
 }
 
 
-function logout(\Request $request){	
+function logout(\Request $request){
 	return new \Response(
 		cookies: [
 			["session_token", "", ["expires"=> time()-3600, "secure" => true, "httponly"=>true, "path"=>"/", "samesite"=> "None"]],
 		]
+    );
+}
+
+function login_as(\Request $request){
+    $request->validateAdminAccess();
+
+    $user_id = (int) $request->path_params["user_id"];
+
+    $user = \UserRepository\get_user_by_id($user_id);
+    if ($user === NULL) {
+        throw new \NotFoundException("user not found");
+    }
+
+    $timeout_s = 60*60*24*7;
+    $session_token = \AuthService\generate_session_token($user_id, $timeout_s);
+
+    _log("admin logged in as user $user_id");
+
+    return new \Response(
+        cookies: [
+            ["session_token", $session_token, ["expires"=> time()+$timeout_s, "secure" => true, "httponly"=>true, "path"=>"/", "samesite"=> "Strict"]],
+        ]
     );
 }
