@@ -25,6 +25,11 @@ export default function CreateUser(){
       return;
     }
 
+    if (formData.invited_by === undefined){
+      alert("invited by missing");
+      return;
+    }
+
     UserService.createUser({
       name: formData.name,
       role: formData.role,
