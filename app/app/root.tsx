@@ -64,13 +64,19 @@ function AdminBanner() {
   const {pathname} = useLocation();
   if (user?.role !== "ADMIN") return null;
   const onAdmin = pathname === "/admin";
+  const mainUrl = import.meta.env.VITE_WEBSITE_URL;
+  const betaUrl = mainUrl?.replace(/^(https?:\/\/)/, '$1beta.');
+  const isBeta = window.location.hostname.startsWith('beta.');
   return (
     <div className="max-w-5xl mx-auto px-4 py-2 flex items-center justify-between text-sm text-olive-700 bg-olive-50 border border-olive-200 rounded mt-4">
       <span>You are admin.</span>
-      {onAdmin
-        ? <Link to="/" className="text-olive-600 hover:underline">← Back to index</Link>
-        : <Link to="/admin" className="text-olive-600 hover:underline">Go to admin page →</Link>
-      }
+      <div className="flex items-center gap-4">
+        <a href={isBeta ? mainUrl : betaUrl} target="_blank" rel="noreferrer" className="text-olive-600 hover:underline">{isBeta ? "main site ↗" : "beta site ↗"}</a>
+        {onAdmin
+          ? <Link to="/" className="text-olive-600 hover:underline">← Back to index</Link>
+          : <Link to="/admin" className="text-olive-600 hover:underline">Go to admin page →</Link>
+        }
+      </div>
     </div>
   );
 }

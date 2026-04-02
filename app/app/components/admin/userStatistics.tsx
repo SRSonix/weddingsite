@@ -9,11 +9,11 @@ const INVITED_BY_COLS = [
 ] as const;
 
 const ATTENDANCE_ROWS = [
-    { key: "total",                    label: "Total" },
-    { key: null,                       label: "Not set" },
-    { key: Attandance.undecided,       label: "Unknown" },
-    { key: Attandance.will_join,       label: "Coming" },
-    { key: Attandance.will_not_join,   label: "Not coming" },
+    { key: null,                           label: "Not set",               sub: true  },
+    { key: Attandance.undecided,           label: "Undecided",             sub: true  },
+    { key: Attandance.will_join,           label: "Coming",                sub: true  },
+    { key: "total_excl_not_coming",        label: "Total excl. not coming", sub: false },
+    { key: Attandance.will_not_join,       label: "Not coming",            sub: false },
 ] as const;
 
 type ColKey = typeof INVITED_BY_COLS[number]["key"];
@@ -25,7 +25,7 @@ function matchesCol(user: User, col: ColKey): boolean {
 }
 
 function matchesRow(user: User, row: RowKey): boolean {
-    if (row === "total") return true;
+    if (row === "total_excl_not_coming") return user.attendance !== Attandance.will_not_join;
     if (row === null) return user.attendance == null;
     return user.attendance === row;
 }
@@ -34,10 +34,10 @@ function countUsers(users: User[], row: RowKey, col: ColKey): number {
     return users.filter(u => matchesRow(u, row) && matchesCol(u, col)).length;
 }
 
-function countFamilyMembers(users: User[], row: RowKey, col: ColKey): number {
+function countFamilyMembers(users: User[], row: RowKey, col: ColKey, is_child?: boolean): number {
     return users
         .filter(u => matchesRow(u, row) && matchesCol(u, col))
-        .reduce((sum, u) => sum + u.familyMembers.length, 0);
+        .reduce((sum, u) => sum + u.familyMembers.filter(fm => is_child === undefined || fm.is_child === is_child).length, 0);
 }
 
 function StatsTable({ title, getValue }: { title: string; getValue: (row: RowKey, col: ColKey) => number }) {
@@ -55,10 +55,12 @@ function StatsTable({ title, getValue }: { title: string; getValue: (row: RowKey
                 </thead>
                 <tbody>
                     {ATTENDANCE_ROWS.map(row => (
-                        <tr key={String(row.key)}>
-                            <td className="border border-gray-400 px-3 py-1 font-medium bg-gray-50">{row.label}</td>
+                        <tr key={String(row.key)} className={!row.sub ? "border-t-2 border-gray-400" : ""}>
+                            <td className={"border border-gray-400 py-1 font-medium bg-gray-50 " + (row.sub ? "px-5 text-gray-500" : "px-3 font-semibold")}>
+                                {row.label}
+                            </td>
                             {INVITED_BY_COLS.map(col => (
-                                <td key={col.key} className="border border-gray-400 px-3 py-1 text-center">
+                                <td key={col.key} className={"border border-gray-400 px-3 py-1 text-center " + (row.sub ? "text-gray-500" : "font-semibold")}>
                                     {getValue(row.key, col.key)}
                                 </td>
                             ))}
@@ -77,12 +79,16 @@ export default function UserStatisticsPanel() {
         <div>
             <div className="mt-4">
                 <StatsTable
-                    title="Users by attendance and invited by"
+                    title="User Statistic"
                     getValue={(row, col) => countUsers(allUsers, row, col)}
                 />
                 <StatsTable
-                    title="Family members by attendance and invited by"
-                    getValue={(row, col) => countFamilyMembers(allUsers, row, col)}
+                    title="Adults Statistic"
+                    getValue={(row, col) => countFamilyMembers(allUsers, row, col, false)}
+                />
+                <StatsTable
+                    title="Children Statistic"
+                    getValue={(row, col) => countFamilyMembers(allUsers, row, col, true)}
                 />
             </div>
         </div>

@@ -126,6 +126,10 @@ export default function AllUsers(){
             </div>
             <div className="flex items-center gap-3 mb-3">
                 <h4 className="m-0">Users ({filtered.length} of {allUsers.length})</h4>
+                <span className="text-sm text-gray-500">
+                    ↑ {filtered.reduce((s, u) => s + u.familyMembers.filter(fm => !fm.is_child).length, 0)} adults
+                    · ↓ {filtered.reduce((s, u) => s + u.familyMembers.filter(fm => fm.is_child).length, 0)} children
+                </span>
                 <button disabled onClick={exportAllUsersCsv} className="btn btn-small btn-gray opacity-50 cursor-not-allowed">export</button>
             </div>
             {filtered.map((item: User) => (
