@@ -29,7 +29,7 @@ export default function Policies(){
                     <div className={section}>
                         <h4>What Data Is Collected</h4>
                         <ul className="list-disc list-inside">
-                            <li>User Account Data: Name, user ID, and role (assigned by the host)</li>
+                            <li>User Account Data: Name, user ID, role (assigned by the host), and which side of the couple invited you (bride, groom, or both)</li>
                             <li>Authentication Data: A personal invite token assigned by the website operator and used to log in</li>
                             <li>RSVP Data: Attendance status, email address and preferred language</li>
                             <li>Family Member Data: Name, dietary preferences, and child status for each person in your group</li>
@@ -101,7 +101,7 @@ export default function Policies(){
                     <div className={section}>
                         <h4>Welche Daten werden erhoben</h4>
                         <ul className="list-disc list-inside">
-                            <li>Kontodaten: Name, Benutzer-ID und Rolle (vergeben durch den Administrator)</li>
+                            <li>Kontodaten: Name, Benutzer-ID, Rolle (vergeben durch den Administrator) sowie die Angabe, von welcher Seite des Brautpaares Sie eingeladen wurden (Braut, Bräutigam oder beide)</li>
                             <li>Authentifizierungsdaten: Ein persönlicher Einladungstoken, der vom Website-Betreiber vergeben und zur Anmeldung verwendet wird</li>
                             <li>RSVP-Daten: Teilnahmestatus, E-Mail-Adresse und bevorzugte Sprache</li>
                             <li>Begleitpersonendaten: Name, Ernährungspräferenzen und Kindstatus für jede Person Ihrer Gruppe</li>

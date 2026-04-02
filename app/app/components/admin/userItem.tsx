@@ -93,7 +93,7 @@ export function UserItem({user}: {user:User}){
         <div className="flex align-center w-full">
             <label htmlFor="invited_by">invited by</label>:
             <select disabled={!edit} value={formData.invited_by == undefined ? "": formData.invited_by} id="invited_by" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "appearance-none")}>
-                <option value="">not set</option>
+                <option value="" disabled>not set</option>
                 <option value={InvitedBy.both}>both</option>
                 <option value={InvitedBy.groom}>groom</option>
                 <option value={InvitedBy.bride}>bride</option>
