@@ -40,13 +40,13 @@ class FamilyMember{
     public $user_id;
     public $name;
     public $diet;
-    public $is_child;
+    public $type;
 
-    public function __construct($id, $user_id, $name, $diet, $is_child){
+    public function __construct($id, $user_id, $name, $diet, $type){
         $this->id = $id;
         $this->user_id = $user_id;
         $this->name = $name;
         $this->diet = $diet;
-        $this->is_child = $is_child;
+        $this->type = $type;
     }
 }

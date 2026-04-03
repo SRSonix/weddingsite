@@ -101,8 +101,8 @@ function delete_user($user_id) {
     if ($affectedRowCount == 0) throw new \NotFoundException("");
 }
 
-function add_family_member($user_id, $name, $diet, $is_child){
-    $lastInsertId = \FamilyMemberRepository\create_family_member($user_id, $name, $diet, $is_child);
+function add_family_member($user_id, $name, $diet, $type){
+    $lastInsertId = \FamilyMemberRepository\create_family_member($user_id, $name, $diet, $type);
 
     if (!$lastInsertId){
         throw new \InternalServerError("unable to add family member.");
@@ -112,20 +112,21 @@ function add_family_member($user_id, $name, $diet, $is_child){
     return \FamilyMemberRepository\get_family_member($user_id, $lastInsertId);
 }
 
-function update_family_member(        
-        $user_id, 
+function update_family_member(
+        $user_id,
         $family_member_id,
-        $name, 
-        $diet, 
-        $is_child,
+        $name,
+        $diet,
+        $type,
     ){
-    $affectedRowCount = \FamilyMemberRepository\update_family_member($user_id, $family_member_id, $name, $diet, $is_child);
-    # TODO: fix that a no-update gives 404
-    if ($affectedRowCount == 0) throw new \NotFoundException("");
-    
+    if (\FamilyMemberRepository\get_family_member($user_id, $family_member_id) === NULL) {
+        throw new \NotFoundException("");
+    }
+
+    \FamilyMemberRepository\update_family_member($user_id, $family_member_id, $name, $diet, $type);
+
     http_response_code(response_code: 200);
     return \FamilyMemberRepository\get_family_member($user_id, $family_member_id);
-   
 }
 
 function remove_family_member($user_id, $family_member_id){

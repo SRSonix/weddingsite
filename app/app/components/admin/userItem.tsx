@@ -1,7 +1,7 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import { useNavigate } from "react-router";
 import { useAllUsers } from "~/providers/allUserProvider";
-import { InvitedBy, Role, UserCoreInfo, UserService, type User } from "~/services/userService";
+import { FamilyMemberType, InvitedBy, Role, UserCoreInfo, UserService, type User } from "~/services/userService";
 import { FamilyMembers } from "../index/familyMembers";
 import { useUser } from "~/providers/userProvider";
 
@@ -133,7 +133,7 @@ export function UserItem({user}: {user:User}){
           last_visit: {user.last_visit || "has not visited"} <br/>
         </p>
         <div>
-          family_members: {user.familyMembers.length} ↑{user.familyMembers.filter(fm => !fm.is_child).length} ↓{user.familyMembers.filter(fm => fm.is_child).length}
+          family_members: {user.familyMembers.length} {user.familyMembers.filter(fm => fm.type === FamilyMemberType.adult).length}A · {user.familyMembers.filter(fm => fm.type === FamilyMemberType.child).length}C · {user.familyMembers.filter(fm => fm.type === FamilyMemberType.infant).length}I
           <button className="btn btn-small ml-2" onClick={() => setShowFamily(p => !p)}>
             {showFamily ? "hide" : "show"} family
           </button>

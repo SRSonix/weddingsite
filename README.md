@@ -74,8 +74,7 @@ python -m venv .venv
 docker
  run --rm -e MYSQL_ROOT_PASSWORD=test -e MYSQL_DATABASE=weddingsite_db -e MYSQL_USER=test -e MYSQL_PASSWORD=test -p 3306:3306 mysql:8.2.0
 ```
-* use define ("DB_SERVER","127.0.0.1"); in config.php
-* run tests 
+* run tests (from the `api` folder)
 ```sh
-./vendor/bin/phpunit
+DB_SERVER=127.0.0.1 ./vendor/bin/phpunit
 ```

@@ -1,5 +1,5 @@
 import { useAllUsers } from "~/providers/allUserProvider";
-import { Attandance, InvitedBy, User } from "~/services/userService";
+import { Attandance, FamilyMemberType, InvitedBy, User } from "~/services/userService";
 
 const INVITED_BY_COLS = [
     { key: "total",          label: "Total" },
@@ -34,10 +34,10 @@ function countUsers(users: User[], row: RowKey, col: ColKey): number {
     return users.filter(u => matchesRow(u, row) && matchesCol(u, col)).length;
 }
 
-function countFamilyMembers(users: User[], row: RowKey, col: ColKey, is_child?: boolean): number {
+function countFamilyMembers(users: User[], row: RowKey, col: ColKey, type?: FamilyMemberType): number {
     return users
         .filter(u => matchesRow(u, row) && matchesCol(u, col))
-        .reduce((sum, u) => sum + u.familyMembers.filter(fm => is_child === undefined || fm.is_child === is_child).length, 0);
+        .reduce((sum, u) => sum + u.familyMembers.filter(fm => type === undefined || fm.type === type).length, 0);
 }
 
 function StatsTable({ title, getValue }: { title: string; getValue: (row: RowKey, col: ColKey) => number }) {
@@ -84,11 +84,15 @@ export default function UserStatisticsPanel() {
                 />
                 <StatsTable
                     title="Adults Statistic"
-                    getValue={(row, col) => countFamilyMembers(allUsers, row, col, false)}
+                    getValue={(row, col) => countFamilyMembers(allUsers, row, col, FamilyMemberType.adult)}
                 />
                 <StatsTable
                     title="Children Statistic"
-                    getValue={(row, col) => countFamilyMembers(allUsers, row, col, true)}
+                    getValue={(row, col) => countFamilyMembers(allUsers, row, col, FamilyMemberType.child)}
+                />
+                <StatsTable
+                    title="Infants Statistic"
+                    getValue={(row, col) => countFamilyMembers(allUsers, row, col, FamilyMemberType.infant)}
                 />
             </div>
         </div>

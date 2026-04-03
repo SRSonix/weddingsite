@@ -123,25 +123,27 @@ function delete_user(\Request $request){
 }
 
 
-function add_family_member(\Request $request){  
+const VALID_MEMBER_TYPES = ["adult", "child", "infant"];
+
+function add_family_member(\Request $request){
     $request->validatePathUserIsAuthorized();
-    $request->validateBodyContainsKeys(["name", "diet", "is_child"]);
-    $request->validateBodyContainsKeys(["name", "is_child"], TRUE);
-    $request->validateTypes(["is_child"=>"boolean"]);
+    $request->validateBodyContainsKeys(["name", "diet", "type"]);
+    $request->validateBodyContainsKeys(["name", "type"], TRUE);
+    $request->validateAcceptableValues(["type"=>VALID_MEMBER_TYPES]);
 
     $user_id = $request->path_params["user_id"];
-    
+
     $name = $request->body["name"];
     $diet = $request->body["diet"];
-    $is_child = $request->body["is_child"];
-   
+    $type = $request->body["type"];
+
     return new \Response(
         status: 201,
         body:\UserService\add_family_member(
-            $user_id, 
-            $name, 
-            $diet, 
-            $is_child,
+            $user_id,
+            $name,
+            $diet,
+            $type,
         )
     );
 }
@@ -149,27 +151,24 @@ function add_family_member(\Request $request){
 
 function update_family_member(\Request $request){
     $request->validatePathUserIsAuthorized();
-    $request->validateBodyContainsKeys(["name", "diet", "is_child"]);
-    $request->validateBodyContainsKeys(["name", "is_child"], TRUE);
-    $request->validateTypes(["is_child"=>"boolean"]);
-
-    _log($request->body["name"]);
-    _log($request->body["name"]==NULl);
+    $request->validateBodyContainsKeys(["name", "diet", "type"]);
+    $request->validateBodyContainsKeys(["name", "type"], TRUE);
+    $request->validateAcceptableValues(["type"=>VALID_MEMBER_TYPES]);
 
     $user_id = $request->path_params["user_id"];
     $family_member_id = $request->path_params["family_member_id"];
-    
+
     $name = $request->body["name"];
     $diet = $request->body["diet"];
-    $is_child = $request->body["is_child"];
-   
+    $type = $request->body["type"];
+
     return new \Response(
         body:\UserService\update_family_member(
-            $user_id, 
+            $user_id,
             $family_member_id,
-            $name, 
-            $diet, 
-            $is_child,
+            $name,
+            $diet,
+            $type,
         )
     );
 }

@@ -86,9 +86,20 @@ Images:
 
 the deployment is to be done by the user and **never** by the agent.
 
-## Testing
+## DDL / Database Migrations
 
-tests are to run manually and not by the agent
+DDL migrations are **never** to be applied by the agent under any circumstance. 
+
+## Testing
+The database test setup is done in  `api/tests/BaseTestCases.php` In case of schema changes these must be reflacted there.
+
+tests can only be run when the user has started the database. 
+If the agent needs to run tests, as the user for permission first.
+
+Run from the `api` folder:
+```sh
+DB_SERVER=127.0.0.1 ./vendor/bin/phpunit
+```
 
 ## Translations
 

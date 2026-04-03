@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent} from "react";
-import { Attandance, InvitedBy, Role, type User } from "~/services/userService";
+import { Attandance, FamilyMemberType, InvitedBy, Role, type User } from "~/services/userService";
 import { UserItem } from "./userItem";
 import { useAllUsers } from "~/providers/allUserProvider";
 
@@ -127,8 +127,9 @@ export default function AllUsers(){
             <div className="flex items-center gap-3 mb-3">
                 <h4 className="m-0">Users ({filtered.length} of {allUsers.length})</h4>
                 <span className="text-sm text-gray-500">
-                    ↑ {filtered.reduce((s, u) => s + u.familyMembers.filter(fm => !fm.is_child).length, 0)} adults
-                    · ↓ {filtered.reduce((s, u) => s + u.familyMembers.filter(fm => fm.is_child).length, 0)} children
+                    {filtered.reduce((s, u) => s + u.familyMembers.filter(fm => fm.type === FamilyMemberType.adult).length, 0)} adults
+                    · {filtered.reduce((s, u) => s + u.familyMembers.filter(fm => fm.type === FamilyMemberType.child).length, 0)} children
+                    · {filtered.reduce((s, u) => s + u.familyMembers.filter(fm => fm.type === FamilyMemberType.infant).length, 0)} infants
                 </span>
                 <button disabled onClick={exportAllUsersCsv} className="btn btn-small btn-gray opacity-50 cursor-not-allowed">export</button>
             </div>

@@ -444,8 +444,8 @@ class UserTest extends ApiIntegrationTestCase
             ["/user/2/rsvp",            PUT,    ["mail"=>"m", "attendance"=>"will_join", "language"=>"de"],      2, false],
             ["/user/2/core-info",       PUT,    ["name"=>"n", "role"=>"USER", "invited_by"=>"both"],             2, false],
             ["/user/2/reset-token",     PUT,    NULL,                                                           2, false],
-            ["/user/2/family-member",   POST,   ["name"=>"n", "diet"=>NULL, "is_child"=>false],                  2, false],
-            ["/user/2/family-member/1", PUT,    ["name"=>"n", "diet"=>NULL, "is_child"=>false],                  2, true],
+            ["/user/2/family-member",   POST,   ["name"=>"n", "diet"=>NULL, "type"=>"adult"],             2, false],
+            ["/user/2/family-member/1", PUT,    ["name"=>"n", "diet"=>NULL, "type"=>"adult"],             2, true],
          ];
     }
 
@@ -458,7 +458,7 @@ class UserTest extends ApiIntegrationTestCase
         parent::loginAsAdmin();
 
         if ($needs_family_member) {
-            $setup = $this->createRequest(path:"/user/2/family-member", method:POST, body:["name"=>"setup", "diet"=>NULL, "is_child"=>false]);
+            $setup = $this->createRequest(path:"/user/2/family-member", method:POST, body:["name"=>"setup", "diet"=>NULL, "type"=>"adult"]);
             app($setup);
         }
 
@@ -690,12 +690,9 @@ class UserTest extends ApiIntegrationTestCase
         # GIVEN
         if ($login_user == "user") parent::loginAsUser();
         else parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/$target_user_id/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "is_child"=>True]);
-        $response = app($request);   
-        $this->assertEquals(201, $response->status);
-        
-        #WHEN     
-        $request = $this->createRequest(path:"/user/$target_user_id/family-member", method:POST, body:["name"=>"test-name2", "diet"=>NULL, "is_child"=>False]);
+        $request = $this->createRequest(path:"/user/$target_user_id/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "type"=>"child"]);
+
+        #WHEN
         $response = app($request);
 
         #THEN
@@ -706,13 +703,39 @@ class UserTest extends ApiIntegrationTestCase
         $request = $this->createRequest(path:"/user", method:GET);
         $response = app($request);
         $this->assertInstanceOf(User::class, $response->body);
-        $this->assertCount(2, $response->body->family_members);
+        $this->assertCount(1, $response->body->family_members);
         $this->assertEquals("test-name", $response->body->family_members[0]->name);
-        $this->assertEquals("vegan", $response->body->family_members[0]->diet); 
-        $this->assertEquals(True, $response->body->family_members[0]->is_child);
-        $this->assertEquals("test-name2", $response->body->family_members[1]->name);
-        $this->assertEquals(NULL, $response->body->family_members[1]->diet); 
-        $this->assertEquals(False, $response->body->family_members[1]->is_child);   
+        $this->assertEquals("vegan", $response->body->family_members[0]->diet);
+        $this->assertEquals("child", $response->body->family_members[0]->type);
+    }
+
+    public static function validFamilyMemberBodies(): array
+    {
+        return [
+            [["name"=>"test-name", "diet"=>"vegan", "type"=>"child"]],
+            [["name"=>"test-name", "diet"=>NULL,    "type"=>"infant"]],
+            [["name"=>"test-name", "diet"=>"",      "type"=>"adult"]],
+        ];
+    }
+
+    /**
+     * @dataProvider validFamilyMemberBodies
+     */
+    public function testAddFamilymemberValidBodies(array $body): void
+    {
+        # GIVEN
+        parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user/1/family-member", method:POST, body:$body);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(201, $response->status);
+        $this->assertInstanceOf(FamilyMember::class, $response->body);
+        $this->assertEquals($body["name"], $response->body->name);
+        $this->assertEquals($body["diet"], $response->body->diet);
+        $this->assertEquals($body["type"], $response->body->type);
     }
 
     public function testAddFamilymemberNoBodyReturns400(): void
@@ -732,11 +755,11 @@ class UserTest extends ApiIntegrationTestCase
     public static function familyMembersPartialBodies(): array
     {
         return [
-            [["diet"=>"vegan", "is_child"=>True]],
-            [["name"=>"test-name", "is_child"=>True]],
+            [["diet"=>"vegan", "type"=>"adult"]],
+            [["name"=>"test-name", "type"=>"adult"]],
             [["name"=>"test-name", "diet"=>"vegan"]],
-            [["name"=>NULL, "diet"=>"vegan", "is_child"=>NULL]],
-            [["name"=>NULL, "diet"=>"vegan", "is_child"=>"bogus"]],
+            [["name"=>NULL, "diet"=>"vegan", "type"=>NULL]],
+            [["name"=>NULL, "diet"=>"vegan", "type"=>"bogus"]],
         ];
     }
 
@@ -786,7 +809,7 @@ class UserTest extends ApiIntegrationTestCase
     {
         # GIVEN
         parent::loginAsUser();
-        $request = $this->createRequest(path:"/user/2/family-member/1", method:PUT, body:["name"=>"test-name", "diet"=>"vegan", "is_child"=>True]);
+        $request = $this->createRequest(path:"/user/2/family-member/1", method:PUT, body:["name"=>"test-name", "diet"=>"vegan", "type"=>"child"]);
 
         #WHEN
         $response = app($request);
@@ -803,13 +826,13 @@ class UserTest extends ApiIntegrationTestCase
     {
         # GIVEN
         parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/$target_user_id/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "is_child"=>True]);
+        $request = $this->createRequest(path:"/user/$target_user_id/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "type"=>"child"]);
         $response = app($request);
         $this->assertEquals(201, $response->status);
-        
+
         if ($login_user == "user") parent::loginAsUser();
         else parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/$target_user_id/family-member/1", method:PUT, body:["name"=>"test-name2", "diet"=>"meat", "is_child"=>False]);
+        $request = $this->createRequest(path:"/user/$target_user_id/family-member/1", method:PUT, body:["name"=>"test-name2", "diet"=>"meat", "type"=>"adult"]);
 
         #WHEN
         $response = app($request);
@@ -823,8 +846,29 @@ class UserTest extends ApiIntegrationTestCase
         $response = app($request);
         $this->assertInstanceOf(User::class, $response->body);
         $this->assertEquals("test-name2", $response->body->family_members[0]->name);
-        $this->assertEquals("meat", $response->body->family_members[0]->diet); 
-        $this->assertEquals(False, $response->body->family_members[0]->is_child);  
+        $this->assertEquals("meat", $response->body->family_members[0]->diet);
+        $this->assertEquals("adult", $response->body->family_members[0]->type);
+    }
+
+    public function testUpdateFamilymemberWithSameValuesReturns200(): void
+    {
+        # GIVEN
+        parent::loginAsAdmin();
+        $body = ["name"=>"test-name", "diet"=>"vegan", "type"=>"child"];
+        $request = $this->createRequest(path:"/user/1/family-member", method:POST, body:$body);
+        $response = app($request);
+        $this->assertEquals(201, $response->status);
+
+        # WHEN
+        $request = $this->createRequest(path:"/user/1/family-member/1", method:PUT, body:$body);
+        $response = app($request);
+
+        # THEN
+        $this->assertEquals(200, $response->status);
+        $this->assertInstanceOf(FamilyMember::class, $response->body);
+        $this->assertEquals("test-name", $response->body->name);
+        $this->assertEquals("vegan", $response->body->diet);
+        $this->assertEquals("child", $response->body->type);
     }
 
     public function testUpdateFamilymemberNoBodyReturns400(): void
@@ -847,7 +891,7 @@ class UserTest extends ApiIntegrationTestCase
     {
         # GIVEN
         parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/1/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "is_child"=>True]);
+        $request = $this->createRequest(path:"/user/1/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "type"=>"child"]);
         $response = app($request);
         $this->assertEquals(201, $response->status);
         
@@ -909,7 +953,7 @@ class UserTest extends ApiIntegrationTestCase
     {
         # GIVEN
         parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/$target_user_id/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "is_child"=>True]);
+        $request = $this->createRequest(path:"/user/$target_user_id/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "type"=>"child"]);
         $response = app($request);
         $this->assertEquals(201, $response->status);
 

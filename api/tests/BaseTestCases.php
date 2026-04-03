@@ -33,7 +33,7 @@ class DatabaseTestCase extends TestCase
             user_id INT NOT NULL,
             name TEXT,
             diet TEXT,
-            child BOOLEAN,
+            type ENUM('adult', 'child', 'infant') NOT NULL,
             FOREIGN KEY (user_id) REFERENCES user(id)
             );
 

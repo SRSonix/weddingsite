@@ -1,6 +1,6 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { FamilyMember, FamilyMemberCore } from "~/services/userService";
+import { FamilyMember, FamilyMemberCore, FamilyMemberType } from "~/services/userService";
 
 export function FamilyMemberItem({familyMember, updateCallback, deleteCallback}:{familyMember:FamilyMember, updateCallback: (id: number, data: FamilyMemberCore) => void, deleteCallback: (id: number) => void}){
     function updateFamilyMember(coreData: FamilyMemberCore){
@@ -33,8 +33,8 @@ export function FamilyMemberForm({id, defaultData, submitChanges, cancelCallback
         if (id !== "diet") {
             new_value = (e.target.value !== "" ? e.target.value : undefined);
         }
-        if (id==="is_child" && new_value !== undefined){
-            new_value = (new_value==="true");
+        if (id==="type" && new_value !== undefined){
+            new_value = new_value as FamilyMemberType;
         }
         setFormData((prev) => ({...prev, [id]: new_value}));
     }
@@ -49,7 +49,7 @@ export function FamilyMemberForm({id, defaultData, submitChanges, cancelCallback
     function validate(): boolean {
         const newErrors: Partial<Record<keyof FamilyMemberCore, string>> = {};
         if (!formData.name?.trim()) newErrors.name = t("error_name_required", "Name is required");
-        if (formData.is_child === undefined) newErrors.is_child = t("error_please_select", "Please select");
+        if (formData.type === undefined) newErrors.type = t("error_please_select", "Please select");
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     }
@@ -69,14 +69,15 @@ export function FamilyMemberForm({id, defaultData, submitChanges, cancelCallback
             <input disabled={!edit} placeholder={t("diet_placeholder", "No allergies / preferences")} value={formData.diet == undefined ? "": formData.diet} id="diet" onChange={handleChange} className={"flex-grow ml-1 min-w-0 " + (edit ?"input-inline" : "")}/>
         </div>
         <div className="flex align-center w-full">
-            <label htmlFor="is_child">{t("is_child", "Child")}</label>:<br/>
-            <select disabled={!edit} value={formData.is_child == undefined ? "": formData.is_child.toString()} id="is_child" onChange={handleChange} className={"flex-grow ml-1 min-w-0 " + (edit ?"input-inline" : "appearance-none") + (errors.is_child ? " border-red-500" : "")}>
+            <label htmlFor="type">{t("member_type", "Type")}</label>:<br/>
+            <select disabled={!edit} value={formData.type ?? ""} id="type" onChange={handleChange} className={"flex-grow ml-1 min-w-0 " + (edit ?"input-inline" : "appearance-none") + (errors.type ? " border-red-500" : "")}>
                 <option disabled value={""}>{t("please_select", "Please select")}</option>
-                <option value={"true"}>{t("yes", "Yes")}</option>
-                <option value={"false"}>{t("no", "No")}</option>
+                <option value={FamilyMemberType.adult}>{t("adult", "Adult")}</option>
+                <option value={FamilyMemberType.child}>{t("child", "Child")}</option>
+                <option value={FamilyMemberType.infant}>{t("infant", "Infant")}</option>
             </select>
         </div>
-        {errors.is_child && <p className="text-red-500 text-sm">{errors.is_child}</p>}
+        {errors.type && <p className="text-red-500 text-sm">{errors.type}</p>}
         <div className="pt-3 flex flex-wrap items-center gap-2">
             {!edit && <button onClickCapture={() => setEdit(true)} className="btn btn-small">
                 {t("edit", "Edit")}

@@ -20,16 +20,22 @@ export enum Language {
   fr = "fr",
 }
 
+export enum FamilyMemberType {
+  adult = "adult",
+  child = "child",
+  infant = "infant",
+}
+
 export class FamilyMemberCore
 {
   constructor(
     public name: string | undefined,
     public diet: string | undefined,
-    public is_child: boolean | undefined,
+    public type: FamilyMemberType | undefined,
   ){}
 
   static getEmpty(){
-    return new FamilyMemberCore(undefined, "", false);
+    return new FamilyMemberCore(undefined, "", undefined);
   }
 }
 
@@ -39,17 +45,17 @@ export class FamilyMember extends FamilyMemberCore{
     public user_id: number,
     public name: string | undefined,
     public diet: string | undefined,
-    public is_child: boolean | undefined,
+    public type: FamilyMemberType | undefined,
   ){
-    super(name, diet, is_child)
+    super(name, diet, type)
   }
 
   public getFamilyMemberCore() {
-    return new FamilyMemberCore(this.name, this.diet, this.is_child);
+    return new FamilyMemberCore(this.name, this.diet, this.type);
   }
 
   static fromData (data: any){
-    return new FamilyMember(data.id, data.user_id, data.name, data.diet, data.is_child);
+    return new FamilyMember(data.id, data.user_id, data.name, data.diet, data.type);
   }
 }
 
