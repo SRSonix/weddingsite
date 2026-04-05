@@ -5,7 +5,6 @@ class User{
     public $role;
     public $name;
     public $mail;
-    public $attendance;
     public $language;
     public $last_visit;
     public $family_members;
@@ -16,7 +15,6 @@ class User{
             $role,
             $name,
             $mail,
-            $attendance,
             $language,
             $last_visit,
             $family_members,
@@ -26,7 +24,6 @@ class User{
         $this->role = $role;
         $this->name = $name;
         $this->mail = $mail;
-        $this->attendance = $attendance;
         $this->language = $language;
         $this->last_visit = $last_visit;
         $this->family_members = $family_members;
@@ -41,12 +38,14 @@ class FamilyMember{
     public $name;
     public $diet;
     public $type;
+    public $attendance;
 
-    public function __construct($id, $user_id, $name, $diet, $type){
+    public function __construct($id, $user_id, $name, $diet, $type, $attendance){
         $this->id = $id;
         $this->user_id = $user_id;
         $this->name = $name;
         $this->diet = $diet;
         $this->type = $type;
+        $this->attendance = $attendance;
     }
 }

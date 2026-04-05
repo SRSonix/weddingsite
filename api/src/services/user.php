@@ -52,44 +52,45 @@ function get_all_users(){
     return $users;
 }
 
-function update_user_rsvp(
-    $user_id, 
+function update_user(
+    $user_id,
+    $name,
+    $role,
+    $invited_by,
     $mail,
-    $attendance,
-    $language, 
+    $language,
     ){
 
-    $success = \UserRepository\update_user_rsvp(
-        $user_id, 
-        $mail, 
-        $attendance,
+    $success = \UserRepository\update_user(
+        $user_id,
+        $name,
+        $role,
+        $invited_by,
+        $mail,
         $language,
     );
 
     if (!$success){
-        throw new \InternalServerError("unable to update user RSVP.");
+        throw new \InternalServerError("unable to update user.");
     }
 
     return fetch_user($user_id);
 }
 
-
-function update_user_core_info(
+function update_user_contact(
     $user_id,
-    $name,
-    $role,
-    $invited_by = NULL,
+    $mail,
+    $language,
     ){
 
-    $success = \UserRepository\update_user_core_info(
+    $success = \UserRepository\update_user_contact(
         $user_id,
-        $name,
-        $role,
-        $invited_by,
+        $mail,
+        $language,
     );
 
     if (!$success){
-        throw new \InternalServerError("unable to update user core.");
+        throw new \InternalServerError("unable to update user contact.");
     }
 
     return fetch_user($user_id);
@@ -101,8 +102,8 @@ function delete_user($user_id) {
     if ($affectedRowCount == 0) throw new \NotFoundException("");
 }
 
-function add_family_member($user_id, $name, $diet, $type){
-    $lastInsertId = \FamilyMemberRepository\create_family_member($user_id, $name, $diet, $type);
+function add_family_member($user_id, $name, $diet, $type, $attendance){
+    $lastInsertId = \FamilyMemberRepository\create_family_member($user_id, $name, $diet, $type, $attendance);
 
     if (!$lastInsertId){
         throw new \InternalServerError("unable to add family member.");
@@ -118,12 +119,13 @@ function update_family_member(
         $name,
         $diet,
         $type,
+        $attendance,
     ){
     if (\FamilyMemberRepository\get_family_member($user_id, $family_member_id) === NULL) {
         throw new \NotFoundException("");
     }
 
-    \FamilyMemberRepository\update_family_member($user_id, $family_member_id, $name, $diet, $type);
+    \FamilyMemberRepository\update_family_member($user_id, $family_member_id, $name, $diet, $type, $attendance);
 
     http_response_code(response_code: 200);
     return \FamilyMemberRepository\get_family_member($user_id, $family_member_id);

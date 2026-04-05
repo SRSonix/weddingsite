@@ -8,7 +8,8 @@ require_once "controllers/base/response.php";
 
 function create_user(\Request $request){
     $request->validateAdminAccess();
-    $request->validateBodyContainsKeys(["name", "role", "language", "invited_by"], TRUE);
+    $request->validateBodyContainsKeys(["name", "role", "language", "invited_by"]);
+    $request->validateBodyContainsKeys(["name"], TRUE);
     $request->validateAcceptableValues(["role"=> ["ADMIN", "USER"], "language"=>["de", "fr"], "invited_by"=>["groom", "bride", "both"]]);
 
     $name = $request->body["name"];
@@ -46,55 +47,59 @@ function get_user(\Request $request){
 
 function get_all_users(\Request $request){
     $request->validateAdminAccess();
-    
+
     return new \Response(
         body: ["data"=> \UserService\get_all_users()]
     );
 }
 
 
-function update_user_rsvp(\Request $request){
+function update_user_contact(\Request $request){
     $request->validatePathUserIsAuthorized();
-    $request->validateBodyContainsKeys(["mail", "attendance", "language"]);
-    $request->validateAcceptableValues(["attendance"=> ['will_join', 'will_not_join', 'undecided'], "language"=>["de", "fr"]]);
+    $request->validateBodyContainsKeys(["mail", "language"]);
+    $request->validateAcceptableValues(["language"=>["de", "fr"]]);
 
     $user_id = $request->path_params["user_id"];
 
     $mail = $request->body["mail"];
-    $attendance = $request->body["attendance"];
     $language = $request->body["language"];
-   
+
     return new \Response(
-        body: \UserService\update_user_rsvp(
-            $user_id, 
-            $mail, 
-            $attendance, 
+        body: \UserService\update_user_contact(
+            $user_id,
+            $mail,
             $language,
         )
     );
 }
 
 
-function update_user_core_info(\Request $request){
+function update_user(\Request $request){
     $request->validateAdminAccess();
-    $request->validateBodyContainsKeys(["name", "role", "invited_by"], TRUE);
-    $request->validateAcceptableValues(["role"=> ["ADMIN", "USER"], "invited_by"=>["groom", "bride", "both"]]);
+    $request->validateBodyContainsKeys(["name", "role", "invited_by", "mail", "language"]);
+    $request->validateBodyContainsKeys(["name"], TRUE);
+    $request->validateAcceptableValues(["role"=> ["ADMIN", "USER"], "invited_by"=>["groom", "bride", "both"], "language"=>["de", "fr"]]);
 
     $user_id = $request->path_params["user_id"];
 
     if ($user_id == $request->user_id) {
         throw new \ForbiddenException("you are not allowed to update your own core info. ask another admin!");
     }
+
     $name = $request->body["name"];
     $role = $request->body["role"];
     $invited_by = $request->body["invited_by"];
+    $mail = $request->body["mail"];
+    $language = $request->body["language"];
 
     return new \Response(
-        body: \UserService\update_user_core_info(
+        body: \UserService\update_user(
             $user_id,
             $name,
             $role,
             $invited_by,
+            $mail,
+            $language,
         )
     );
 }
@@ -124,11 +129,12 @@ function delete_user(\Request $request){
 
 
 const VALID_MEMBER_TYPES = ["adult", "child", "infant"];
+const VALID_ATTENDANCE = ['will_join', 'will_not_join', 'undecided'];
 
 function add_family_member(\Request $request){
-    $request->validatePathUserIsAuthorized();
+    $request->validateAdminAccess();
     $request->validateBodyContainsKeys(["name", "diet", "type"]);
-    $request->validateBodyContainsKeys(["name", "type"], TRUE);
+    $request->validateBodyContainsKeys(["name"], TRUE);
     $request->validateAcceptableValues(["type"=>VALID_MEMBER_TYPES]);
 
     $user_id = $request->path_params["user_id"];
@@ -144,6 +150,7 @@ function add_family_member(\Request $request){
             $name,
             $diet,
             $type,
+            NULL,
         )
     );
 }
@@ -151,9 +158,9 @@ function add_family_member(\Request $request){
 
 function update_family_member(\Request $request){
     $request->validatePathUserIsAuthorized();
-    $request->validateBodyContainsKeys(["name", "diet", "type"]);
-    $request->validateBodyContainsKeys(["name", "type"], TRUE);
-    $request->validateAcceptableValues(["type"=>VALID_MEMBER_TYPES]);
+    $request->validateBodyContainsKeys(["name", "diet", "type", "attendance"]);
+    $request->validateBodyContainsKeys(["name"], TRUE);
+    $request->validateAcceptableValues(["type"=>VALID_MEMBER_TYPES, "attendance"=>VALID_ATTENDANCE]);
 
     $user_id = $request->path_params["user_id"];
     $family_member_id = $request->path_params["family_member_id"];
@@ -161,6 +168,7 @@ function update_family_member(\Request $request){
     $name = $request->body["name"];
     $diet = $request->body["diet"];
     $type = $request->body["type"];
+    $attendance = $request->body["attendance"];
 
     return new \Response(
         body:\UserService\update_family_member(
@@ -169,18 +177,19 @@ function update_family_member(\Request $request){
             $name,
             $diet,
             $type,
+            $attendance,
         )
     );
 }
 
 function delete_family_member(\Request $request){
-    $request->validatePathUserIsAuthorized();
+    $request->validateAdminAccess();
 
     $user_id = $request->path_params["user_id"];
     $family_member_id = $request->path_params["family_member_id"];
 
     \UserService\remove_family_member(
-        $user_id, 
+        $user_id,
         $family_member_id,
     );
 

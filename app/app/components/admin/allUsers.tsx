@@ -24,13 +24,12 @@ export default function AllUsers(){
     const {allUsers} = useAllUsers();
 
     function exportAllUsersCsv() {
-        const fields: string[] = ["name", "attendance", "diet", "drinks", "mail", "seating_preference"];
+        const fields: string[] = ["name", "mail", "language", "invited_by"];
         let csvContent = "data:text/csv;charset=utf-8,";
         csvContent = csvContent + fields.join(",") + "\n";
         csvContent = csvContent + allUsers.map(user => {
             return fields.map(field => {
-                if (field === "drinks") return (user as any)[field].join("/");
-                return (user as any)[field]?.replace(/(\r\n|\n|\r)/gm, "");
+                return (user as any)[field]?.replace(/(\r\n|\n|\r)/gm, "") ?? "";
             }).join(",");
         }).join("\n");
 
@@ -55,8 +54,8 @@ export default function AllUsers(){
         const {name, role, attendance, has_visited, mail_set, invited_by} = formData;
 
         if (name && !user.name.toLowerCase().includes(name.toLocaleLowerCase())) return false;
-        if (attendance && attendance === "not_set" && user.attendance !== null) return false;
-        if (attendance && attendance !== "not_set" && user.attendance !== attendance) return false;
+        if (attendance === "not_set" && !user.familyMembers.some(fm => fm.attendance === undefined)) return false;
+        if (attendance && attendance !== "not_set" && !user.familyMembers.some(fm => fm.attendance === attendance)) return false;
         if (role && user.role !==  role) return false;
         if (has_visited === "visited" && user.last_visit === null) return false;
         if (has_visited === "not_visited" && user.last_visit !== null) return false;
@@ -68,6 +67,12 @@ export default function AllUsers(){
     }
 
     const filtered = allUsers.filter(filterUser);
+
+    function countedMembers(user: User) {
+        if (!formData.attendance) return user.familyMembers;
+        if (formData.attendance === "not_set") return user.familyMembers.filter(fm => fm.attendance === undefined);
+        return user.familyMembers.filter(fm => fm.attendance === formData.attendance);
+    }
 
     return (
         <div className="mt-3">
@@ -127,9 +132,9 @@ export default function AllUsers(){
             <div className="flex items-center gap-3 mb-3">
                 <h4 className="m-0">Users ({filtered.length} of {allUsers.length})</h4>
                 <span className="text-sm text-gray-500">
-                    {filtered.reduce((s, u) => s + u.familyMembers.filter(fm => fm.type === FamilyMemberType.adult).length, 0)} adults
-                    · {filtered.reduce((s, u) => s + u.familyMembers.filter(fm => fm.type === FamilyMemberType.child).length, 0)} children
-                    · {filtered.reduce((s, u) => s + u.familyMembers.filter(fm => fm.type === FamilyMemberType.infant).length, 0)} infants
+                    {filtered.reduce((s, u) => s + countedMembers(u).filter(fm => fm.type === FamilyMemberType.adult).length, 0)} adults
+                    · {filtered.reduce((s, u) => s + countedMembers(u).filter(fm => fm.type === FamilyMemberType.child).length, 0)} children
+                    · {filtered.reduce((s, u) => s + countedMembers(u).filter(fm => fm.type === FamilyMemberType.infant).length, 0)} infants
                 </span>
                 <button disabled onClick={exportAllUsersCsv} className="btn btn-small btn-gray opacity-50 cursor-not-allowed">export</button>
             </div>

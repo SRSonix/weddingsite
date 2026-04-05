@@ -1,7 +1,7 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import { useNavigate } from "react-router";
 import { useAllUsers } from "~/providers/allUserProvider";
-import { FamilyMemberType, InvitedBy, Role, UserCoreInfo, UserService, type User } from "~/services/userService";
+import { FamilyMemberType, InvitedBy, Language, Role, UserUpdateInfo, UserService, type User } from "~/services/userService";
 import { FamilyMembers } from "../index/familyMembers";
 import { useUser } from "~/providers/userProvider";
 
@@ -12,8 +12,8 @@ export function UserItem({user}: {user:User}){
     const [userUrl, setUserUrl] = useState<string|undefined>(undefined);
     const [edit, setEdit] = useState(false);
     const [showFamily, setShowFamily] = useState(false);
-    const [formData, setFormData] = useState<UserCoreInfo>(UserCoreInfo.getEmpty());
-    const {updateUserCoreInfo, deleteUser, updateFamilyMember, deleteFamilyMember, addFamilyMember} = useAllUsers();
+    const [formData, setFormData] = useState<UserUpdateInfo>(UserUpdateInfo.getEmpty());
+    const {updateUser, deleteUser, updateFamilyMember, deleteFamilyMember, addFamilyMember} = useAllUsers();
     const navigate = useNavigate();
 
     const userAgent = window.navigator.userAgent;
@@ -57,7 +57,7 @@ export function UserItem({user}: {user:User}){
     }, [user])
 
     function populateFormDataFromUser(){
-      setFormData(new UserCoreInfo(user.role, user.name, user.invited_by));
+      setFormData(new UserUpdateInfo(user.role, user.name, user.invited_by, user.mail, user.language));
     }
 
     function handleChange(e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLTextAreaElement>){
@@ -66,8 +66,8 @@ export function UserItem({user}: {user:User}){
       setFormData((prev) => ({...prev, [id]: new_value}));
     }
 
-    function sumbitUserChange(){
-      updateUserCoreInfo(user.id, formData);
+    function submitUserChange(){
+      updateUser(user.id, formData);
       setEdit(false);
     }
 
@@ -113,12 +113,24 @@ export function UserItem({user}: {user:User}){
                 <option value={InvitedBy.bride}>bride</option>
             </select>
         </div>
+        <div className="flex align-center w-full">
+            <label htmlFor="mail">mail</label>:
+            <input disabled={!edit} placeholder="mail" value={formData.mail == undefined ? "": formData.mail} id="mail" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "")}/>
+        </div>
+        <div className="flex align-center w-full">
+            <label htmlFor="language">language</label>:
+            <select disabled={!edit} value={formData.language == undefined ? "": formData.language} id="language" onChange={handleChange} className={"flex-grow ml-1 " + (edit ? "input-inline" : "appearance-none")}>
+                <option value="" disabled>not set</option>
+                <option value={Language.de}>de</option>
+                <option value={Language.fr}>fr</option>
+            </select>
+        </div>
 
         <div className="pt-3 flex flex-wrap items-center gap-2">
             {!edit && <button onClickCapture={() => setEdit(true)} className="btn btn-small">
                 edit
             </button>}
-            {edit && <button onClickCapture={sumbitUserChange} className="btn btn-green btn-small">
+            {edit && <button onClickCapture={submitUserChange} className="btn btn-green btn-small">
                 save
             </button>}
             {edit && <button onClickCapture={resetUserChange} className="btn btn-small">
@@ -127,9 +139,6 @@ export function UserItem({user}: {user:User}){
         </div>
 
         <p className="mt-2">
-          attendance: {user.attendance || "not set"} <br/>
-          mail: {user.mail || "not set"} <br/>
-          language: {user.language || "not set"} <br/>
           last_visit: {user.last_visit || "has not visited"} <br/>
         </p>
         <div>
@@ -138,10 +147,9 @@ export function UserItem({user}: {user:User}){
             {showFamily ? "hide" : "show"} family
           </button>
           {showFamily && <div className="mt-2"><FamilyMembers
-            user_id={user.id}
             addCallback={(coreData) => addFamilyMember(user.id, coreData)}
-            updateCallback={(id, coreData)=>updateFamilyMember(user.id, id, coreData)}
-            deleteCallback={(id)=>deleteFamilyMember(user.id, id)}
+            updateCallback={(id, updateData) => updateFamilyMember(user.id, id, updateData)}
+            deleteCallback={(id) => deleteFamilyMember(user.id, id)}
             familyMembers={user.familyMembers}>
           </FamilyMembers></div>}
         </div>

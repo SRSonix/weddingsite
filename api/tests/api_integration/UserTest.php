@@ -107,7 +107,7 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(403, $response->status);
     }
 
-    
+
     public function testGetUserNoCredentialsReturns401(): void
     {
         # GIVEN
@@ -120,7 +120,7 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(401, $response->status);
     }
 
-    
+
     public function testGetUserUserCredentialsReturnsUser(): void
     {
         # GIVEN
@@ -162,7 +162,7 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(401, $response->status);
     }
 
-    
+
     public function testGetAllUsersUserCredentialsReturns403(): void
     {
         # GIVEN
@@ -194,10 +194,12 @@ class UserTest extends ApiIntegrationTestCase
     }
 
 
-    public function testUpdateUserRsvpNoCredentialsReturns401(): void
+    # --- contact endpoint (mail + language, self or admin) ---
+
+    public function testUpdateUserContactNoCredentialsReturns401(): void
     {
         # GIVEN
-        $request = $this->createRequest(path:"/user/1/rsvp", method:PUT);
+        $request = $this->createRequest(path:"/user/1/contact", method:PUT);
 
         #WHEN
         $response = app($request);
@@ -206,12 +208,11 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(401, $response->status);
     }
 
-        
-    public function testUpdateUserRsvpUserCredentialsOtherUserReturns403(): void
+    public function testUpdateUserContactUserCredentialsOtherUserReturns403(): void
     {
         # GIVEN
         parent::loginAsUser();
-        $request = $this->createRequest(path:"/user/1/rsvp", method:PUT);
+        $request = $this->createRequest(path:"/user/1/contact", method:PUT);
 
         #WHEN
         $response = app($request);
@@ -220,28 +221,24 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(403, $response->status);
     }
 
-
-
-    public static function validUpdateRsvps(): array
+    public static function validUpdateContacts(): array
     {
         return [
-            [["mail"=>"test.mail", "attendance"=>"will_join", "language"=>"fr"]],
-            [["mail"=>"", "attendance"=>"will_join", "language"=>"fr"]],
-            [["mail"=>NULL, "attendance"=>"will_join", "language"=>"fr"]],
-            [["mail"=>"test.mail1", "attendance"=>"will_join", "language"=>"de"]],
-            [["mail"=>"test.mail2", "attendance"=>"will_not_join", "language"=>"de"]],
-            [["mail"=>"test.mail3", "attendance"=>"undecided", "language"=>"de"]],
+            [["mail"=>"test.mail",  "language"=>"fr"]],
+            [["mail"=>"",           "language"=>"fr"]],
+            [["mail"=>NULL,         "language"=>"fr"]],
+            [["mail"=>"test.mail1", "language"=>"de"]],
         ];
     }
 
     /**
-     * @dataProvider validUpdateRsvps
+     * @dataProvider validUpdateContacts
      */
-    public function testUpdateUserRsvpReturnUpdatesForAllValidRsvps($body): void
+    public function testUpdateUserContactReturnUpdatesForAllValidBodies($body): void
     {
         # GIVEN
         parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/1/rsvp", method:PUT, body:$body);
+        $request = $this->createRequest(path:"/user/1/contact", method:PUT, body:$body);
 
         #WHEN
         $response = app($request);
@@ -249,25 +246,25 @@ class UserTest extends ApiIntegrationTestCase
         #THEN
         $this->assertEquals(200, $response->status);
     }
-    
-    public static function validUpdateRsvpSetups(): array
+
+    public static function validUpdateContactSetups(): array
     {
         return [
             ["user", "user", 2],
-            ["admin","admin", 1],
-            ["admin","user", 2],
+            ["admin", "admin", 1],
+            ["admin", "user", 2],
         ];
     }
 
     /**
-     * @dataProvider validUpdateRsvpSetups
+     * @dataProvider validUpdateContactSetups
      */
-    public function testUpdateUserRsvpReturnUpdates($login_user, $target_user, $target_user_id): void
+    public function testUpdateUserContactReturnUpdates($login_user, $target_user, $target_user_id): void
     {
         # GIVEN
         if ($login_user == "user") parent::loginAsUser();
         else parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/$target_user_id/rsvp", method:PUT, body:["mail"=>"test.mail", "attendance"=>"will_join", "language"=>"de"]);
+        $request = $this->createRequest(path:"/user/$target_user_id/contact", method:PUT, body:["mail"=>"test.mail", "language"=>"de"]);
 
         #WHEN
         $response = app($request);
@@ -281,15 +278,14 @@ class UserTest extends ApiIntegrationTestCase
         $response = app($request);
         $this->assertInstanceOf(User::class, $response->body);
         $this->assertEquals("test.mail", $response->body->mail);
-        $this->assertEquals("will_join", $response->body->attendance);
         $this->assertEquals("de", $response->body->language);
     }
 
-    public function testUpdateUserRsvpNoBodyReturns400(): void
+    public function testUpdateUserContactNoBodyReturns400(): void
     {
         # GIVEN
         parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/1/rsvp", method:PUT);
+        $request = $this->createRequest(path:"/user/1/contact", method:PUT);
 
         #WHEN
         $response = app($request);
@@ -298,28 +294,24 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(400, $response->status);
     }
 
-
-    public static function userUpdateRsvpPartialBodies(): array
+    public static function userUpdateContactPartialBodies(): array
     {
         return [
-            [["attendance"=>"will_join", "language"=>"de"]],
-            [["mail"=>"test.mail", "language"=>"de"]],
-            [["mail"=>"test.mail", "attendance"=>"will_join"]],
-            [["mail"=>"test.mail", "attendance"=>NULL, "language"=>"de"]],
-            [["mail"=>"test.mail", "attendance"=>"will_join", "language"=>NULL]],
-            [["mail"=>"test.mail", "attendance"=>"bogus", "language"=>"fr"]],
-            [["mail"=>"test.mail", "attendance"=>"will_join", "language"=>"bogus"]],
+            [["language"=>"de"]],
+            [["mail"=>"test.mail"]],
+            [["mail"=>"test.mail", "language"=>NULL]],
+            [["mail"=>"test.mail", "language"=>"bogus"]],
         ];
     }
 
     /**
-     * @dataProvider userUpdateRsvpPartialBodies
+     * @dataProvider userUpdateContactPartialBodies
      */
-    public function testUpdateUserRsvpPartialBodyReturns422($body): void
+    public function testUpdateUserContactPartialBodyReturns422($body): void
     {
         # GIVEN
         parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/1/rsvp", method:PUT, body:$body);
+        $request = $this->createRequest(path:"/user/1/contact", method:PUT, body:$body);
 
         #WHEN
         $response = app($request);
@@ -328,11 +320,13 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(422, $response->status);
     }
 
-    
-    public function testUpdateUserCoreNoCredentialsReturns401(): void
+
+    # --- admin update endpoint (all fields, admin only) ---
+
+    public function testUpdateUserNoCredentialsReturns401(): void
     {
         # GIVEN
-        $request = $this->createRequest(path:"/user/1/core-info", method:PUT);
+        $request = $this->createRequest(path:"/user/1", method:PUT);
 
         #WHEN
         $response = app($request);
@@ -341,12 +335,11 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(401, $response->status);
     }
 
-        
-    public function testUpdateUserCoreUserCredentialReturns403(): void
+    public function testUpdateUserUserCredentialReturns403(): void
     {
         # GIVEN
         parent::loginAsUser();
-        $request = $this->createRequest(path:"/user/2/core-info", method:PUT);
+        $request = $this->createRequest(path:"/user/2", method:PUT);
 
         #WHEN
         $response = app($request);
@@ -355,12 +348,11 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(403, $response->status);
     }
 
-    
-    public function testUpdateUserCoreAdminCannotUpdateSelf(): void
+    public function testUpdateUserAdminCannotUpdateSelf(): void
     {
         # GIVEN
         parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/1/core-info", method:PUT, body:["name"=>"bogus", "role"=>"USER", "invited_by"=>"both"]);
+        $request = $this->createRequest(path:"/user/1", method:PUT, body:["name"=>"bogus", "role"=>"USER", "invited_by"=>"both", "mail"=>NULL, "language"=>"de"]);
 
         #WHEN
         $response = app($request);
@@ -370,23 +362,23 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals("you are not allowed to update your own core info. ask another admin!", $response->body["message"]);
     }
 
-    public static function validUpdateCoreBody(): array
+    public static function validUpdateUserBodies(): array
     {
         return [
-            [["name"=>"user", "role"=>"ADMIN", "invited_by"=>"groom"]],
-            [["name"=>"user2", "role"=>"USER", "invited_by"=>"bride"]],
-            [["name"=>"user3", "role"=>"USER", "invited_by"=>"both"]],
+            [["name"=>"user",  "role"=>"ADMIN", "invited_by"=>"groom", "mail"=>"a@b.com", "language"=>"fr"]],
+            [["name"=>"user2", "role"=>"USER",  "invited_by"=>"bride", "mail"=>NULL,       "language"=>"de"]],
+            [["name"=>"user3", "role"=>"USER",  "invited_by"=>"both",  "mail"=>"",         "language"=>"de"]],
         ];
     }
 
     /**
-     * @dataProvider validUpdateCoreBody
+     * @dataProvider validUpdateUserBodies
      */
-    public function testUpdateUserCoreReturnUpdatesForAllValidUserCore($body): void
+    public function testUpdateUserReturnUpdatesForAllValidBodies($body): void
     {
         # GIVEN
         parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/2/core-info", method:PUT, body:$body);
+        $request = $this->createRequest(path:"/user/2", method:PUT, body:$body);
 
         #WHEN
         $response = app($request);
@@ -395,12 +387,11 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(200, $response->status);
     }
 
-
-    public function testUpdateUserCoreReturnUpdates(): void
+    public function testUpdateUserReturnUpdates(): void
     {
         # GIVEN
         parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/2/core-info", method:PUT, body:["name"=>"bogus", "role"=>"ADMIN", "invited_by"=>"both"]);
+        $request = $this->createRequest(path:"/user/2", method:PUT, body:["name"=>"bogus", "role"=>"ADMIN", "invited_by"=>"both", "mail"=>"test@test.com", "language"=>"fr"]);
 
         #WHEN
         $response = app($request);
@@ -414,70 +405,15 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertInstanceOf(User::class, $response->body);
         $this->assertEquals("bogus", $response->body->name);
         $this->assertEquals("ADMIN", $response->body->role);
+        $this->assertEquals("test@test.com", $response->body->mail);
+        $this->assertEquals("fr", $response->body->language);
     }
 
-    public function testGetUserUpdatesLastVisit(): void
-    {
-        # GIVEN
-        parent::loginAsUser();
-        $request = $this->createRequest(path:"/user", method:GET);
-
-        #WHEN
-        $response = app($request);
-
-        #THEN
-        $this->assertEquals(200, $response->status);
-        $this->assertNotNull($response->body->last_visit);
-    }
-
-    private function getLastVisit(int $user_id): ?string {
-        $session = create_db_session();
-        $stmt = $session->prepare("SELECT last_visit FROM user WHERE id = :id;");
-        $stmt->execute(["id" => $user_id]);
-        return $stmt->fetch()["last_visit"];
-    }
-
-    public static function endpointsNotAffectingLastVisit(): array {
-        return [
-            ["/users",                  GET,    NULL,                                                           2, false],
-            ["/user",                   POST,   ["name"=>"n", "role"=>"USER", "language"=>"fr", "invited_by"=>"both"],  3, false],
-            ["/user/2/rsvp",            PUT,    ["mail"=>"m", "attendance"=>"will_join", "language"=>"de"],      2, false],
-            ["/user/2/core-info",       PUT,    ["name"=>"n", "role"=>"USER", "invited_by"=>"both"],             2, false],
-            ["/user/2/reset-token",     PUT,    NULL,                                                           2, false],
-            ["/user/2/family-member",   POST,   ["name"=>"n", "diet"=>NULL, "type"=>"adult"],             2, false],
-            ["/user/2/family-member/1", PUT,    ["name"=>"n", "diet"=>NULL, "type"=>"adult"],             2, true],
-         ];
-    }
-
-    /**
-     * @dataProvider endpointsNotAffectingLastVisit
-     */
-    public function testEndpointDoesNotUpdateLastVisit(string $path, string $method, ?array $body, int $user_id, bool $needs_family_member): void
+    public function testUpdateUserNoBodyReturns400(): void
     {
         # GIVEN
         parent::loginAsAdmin();
-
-        if ($needs_family_member) {
-            $setup = $this->createRequest(path:"/user/2/family-member", method:POST, body:["name"=>"setup", "diet"=>NULL, "type"=>"adult"]);
-            app($setup);
-        }
-
-        $request = $this->createRequest(path:$path, method:$method, body:$body);
-
-        #WHEN
-        $response = app($request);
-
-        #THEN
-        $this->assertGreaterThanOrEqual(200, $response->status);
-        $this->assertLessThan(300, $response->status);
-        $this->assertNull($this->getLastVisit(2));
-    }
-
-    public function testUpdateUserCoreNoBodyReturns400(): void
-    {
-        # GIVEN
-        parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/2/core-info", method:PUT);
+        $request = $this->createRequest(path:"/user/2", method:PUT);
 
         #WHEN
         $response = app($request);
@@ -486,29 +422,32 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(400, $response->status);
     }
 
-
-    public static function userUpdateCorePartialBodies(): array
+    public static function userUpdatePartialBodies(): array
     {
         return [
-            [["role"=>"ADMIN", "invited_by"=>"both"]],
-            [["name"=>"bogus", "invited_by"=>"both"]],
-            [["name"=>"bogus", "role"=>"ADMIN"]],
-            [["name"=>NULL, "role"=>"ADMIN", "invited_by"=>"both"]],
-            [["name"=>"bogus", "role"=>NULL, "invited_by"=>"both"]],
-            [["name"=>"bogus", "role"=>"ADMIN", "invited_by"=>NULL]],
-            [["name"=>"user", "role"=>"bogus", "invited_by"=>"both"]],
-            [["name"=>"bogus", "role"=>"ADMIN", "invited_by"=>"bogus"]],
+            [["role"=>"ADMIN", "invited_by"=>"both", "mail"=>NULL, "language"=>"de"]],
+            [["name"=>"user", "invited_by"=>"both", "mail"=>NULL, "language"=>"de"]],
+            [["name"=>"user", "role"=>"ADMIN", "mail"=>NULL, "language"=>"de"]],
+            [["name"=>"user", "role"=>"ADMIN", "invited_by"=>"both", "language"=>"de"]],
+            [["name"=>"user", "role"=>"ADMIN", "invited_by"=>"both", "mail"=>NULL]],
+            [["name"=>NULL,    "role"=>"ADMIN", "invited_by"=>"both", "mail"=>NULL, "language"=>"de"]],
+            [["name"=>"user", "role"=>NULL,    "invited_by"=>"both", "mail"=>NULL, "language"=>"de"]],
+            [["name"=>"user", "role"=>"ADMIN", "invited_by"=>NULL,   "mail"=>NULL, "language"=>"de"]],
+            [["name"=>"user", "role"=>"ADMIN", "invited_by"=>"both", "mail"=>NULL, "language"=>NULL]],
+            [["name"=>"user", "role"=>"bogus", "invited_by"=>"both", "mail"=>NULL, "language"=>"de"]],
+            [["name"=>"user", "role"=>"ADMIN", "invited_by"=>"bogus","mail"=>NULL, "language"=>"de"]],
+            [["name"=>"user", "role"=>"ADMIN", "invited_by"=>"both", "mail"=>NULL, "language"=>"bogus"]],
         ];
     }
 
     /**
-     * @dataProvider userUpdateCorePartialBodies
+     * @dataProvider userUpdatePartialBodies
      */
-    public function testUpdateUserCorePartialBodyReturns422($body): void
+    public function testUpdateUserPartialBodyReturns422($body): void
     {
         # GIVEN
         parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/2/core-info", method:PUT, body:$body);
+        $request = $this->createRequest(path:"/user/2", method:PUT, body:$body);
 
         #WHEN
         $response = app($request);
@@ -517,6 +456,8 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(422, $response->status);
     }
 
+
+    # --- reset token ---
 
     public function testUpdateUserTokenNoCredentialsReturns401(): void
     {
@@ -530,7 +471,6 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(401, $response->status);
     }
 
-        
     public function testUpdateUserTokenUserCredentialOtherUserReturns403(): void
     {
         # GIVEN
@@ -544,7 +484,6 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(403, $response->status);
     }
 
-    
     public static function validUpdateTokenSetups(): array
     {
         return [
@@ -575,6 +514,8 @@ class UserTest extends ApiIntegrationTestCase
     }
 
 
+    # --- delete user ---
+
     public function testDeleteUserNoCredentialsReturns401(): void
     {
         # GIVEN
@@ -587,7 +528,6 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(401, $response->status);
     }
 
-        
     public function testDeleteUserUserCredentialReturns403(): void
     {
         # GIVEN
@@ -601,7 +541,6 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(403, $response->status);
     }
 
-    
     public function testDeleteUserAdminDeletesUser(): void
     {
         # GIVEN
@@ -635,7 +574,6 @@ class UserTest extends ApiIntegrationTestCase
     public function testDeleteUserAdminCannotDeleteSelf(): void
     {
         # GIVEN
-        # GIVEN
         parent::loginAsAdmin();
         $request = $this->createRequest(path:"/user/1", method:DELETE);
 
@@ -646,6 +584,68 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(403, $response->status);
         $this->assertEquals("you are not allowed to delete yourself. ask another admin!", $response->body["message"]);
     }
+
+
+    # --- last visit ---
+
+    public function testGetUserUpdatesLastVisit(): void
+    {
+        # GIVEN
+        parent::loginAsUser();
+        $request = $this->createRequest(path:"/user", method:GET);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(200, $response->status);
+        $this->assertNotNull($response->body->last_visit);
+    }
+
+    private function getLastVisit(int $user_id): ?string {
+        $session = create_db_session();
+        $stmt = $session->prepare("SELECT last_visit FROM user WHERE id = :id;");
+        $stmt->execute(["id" => $user_id]);
+        return $stmt->fetch()["last_visit"];
+    }
+
+    public static function endpointsNotAffectingLastVisit(): array {
+        return [
+            ["/users",                    GET,    NULL,                                                                                false],
+            ["/user/2/contact",           PUT,    ["mail"=>"m", "language"=>"de"],                                                     false],
+            ["/user/2",                   PUT,    ["name"=>"n", "role"=>"USER", "invited_by"=>"both", "mail"=>NULL, "language"=>"de"], false],
+            ["/user/2/reset-token",       PUT,    NULL,                                                                                false],
+            ["/user/2/family-member",     POST,   ["name"=>"n", "diet"=>NULL, "type"=>"adult"],                                        false],
+            ["/user/2/family-member/1",   PUT,    ["name"=>"n", "diet"=>NULL, "type"=>"adult", "attendance"=>"will_join"],             true],
+        ];
+    }
+
+    /**
+     * @dataProvider endpointsNotAffectingLastVisit
+     */
+    public function testEndpointDoesNotUpdateLastVisit(string $path, string $method, ?array $body, bool $needs_family_member): void
+    {
+        # GIVEN
+        parent::loginAsAdmin();
+
+        if ($needs_family_member) {
+            $setup = $this->createRequest(path:"/user/2/family-member", method:POST, body:["name"=>"setup", "diet"=>NULL, "type"=>"adult"]);
+            app($setup);
+        }
+
+        $request = $this->createRequest(path:$path, method:$method, body:$body);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertGreaterThanOrEqual(200, $response->status);
+        $this->assertLessThan(300, $response->status);
+        $this->assertNull($this->getLastVisit(2));
+    }
+
+
+    # --- family member add (admin only) ---
 
     public function testAddFamilymemberNoCredentialsReturns401(): void
     {
@@ -659,7 +659,19 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(401, $response->status);
     }
 
-        
+    public function testAddFamilymemberUserCredentialsSelfReturns403(): void
+    {
+        # GIVEN
+        parent::loginAsUser();
+        $request = $this->createRequest(path:"/user/2/family-member", method:POST);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(403, $response->status);
+    }
+
     public function testAddFamilymemberUserCredentialsOtherUserReturns403(): void
     {
         # GIVEN
@@ -673,23 +685,21 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(403, $response->status);
     }
 
-    public static function validFamilyMemberSetups(): array
+    public static function validFamilyMemberAdminSetups(): array
     {
         return [
-            ["user", "user", 2],
-            ["admin","admin", 1],
-            ["admin","user", 2],
+            ["admin", 1, "admin"],
+            ["admin", 2, "user"],
         ];
     }
 
     /**
-     * @dataProvider validFamilyMemberSetups
+     * @dataProvider validFamilyMemberAdminSetups
      */
-    public function testAddFamilymemberAdds($login_user, $target_user, $target_user_id): void
+    public function testAddFamilymemberAdds($login_user, $target_user_id, $verify_as): void
     {
         # GIVEN
-        if ($login_user == "user") parent::loginAsUser();
-        else parent::loginAsAdmin();
+        parent::loginAsAdmin();
         $request = $this->createRequest(path:"/user/$target_user_id/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "type"=>"child"]);
 
         #WHEN
@@ -698,8 +708,7 @@ class UserTest extends ApiIntegrationTestCase
         #THEN
         $this->assertEquals(201, $response->status);
         $this->assertInstanceOf(FamilyMember::class, $response->body);
-        if ($target_user == "user") parent::loginAsUser();
-        else parent::loginAsAdmin();
+        if ($verify_as == "user") parent::loginAsUser();
         $request = $this->createRequest(path:"/user", method:GET);
         $response = app($request);
         $this->assertInstanceOf(User::class, $response->body);
@@ -707,6 +716,7 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals("test-name", $response->body->family_members[0]->name);
         $this->assertEquals("vegan", $response->body->family_members[0]->diet);
         $this->assertEquals("child", $response->body->family_members[0]->type);
+        $this->assertNull($response->body->family_members[0]->attendance);
     }
 
     public static function validFamilyMemberBodies(): array
@@ -736,6 +746,7 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals($body["name"], $response->body->name);
         $this->assertEquals($body["diet"], $response->body->diet);
         $this->assertEquals($body["type"], $response->body->type);
+        $this->assertNull($response->body->attendance);
     }
 
     public function testAddFamilymemberNoBodyReturns400(): void
@@ -751,20 +762,21 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(400, $response->status);
     }
 
-
-    public static function familyMembersPartialBodies(): array
+    public static function familyMemberAddPartialBodies(): array
     {
         return [
             [["diet"=>"vegan", "type"=>"adult"]],
             [["name"=>"test-name", "type"=>"adult"]],
             [["name"=>"test-name", "diet"=>"vegan"]],
-            [["name"=>NULL, "diet"=>"vegan", "type"=>NULL]],
-            [["name"=>NULL, "diet"=>"vegan", "type"=>"bogus"]],
+            [["name"=>NULL, "diet"=>"vegan", "type"=>"adult"]],
+            [["name"=>"test-name", "diet"=>"vegan", "type"=>NULL]],
+            [["name"=>"test-name", "diet"=>"vegan", "type"=>"bogus"]],
         ];
     }
 
+
     /**
-     * @dataProvider familyMembersPartialBodies
+     * @dataProvider familyMemberAddPartialBodies
      */
     public function testAddFamilymemberPartialBodyReturns422($body): void
     {
@@ -779,6 +791,9 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(422, $response->status);
     }
 
+
+    # --- family member update (self or admin, includes attendance) ---
+
     public function testUpdateFamilymemberNoCredentialsReturns401(): void
     {
         # GIVEN
@@ -791,7 +806,6 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(401, $response->status);
     }
 
-        
     public function testUpdateFamilymemberUserCredentialsOtherUserReturns403(): void
     {
         # GIVEN
@@ -809,7 +823,7 @@ class UserTest extends ApiIntegrationTestCase
     {
         # GIVEN
         parent::loginAsUser();
-        $request = $this->createRequest(path:"/user/2/family-member/1", method:PUT, body:["name"=>"test-name", "diet"=>"vegan", "type"=>"child"]);
+        $request = $this->createRequest(path:"/user/2/family-member/1", method:PUT, body:["name"=>"test-name", "diet"=>"vegan", "type"=>"child", "attendance"=>"will_join"]);
 
         #WHEN
         $response = app($request);
@@ -818,9 +832,17 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(404, $response->status);
     }
 
+    public static function validFamilyMemberUpdateSetups(): array
+    {
+        return [
+            ["user", "user", 2],
+            ["admin", "admin", 1],
+            ["admin", "user", 2],
+        ];
+    }
 
     /**
-     * @dataProvider validFamilyMemberSetups
+     * @dataProvider validFamilyMemberUpdateSetups
      */
     public function testUpdateFamilymemberReturnUpdates($login_user, $target_user, $target_user_id): void
     {
@@ -832,7 +854,7 @@ class UserTest extends ApiIntegrationTestCase
 
         if ($login_user == "user") parent::loginAsUser();
         else parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/$target_user_id/family-member/1", method:PUT, body:["name"=>"test-name2", "diet"=>"meat", "type"=>"adult"]);
+        $request = $this->createRequest(path:"/user/$target_user_id/family-member/1", method:PUT, body:["name"=>"test-name2", "diet"=>"meat", "type"=>"adult", "attendance"=>"will_not_join"]);
 
         #WHEN
         $response = app($request);
@@ -848,16 +870,22 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals("test-name2", $response->body->family_members[0]->name);
         $this->assertEquals("meat", $response->body->family_members[0]->diet);
         $this->assertEquals("adult", $response->body->family_members[0]->type);
+        $this->assertEquals("will_not_join", $response->body->family_members[0]->attendance);
     }
 
     public function testUpdateFamilymemberWithSameValuesReturns200(): void
     {
         # GIVEN
         parent::loginAsAdmin();
-        $body = ["name"=>"test-name", "diet"=>"vegan", "type"=>"child"];
-        $request = $this->createRequest(path:"/user/1/family-member", method:POST, body:$body);
+        $request = $this->createRequest(path:"/user/1/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "type"=>"child"]);
         $response = app($request);
         $this->assertEquals(201, $response->status);
+
+        # Set attendance to will_join so the following update is truly "same values"
+        $body = ["name"=>"test-name", "diet"=>"vegan", "type"=>"child", "attendance"=>"will_join"];
+        $request = $this->createRequest(path:"/user/1/family-member/1", method:PUT, body:$body);
+        $response = app($request);
+        $this->assertEquals(200, $response->status);
 
         # WHEN
         $request = $this->createRequest(path:"/user/1/family-member/1", method:PUT, body:$body);
@@ -869,13 +897,14 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals("test-name", $response->body->name);
         $this->assertEquals("vegan", $response->body->diet);
         $this->assertEquals("child", $response->body->type);
+        $this->assertEquals("will_join", $response->body->attendance);
     }
 
     public function testUpdateFamilymemberNoBodyReturns400(): void
     {
         # GIVEN
         parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/1/rsvp", method:PUT);
+        $request = $this->createRequest(path:"/user/1/family-member/1", method:PUT);
 
         #WHEN
         $response = app($request);
@@ -884,8 +913,23 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(400, $response->status);
     }
 
+    public static function familyMemberUpdatePartialBodies(): array
+    {
+        return [
+            [["diet"=>"vegan", "type"=>"adult", "attendance"=>"will_join"]],
+            [["name"=>"test-name", "type"=>"adult", "attendance"=>"will_join"]],
+            [["name"=>"test-name", "diet"=>"vegan", "attendance"=>"will_join"]],
+            [["name"=>"test-name", "diet"=>"vegan", "type"=>"adult"]],
+            [["name"=>NULL, "diet"=>"vegan", "type"=>"adult", "attendance"=>"will_join"]],
+            [["name"=>"test-name", "diet"=>"vegan", "type"=>NULL, "attendance"=>"will_join"]],
+            [["name"=>"test-name", "diet"=>"vegan", "type"=>"adult", "attendance"=>NULL]],
+            [["name"=>"test-name", "diet"=>"vegan", "type"=>"bogus", "attendance"=>"will_join"]],
+            [["name"=>"test-name", "diet"=>"vegan", "type"=>"adult", "attendance"=>"bogus"]],
+        ];
+    }
+
     /**
-     * @dataProvider familyMembersPartialBodies
+     * @dataProvider familyMemberUpdatePartialBodies
      */
     public function testUpdateFamilymemberPartialBodyReturns422($body): void
     {
@@ -894,8 +938,7 @@ class UserTest extends ApiIntegrationTestCase
         $request = $this->createRequest(path:"/user/1/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "type"=>"child"]);
         $response = app($request);
         $this->assertEquals(201, $response->status);
-        
-        parent::loginAsAdmin();
+
         $request = $this->createRequest(path:"/user/1/family-member/1", method:PUT, body:$body);
 
         #WHEN
@@ -906,11 +949,12 @@ class UserTest extends ApiIntegrationTestCase
     }
 
 
-    
+    # --- family member delete (admin only) ---
+
     public function testDeleteFamilymemberNoCredentialsReturns401(): void
     {
         # GIVEN
-        $request = $this->createRequest(path:"/user/1/rsvp", method:PUT);
+        $request = $this->createRequest(path:"/user/1/family-member/1", method:DELETE);
 
         #WHEN
         $response = app($request);
@@ -919,12 +963,24 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(401, $response->status);
     }
 
-        
+    public function testDeleteFamilymemberUserCredentialsSelfReturns403(): void
+    {
+        # GIVEN
+        parent::loginAsUser();
+        $request = $this->createRequest(path:"/user/2/family-member/1", method:DELETE);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(403, $response->status);
+    }
+
     public function testDeleteFamilymemberUserCredentialsOtherUserReturns403(): void
     {
         # GIVEN
         parent::loginAsUser();
-        $request = $this->createRequest(path:"/user/1/rsvp", method:PUT);
+        $request = $this->createRequest(path:"/user/1/family-member/1", method:DELETE);
 
         #WHEN
         $response = app($request);
@@ -936,7 +992,7 @@ class UserTest extends ApiIntegrationTestCase
     public function testDeleteNonExistingFamilymemberReturns404(): void
     {
         # GIVEN
-        parent::loginAsUser();
+        parent::loginAsAdmin();
         $request = $this->createRequest(path:"/user/2/family-member/1", method:DELETE);
 
         #WHEN
@@ -946,10 +1002,18 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(404, $response->status);
     }
 
+    public static function validFamilyMemberDeleteSetups(): array
+    {
+        return [
+            ["admin", 1],
+            ["admin", 2],
+        ];
+    }
+
     /**
-     * @dataProvider validFamilyMemberSetups
+     * @dataProvider validFamilyMemberDeleteSetups
      */
-    public function testDeleteFamilymemberDeletes($login_user, $target_user, $target_user_id): void
+    public function testDeleteFamilymemberDeletes($login_user, $target_user_id): void
     {
         # GIVEN
         parent::loginAsAdmin();
@@ -957,8 +1021,6 @@ class UserTest extends ApiIntegrationTestCase
         $response = app($request);
         $this->assertEquals(201, $response->status);
 
-        if ($login_user == "user") parent::loginAsUser();
-        else parent::loginAsAdmin();
         $request = $this->createRequest(path:"/user/$target_user_id/family-member/1", method:DELETE);
 
         #WHEN
@@ -967,11 +1029,8 @@ class UserTest extends ApiIntegrationTestCase
         #THEN
         $this->assertEquals(204, $response->status);
         $this->assertEquals(NULL, $response->body);
-        if ($target_user == "user") parent::loginAsUser();
-        else parent::loginAsAdmin();
         $request = $this->createRequest(path:"/user", method:GET);
         $response = app($request);
         $this->assertCount(0, $response->body->family_members);
     }
-
 }

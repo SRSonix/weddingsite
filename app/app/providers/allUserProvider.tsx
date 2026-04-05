@@ -1,13 +1,13 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { FamilyMember, FamilyMemberCore, UserCoreInfo, UserService, type User } from "~/services/userService";
+import { FamilyMemberAdd, FamilyMemberUpdate, UserUpdateInfo, UserService, type User } from "~/services/userService";
 
 type AllUsersContextType = {
     allUsers: Array<User>;
     reloadAllUsers: () => void;
-    updateUserCoreInfo: (user_id: number, userCoreInfo: UserCoreInfo) => void;
+    updateUser: (user_id: number, userUpdateInfo: UserUpdateInfo) => void;
     deleteUser: (user_id: number) => void;
-    addFamilyMember: (user_id: number, data: FamilyMemberCore) => void;
-    updateFamilyMember: (user_id: number, familyMemberId: number, data: FamilyMemberCore) => void;
+    addFamilyMember: (user_id: number, data: FamilyMemberAdd) => void;
+    updateFamilyMember: (user_id: number, familyMemberId: number, data: FamilyMemberUpdate) => void;
     deleteFamilyMember: (user_id: number, familyMemberId: number) => void;
 }
 
@@ -28,10 +28,10 @@ export default function AllUsersProvider({children}: {children: React.ReactNode}
         )
     }
 
-    function updateUserCoreInfo(user_id: number, userCoreInfo: UserCoreInfo): void{
-        UserService.updateUserCoreInfo(user_id, userCoreInfo).then(
+    function updateUser(user_id: number, userUpdateInfo: UserUpdateInfo): void{
+        UserService.updateUser(user_id, userUpdateInfo).then(
             (user) => {
-                if (user){ 
+                if (user){
                     setAllUsers(prev => {
                         const index = prev.findIndex((user) => user.id === user_id);
                         const newArray = [...prev];
@@ -57,16 +57,16 @@ export default function AllUsersProvider({children}: {children: React.ReactNode}
             }
         )
     }
-    
 
-    function addFamilyMember(user_id: number, data: FamilyMemberCore){
+
+    function addFamilyMember(user_id: number, data: FamilyMemberAdd){
         console.log(data);
         UserService.addFamilyMember(user_id, data).then(
             (familyMember) => {
                 if (familyMember) {
                     setAllUsers(prev => prev.map((user) =>
                         user.id === user_id
-                            ? {...user, familyMembers: [...user.familyMembers, familyMember]}
+                            ? user.withFamilyMembers([...user.familyMembers, familyMember])
                             : user
                     ));
                 }
@@ -75,13 +75,13 @@ export default function AllUsersProvider({children}: {children: React.ReactNode}
     }
 
 
-    function updateFamilyMember(user_id: number, familyMemberId: number, data: FamilyMemberCore){
+    function updateFamilyMember(user_id: number, familyMemberId: number, data: FamilyMemberUpdate){
         UserService.updateFamilyMember(user_id, familyMemberId, data).then(
             (familyMember) => {
                 if (familyMember) {
                     setAllUsers(prev => prev.map((user) =>
                         user.id === user_id
-                            ? {...user, familyMembers: user.familyMembers.map((fm) => fm.id === familyMemberId ? familyMember : fm)}
+                            ? user.withFamilyMembers(user.familyMembers.map((fm) => fm.id === familyMemberId ? familyMember : fm))
                             : user
                     ));
                 }
@@ -97,7 +97,7 @@ export default function AllUsersProvider({children}: {children: React.ReactNode}
                 if (success) {
                     setAllUsers(prev => prev.map((user) =>
                         user.id === user_id
-                            ? {...user, familyMembers: user.familyMembers.filter((fm) => fm.id !== familyMemberId)}
+                            ? user.withFamilyMembers(user.familyMembers.filter((fm) => fm.id !== familyMemberId))
                             : user
                     ));
                 }
@@ -107,7 +107,7 @@ export default function AllUsersProvider({children}: {children: React.ReactNode}
 
 
     return (
-        <AllUsersContext.Provider value={{allUsers, reloadAllUsers, updateUserCoreInfo, deleteUser, addFamilyMember, updateFamilyMember, deleteFamilyMember}}>
+        <AllUsersContext.Provider value={{allUsers, reloadAllUsers, updateUser, deleteUser, addFamilyMember, updateFamilyMember, deleteFamilyMember}}>
             {children}
         </AllUsersContext.Provider>
     )

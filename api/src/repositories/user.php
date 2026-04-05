@@ -11,7 +11,6 @@ function user_from_row($row){
         role: $row["role"],
         name: $row["name"],
         mail: $row["mail"],
-        attendance: $row["attendance"],
         language: $row["language"],
         last_visit: $row["last_visit"],
         family_members: NULL,
@@ -97,17 +96,19 @@ function create_user($name, $role, $language, $jti, $invited_by = NULL) {
     return $lastInsertId;
 }
 
-function update_user_core_info(
+function update_user(
     $user_id,
     $name,
     $role,
-    $invited_by = NULL,
+    $invited_by,
+    $mail,
+    $language,
     ){
     $session = create_db_session();
 
     try {
-        $stmt = $session->prepare("UPDATE user SET name = :name, role = :role, invited_by = :invited_by WHERE id = :user_id;");
-        $stmt->execute(["user_id"=>$user_id, "name"=>$name, "role"=> $role, "invited_by"=>$invited_by]);
+        $stmt = $session->prepare("UPDATE user SET name = :name, role = :role, invited_by = :invited_by, mail = :mail, language = :language WHERE id = :user_id;");
+        $stmt->execute(["user_id"=>$user_id, "name"=>$name, "role"=>$role, "invited_by"=>$invited_by, "mail"=>$mail, "language"=>$language]);
     }
     catch(\PDOException $e)
     {
@@ -121,25 +122,24 @@ function update_user_core_info(
     return True;
 }
 
-function update_user_rsvp(
-    $user_id, 
-    $mail, 
-    $attendance,
+function update_user_contact(
+    $user_id,
+    $mail,
     $language,
     ){
-    $session = create_db_session();    
+    $session = create_db_session();
 
     try {
-        $stmt = $session->prepare("UPDATE user SET mail = :mail, attendance = :attendance, language = :language WHERE id = :user_id;");
-        $stmt->execute(["user_id"=>$user_id, "mail"=>$mail, "attendance"=>$attendance, "language"=>$language]);
+        $stmt = $session->prepare("UPDATE user SET mail = :mail, language = :language WHERE id = :user_id;");
+        $stmt->execute(["user_id"=>$user_id, "mail"=>$mail, "language"=>$language]);
     }
-    catch(\PDOException $e) 
+    catch(\PDOException $e)
     {
         _log($e);
         $session = null;
         return False;
     }
-    
+
     $session = null;
 
     return True;

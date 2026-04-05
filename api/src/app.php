@@ -19,8 +19,8 @@ function app($request): Response{
 	$router->add_route(pattern: '^/user$', method: POST, parameter_names: [], callback: "UserController\\create_user");
 	$router->add_route(pattern: "^/user$", method: GET, parameter_names: [], callback:"UserController\\get_user");
 	$router->add_route(pattern: "^/user\/(\d+)$", method: DELETE, parameter_names: ["user_id"], callback:"UserController\\delete_user");
-	$router->add_route(pattern: "^/user\/(\d+)\/rsvp$", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user_rsvp");
-	$router->add_route(pattern: "^/user\/(\d+)\/core-info$", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user_core_info");
+	$router->add_route(pattern: "^/user\/(\d+)\/contact$", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user_contact");
+	$router->add_route(pattern: "^/user\/(\d+)$", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user");
 	$router->add_route(pattern: "^/user\/(\d+)\/reset-token$", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user_token");
 	$router->add_route(pattern: "^/users$", method: GET, parameter_names: [], callback:"UserController\\get_all_users");
 

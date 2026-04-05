@@ -16,10 +16,8 @@ class DatabaseTestCase extends TestCase
             role ENUM('USER', 'ADMIN') NOT NULL,
             name TEXT,
             mail TEXT,
-            attendance ENUM('will_join', 'will_not_join', 'undecided'),
             language ENUM('fr', 'de'),
             last_visit TIMESTAMP,
-            seating_preference TEXT,
             invited_by ENUM('groom', 'bride', 'both') NOT NULL
             );
 
@@ -34,6 +32,7 @@ class DatabaseTestCase extends TestCase
             name TEXT,
             diet TEXT,
             type ENUM('adult', 'child', 'infant') NOT NULL,
+            attendance ENUM('will_join', 'will_not_join', 'undecided'),
             FOREIGN KEY (user_id) REFERENCES user(id)
             );
 

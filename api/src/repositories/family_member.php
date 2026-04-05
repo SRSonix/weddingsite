@@ -12,6 +12,7 @@ function family_member_from_row($row) {
         name: $row["name"],
         diet: $row["diet"],
         type: $row["type"],
+        attendance: $row["attendance"],
     );
 }
 
@@ -50,27 +51,27 @@ function get_family_member($user_id, $family_member_id){
     return family_member_from_row($result[0]);
 }
 
-function update_family_member($user_id, $family_member_id,  $name, $diet, $type){
+function update_family_member($user_id, $family_member_id, $name, $diet, $type, $attendance){
     $session = create_db_session();
 
-    $stmt = $session->prepare("UPDATE family_member SET name = :name, diet = :diet, type = :type WHERE id = :id AND user_id = :user_id;");
-    $stmt->execute(["user_id" => $user_id, "id"=>$family_member_id, "name"=> $name, "diet"=>$diet, "type"=>$type]);
+    $stmt = $session->prepare("UPDATE family_member SET name = :name, diet = :diet, type = :type, attendance = :attendance WHERE id = :id AND user_id = :user_id;");
+    $stmt->execute(["user_id" => $user_id, "id"=>$family_member_id, "name"=> $name, "diet"=>$diet, "type"=>$type, "attendance"=>$attendance]);
     $affectedRows = $stmt->rowCount();
-    
+
     $session = null;
-    
+
     return $affectedRows;
 }
 
-function create_family_member($user_id, $name, $diet, $type){
+function create_family_member($user_id, $name, $diet, $type, $attendance){
     $session = create_db_session();
 
-    $stmt = $session->prepare("INSERT INTO family_member (user_id, name, diet, type) VALUES (:user_id, :name, :diet, :type)");
-    $stmt->execute(["user_id" => $user_id, "name"=> $name, "diet"=>$diet, "type"=>$type]);
+    $stmt = $session->prepare("INSERT INTO family_member (user_id, name, diet, type, attendance) VALUES (:user_id, :name, :diet, :type, :attendance)");
+    $stmt->execute(["user_id" => $user_id, "name"=> $name, "diet"=>$diet, "type"=>$type, "attendance"=>$attendance]);
     $lastInsertId = $session->lastInsertId();
-    
+
     $session = null;
-    
+
     return $lastInsertId;
 }
 

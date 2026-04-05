@@ -96,6 +96,8 @@ The database test setup is done in  `api/tests/BaseTestCases.php` In case of sch
 tests can only be run when the user has started the database. 
 If the agent needs to run tests, as the user for permission first.
 
+**Never remove test cases** without explicit permission from the user.
+
 Run from the `api` folder:
 ```sh
 DB_SERVER=127.0.0.1 ./vendor/bin/phpunit
