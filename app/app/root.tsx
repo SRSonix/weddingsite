@@ -30,7 +30,7 @@ i18n
     debug: false,
     backend: {
       loadPath: 'translations/{{ns}}/{{lng}}.json',
-      queryStringParams: { v: '2' },
+      queryStringParams: { v: '3' },
     },
     ns: ['app'],
     defaultNS: 'app',

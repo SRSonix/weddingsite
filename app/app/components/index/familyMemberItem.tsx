@@ -111,6 +111,7 @@ export function FamilyMemberForm({id, defaultData, submitChanges, cancelCallback
                         <option value={FamilyMemberType.infant}>{t("infant", "Infant")}</option>
                     </select>
                 </div>
+                <p className="text-xs text-olive-500 mt-0.5">{t("companions_children", "Age groups: Infant (0-3), Child (4-12), Adult (13+).")}</p>
                 {errors.type && <p className="text-red-500 text-sm">{errors.type}</p>}
             </div>
         </div>

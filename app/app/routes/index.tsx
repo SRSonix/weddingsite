@@ -16,8 +16,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Overview() {
-  const {t, i18n} = useTranslation("app");
-  const lang = i18n.language as "de" | "fr";
+  const {t} = useTranslation("app");
   const {user} = useUser();
 
   const [overviewInfo, setOverviewInfo] = useState<OverviewInfo | undefined>(undefined);
@@ -73,12 +72,6 @@ export default function Overview() {
                 </div>
               </div>
             )}
-            {overviewInfo?.public_transport?.[lang] && (
-              <div>
-                <h4>{t("public_transport", "Public Transport")}</h4>
-                <p className="text-sm mt-1">{overviewInfo.public_transport[lang]}</p>
-              </div>
-            )}
             <div>
               <h4>{t("phone", "Phone")}</h4>
               <div className="text-sm mt-1">
@@ -89,8 +82,8 @@ export default function Overview() {
             </div>
             <div>
               <h4>{t("companions", "Partners & Children")}</h4>
-              <p className="text-sm mt-1">{t("companions_text", "Please add anyone you would like to bring and remove anyone who will not be joining. We plan with these people, so it is important to keep this list up to date.")}</p>
-              <p className="text-sm mt-1">{t("companions_children", "Children are counted as children between the ages of 4 and 12.")}</p>
+              <p className="text-sm mt-1">{t("companions_text", "Your group has been set up for you. Please confirm attendance and note any dietary requirements for each person. If someone is missing, please contact us directly.")}</p>
+              <p className="text-sm mt-1">{t("companions_children", "Age groups: Infant (0-3), Child (4-12), Adult (13+).")}</p>
             </div>
             <div>
               <h4>{t("gifts", "Gifts")}</h4>

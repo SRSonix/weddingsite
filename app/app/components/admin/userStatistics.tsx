@@ -1,5 +1,5 @@
 import { useAllUsers } from "~/providers/allUserProvider";
-import { Attandance, FamilyMemberType, InvitedBy, User } from "~/services/userService";
+import { Attandance, FamilyMember, FamilyMemberType, InvitedBy, User } from "~/services/userService";
 
 const INVITED_BY_COLS = [
     { key: "total",          label: "Total" },
@@ -24,20 +24,18 @@ function matchesCol(user: User, col: ColKey): boolean {
     return user.invited_by === col;
 }
 
-function matchesRow(user: User, row: RowKey): boolean {
-    if (row === "total_excl_not_coming") return user.attendance !== Attandance.will_not_join;
-    if (row === null) return user.attendance == null;
-    return user.attendance === row;
-}
-
-function countUsers(users: User[], row: RowKey, col: ColKey): number {
-    return users.filter(u => matchesRow(u, row) && matchesCol(u, col)).length;
+function matchesRow(fm: FamilyMember, row: RowKey): boolean {
+    if (row === "total_excl_not_coming") return fm.attendance !== Attandance.will_not_join;
+    if (row === null) return fm.attendance == null;
+    return fm.attendance === row;
 }
 
 function countFamilyMembers(users: User[], row: RowKey, col: ColKey, type?: FamilyMemberType): number {
     return users
-        .filter(u => matchesRow(u, row) && matchesCol(u, col))
-        .reduce((sum, u) => sum + u.familyMembers.filter(fm => type === undefined || fm.type === type).length, 0);
+        .filter(u => matchesCol(u, col))
+        .flatMap(u => u.familyMembers.filter(fm => type === undefined || fm.type === type))
+        .filter(fm => matchesRow(fm, row))
+        .length;
 }
 
 function StatsTable({ title, getValue }: { title: string; getValue: (row: RowKey, col: ColKey) => number }) {
@@ -78,10 +76,6 @@ export default function UserStatisticsPanel() {
     return (
         <div>
             <div className="mt-4">
-                <StatsTable
-                    title="User Statistic"
-                    getValue={(row, col) => countUsers(allUsers, row, col)}
-                />
                 <StatsTable
                     title="Adults Statistic"
                     getValue={(row, col) => countFamilyMembers(allUsers, row, col, FamilyMemberType.adult)}
