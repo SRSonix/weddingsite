@@ -69,7 +69,7 @@ export class FamilyMember extends FamilyMemberUpdate {
   }
 
   static fromData (data: any){
-    return new FamilyMember(data.id, data.user_id, data.name, data.diet, data.type, data.attendance);
+    return new FamilyMember(data.id, data.user_id, data.name, data.diet, data.type, data.attendance ?? undefined);
   }
 }
 
