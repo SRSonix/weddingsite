@@ -76,7 +76,7 @@ export function Rsvp() {
             {user && <div className="mt-6">
                 <p className="font-bold mb-2">{t("party", "Your Party")}</p>
                 <div className="bg-olive-100 border border-olive-300 rounded-lg p-3 mb-3 text-sm">
-                  {t("party_text", "This list shows everyone in your group. Please set your attendance for each person.")}
+                  {t("party_text", "This list shows everyone in your group. Please set your attendance for each person, add any allergies or dietary preferences, and correct any mistakes in names or age group.")}
                 </div>
                 <FamilyMembers
                     familyMembers={user.familyMembers}

@@ -359,7 +359,7 @@ class UserTest extends ApiIntegrationTestCase
 
         #THEN
         $this->assertEquals(403, $response->status);
-        $this->assertEquals("you are not allowed to update your own core info. ask another admin!", $response->body["message"]);
+        $this->assertEquals("admins cannot perform this action on their own account. ask another admin!", $response->body["message"]);
     }
 
     public static function validUpdateUserBodies(): array
@@ -558,6 +558,26 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(1, count($response->body["data"]));
     }
 
+    public function testDeleteUserWithFamilyMembersDeletes(): void
+    {
+        # GIVEN
+        parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user/2/family-member", method:POST, body:["name"=>"family-name", "diet"=>NULL, "type"=>"adult"]);
+        $response = app($request);
+        $this->assertEquals(201, $response->status);
+
+        $request = $this->createRequest(path:"/user/2", method:DELETE);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(204, $response->status);
+        $request = $this->createRequest(path:"/users", method:GET);
+        $response = app($request);
+        $this->assertEquals(1, count($response->body["data"]));
+    }
+
     public function testDeleteUserAdminDeletesNonExistingUserReturns404(): void
     {
         # GIVEN
@@ -582,7 +602,7 @@ class UserTest extends ApiIntegrationTestCase
 
         #THEN
         $this->assertEquals(403, $response->status);
-        $this->assertEquals("you are not allowed to delete yourself. ask another admin!", $response->body["message"]);
+        $this->assertEquals("admins cannot perform this action on their own account. ask another admin!", $response->body["message"]);
     }
 
 
@@ -685,22 +705,25 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(403, $response->status);
     }
 
-    public static function validFamilyMemberAdminSetups(): array
-    {
-        return [
-            ["admin", 1, "admin"],
-            ["admin", 2, "user"],
-        ];
-    }
-
-    /**
-     * @dataProvider validFamilyMemberAdminSetups
-     */
-    public function testAddFamilymemberAdds($login_user, $target_user_id, $verify_as): void
+    public function testAddFamilymemberAdminCannotAddToSelf(): void
     {
         # GIVEN
         parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/$target_user_id/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "type"=>"child"]);
+        $request = $this->createRequest(path:"/user/1/family-member", method:POST, body:["name"=>"test-name", "diet"=>NULL, "type"=>"adult"]);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(403, $response->status);
+        $this->assertEquals("admins cannot perform this action on their own account. ask another admin!", $response->body["message"]);
+    }
+
+    public function testAddFamilymemberAdds(): void
+    {
+        # GIVEN
+        parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user/2/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "type"=>"child"]);
 
         #WHEN
         $response = app($request);
@@ -708,7 +731,7 @@ class UserTest extends ApiIntegrationTestCase
         #THEN
         $this->assertEquals(201, $response->status);
         $this->assertInstanceOf(FamilyMember::class, $response->body);
-        if ($verify_as == "user") parent::loginAsUser();
+        parent::loginAsUser();
         $request = $this->createRequest(path:"/user", method:GET);
         $response = app($request);
         $this->assertInstanceOf(User::class, $response->body);
@@ -735,7 +758,7 @@ class UserTest extends ApiIntegrationTestCase
     {
         # GIVEN
         parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/1/family-member", method:POST, body:$body);
+        $request = $this->createRequest(path:"/user/2/family-member", method:POST, body:$body);
 
         #WHEN
         $response = app($request);
@@ -847,10 +870,11 @@ class UserTest extends ApiIntegrationTestCase
     public function testUpdateFamilymemberReturnUpdates($login_user, $target_user, $target_user_id): void
     {
         # GIVEN
-        parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/$target_user_id/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "type"=>"child"]);
-        $response = app($request);
-        $this->assertEquals(201, $response->status);
+        # Insert directly via SQL: admins cannot add family members to their own account via the API,
+        # so using SQL here keeps setup uniform across all data sets.
+        $session = create_db_session();
+        $session->exec("INSERT INTO family_member (user_id, name, diet, type) VALUES ($target_user_id, 'test-name', 'vegan', 'child')");
+        $session = NULL;
 
         if ($login_user == "user") parent::loginAsUser();
         else parent::loginAsAdmin();
@@ -877,18 +901,18 @@ class UserTest extends ApiIntegrationTestCase
     {
         # GIVEN
         parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/1/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "type"=>"child"]);
+        $request = $this->createRequest(path:"/user/2/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "type"=>"child"]);
         $response = app($request);
         $this->assertEquals(201, $response->status);
 
         # Set attendance to will_join so the following update is truly "same values"
         $body = ["name"=>"test-name", "diet"=>"vegan", "type"=>"child", "attendance"=>"will_join"];
-        $request = $this->createRequest(path:"/user/1/family-member/1", method:PUT, body:$body);
+        $request = $this->createRequest(path:"/user/2/family-member/1", method:PUT, body:$body);
         $response = app($request);
         $this->assertEquals(200, $response->status);
 
         # WHEN
-        $request = $this->createRequest(path:"/user/1/family-member/1", method:PUT, body:$body);
+        $request = $this->createRequest(path:"/user/2/family-member/1", method:PUT, body:$body);
         $response = app($request);
 
         # THEN
@@ -935,11 +959,11 @@ class UserTest extends ApiIntegrationTestCase
     {
         # GIVEN
         parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/1/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "type"=>"child"]);
+        $request = $this->createRequest(path:"/user/2/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "type"=>"child"]);
         $response = app($request);
         $this->assertEquals(201, $response->status);
 
-        $request = $this->createRequest(path:"/user/1/family-member/1", method:PUT, body:$body);
+        $request = $this->createRequest(path:"/user/2/family-member/1", method:PUT, body:$body);
 
         #WHEN
         $response = app($request);
@@ -989,6 +1013,20 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(403, $response->status);
     }
 
+    public function testDeleteFamilymemberAdminCannotDeleteOwnFamilyMember(): void
+    {
+        # GIVEN
+        parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user/1/family-member/1", method:DELETE);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(403, $response->status);
+        $this->assertEquals("admins cannot perform this action on their own account. ask another admin!", $response->body["message"]);
+    }
+
     public function testDeleteNonExistingFamilymemberReturns404(): void
     {
         # GIVEN
@@ -1002,26 +1040,15 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(404, $response->status);
     }
 
-    public static function validFamilyMemberDeleteSetups(): array
-    {
-        return [
-            ["admin", 1],
-            ["admin", 2],
-        ];
-    }
-
-    /**
-     * @dataProvider validFamilyMemberDeleteSetups
-     */
-    public function testDeleteFamilymemberDeletes($login_user, $target_user_id): void
+    public function testDeleteFamilymemberDeletes(): void
     {
         # GIVEN
         parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/$target_user_id/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "type"=>"child"]);
+        $request = $this->createRequest(path:"/user/2/family-member", method:POST, body:["name"=>"test-name", "diet"=>"vegan", "type"=>"child"]);
         $response = app($request);
         $this->assertEquals(201, $response->status);
 
-        $request = $this->createRequest(path:"/user/$target_user_id/family-member/1", method:DELETE);
+        $request = $this->createRequest(path:"/user/2/family-member/1", method:DELETE);
 
         #WHEN
         $response = app($request);

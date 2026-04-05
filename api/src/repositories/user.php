@@ -182,8 +182,6 @@ function update_user_token_jti(int $user_id, $jti) {
     return true;
 }
 
-# TODO: add test with family member
-
 function delete_user($user_id) {
     $session = create_db_session();
 

@@ -8,6 +8,7 @@ import {
   ScrollRestoration,
   useLocation,
 } from "react-router";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import Backend from 'i18next-http-backend';
 import detector from "i18next-browser-languagedetector";
@@ -60,10 +61,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 function AdminBanner() {
-  const {user} = useUser();
+  const {user, reloadUser} = useUser();
   const {pathname} = useLocation();
-  if (user?.role !== "ADMIN") return null;
   const onAdmin = pathname === "/admin";
+  const prevOnAdmin = useRef(onAdmin);
+  useEffect(() => {
+    if (prevOnAdmin.current && !onAdmin) {
+      reloadUser();
+    }
+    prevOnAdmin.current = onAdmin;
+  }, [onAdmin]);
+  if (user?.role !== "ADMIN") return null;
   const mainUrl = import.meta.env.VITE_WEBSITE_URL;
   const betaUrl = mainUrl?.replace(/^(https?:\/\/)/, '$1beta.');
   const isBeta = window.location.hostname.startsWith('beta.');

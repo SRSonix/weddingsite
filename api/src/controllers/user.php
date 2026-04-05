@@ -82,9 +82,7 @@ function update_user(\Request $request){
 
     $user_id = $request->path_params["user_id"];
 
-    if ($user_id == $request->user_id) {
-        throw new \ForbiddenException("you are not allowed to update your own core info. ask another admin!");
-    }
+    $request->validateAdminIsNotPathUser();
 
     $name = $request->body["name"];
     $role = $request->body["role"];
@@ -118,9 +116,7 @@ function delete_user(\Request $request){
 
     $user_id = $request->path_params["user_id"];
 
-    if ($user_id == $request->user_id) {
-        throw new \ForbiddenException("you are not allowed to delete yourself. ask another admin!");
-    }
+    $request->validateAdminIsNotPathUser();
 
     \UserService\delete_user($user_id);
 
@@ -138,6 +134,8 @@ function add_family_member(\Request $request){
     $request->validateAcceptableValues(["type"=>VALID_MEMBER_TYPES]);
 
     $user_id = $request->path_params["user_id"];
+
+    $request->validateAdminIsNotPathUser();
 
     $name = $request->body["name"];
     $diet = $request->body["diet"];
@@ -186,6 +184,8 @@ function delete_family_member(\Request $request){
     $request->validateAdminAccess();
 
     $user_id = $request->path_params["user_id"];
+
+    $request->validateAdminIsNotPathUser();
     $family_member_id = $request->path_params["family_member_id"];
 
     \UserService\remove_family_member(

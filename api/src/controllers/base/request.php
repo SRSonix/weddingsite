@@ -67,6 +67,12 @@ class Request {
         }
     }
 
+    function validateAdminIsNotPathUser(){
+        if ($this->user_role == "ADMIN" && $this->path_params["user_id"] == $this->user_id) {
+            throw new \ForbiddenException("admins cannot perform this action on their own account. ask another admin!");
+        }
+    }
+
     function validatePathUserIsAuthorized(
         $allowAdminAcces = TRUE
     ){

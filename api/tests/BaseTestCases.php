@@ -33,7 +33,7 @@ class DatabaseTestCase extends TestCase
             diet TEXT,
             type ENUM('adult', 'child', 'infant') NOT NULL,
             attendance ENUM('will_join', 'will_not_join', 'undecided'),
-            FOREIGN KEY (user_id) REFERENCES user(id)
+            FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
             );
 
             INSERT INTO user_auth(id, jti) VALUES

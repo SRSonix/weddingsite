@@ -49,7 +49,7 @@ export function FamilyMembers({familyMembers, updateCallback, addCallback, delet
         )}
         {!addCallback && (
             <p className="text-sm text-olive-700 italic">
-                {t("contact_couple_for_changes", "If something is wrong with your group, please contact us directly.")}
+                {t("contact_couple_for_changes", "If someone is missing from your group, please contact us directly.")}
             </p>
         )}
     </div>

@@ -2,6 +2,46 @@ import { useEffect, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Attandance, FamilyMemberType, FamilyMemberUpdate } from "~/services/userService";
 
+function AttendanceSlider({ value, onChange, disabled, error }: {
+    value: Attandance | undefined,
+    onChange: (value: Attandance) => void,
+    disabled: boolean,
+    error?: boolean,
+}) {
+    const { t } = useTranslation("app");
+
+    const options: { value: Attandance, label: string, icon: string, activeClass: string }[] = [
+        { value: Attandance.will_not_join, label: t("no", "No"),    icon: "✗", activeClass: "bg-red-400 text-white" },
+        { value: Attandance.undecided,     label: t("maybe", "Maybe"), icon: "?", activeClass: "bg-amber-400 text-white" },
+        { value: Attandance.will_join,     label: t("yes", "Yes"),  icon: "✓", activeClass: "bg-olive-500 text-white" },
+    ];
+
+    const borderColor = error ? "border-red-500" : "border-olive-300";
+
+    return (
+        <div className={`flex rounded-lg overflow-hidden border max-w-64 ${borderColor} ${disabled ? "pointer-events-none" : ""}`}>
+            {options.map((option, i) => (
+                <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => onChange(option.value)}
+                    className={[
+                        "flex-1 py-0.5 px-2 text-sm flex items-center justify-center gap-1 transition-colors",
+                        i > 0 ? `border-l ${borderColor}` : "",
+                        value === option.value
+                            ? option.activeClass
+                            : disabled
+                                ? "bg-transparent text-olive-300"
+                                : "bg-white hover:bg-olive-50 text-olive-700",
+                    ].join(" ")}
+                >
+                    <span aria-hidden="true">{option.icon}</span>
+                    <span>{option.label}</span>
+                </button>
+            ))}
+        </div>
+    );
+}
 
 export function FamilyMemberForm({id, defaultData, submitChanges, cancelCallback, deleteCallback}: {
     id?: number,
@@ -27,7 +67,6 @@ export function FamilyMemberForm({id, defaultData, submitChanges, cancelCallback
         let value: any = e.target.value;
         if (key !== "diet") value = value !== "" ? value : undefined;
         if (key === "type" && value) value = value as FamilyMemberType;
-        if (key === "attendance" && value) value = value as Attandance;
         setFormData((prev) => ({...prev, [key]: value}));
     }
 
@@ -54,37 +93,47 @@ export function FamilyMemberForm({id, defaultData, submitChanges, cancelCallback
     }
 
     return <div>
-        <div className="flex align-center w-full">
-            <label htmlFor="name">{t("name", "Name")}</label>:<br/>
-            <input disabled={!edit} placeholder={t("name", "Name")} value={formData.name ?? ""} id="name" onChange={handleChange} className={"flex-grow ml-1 min-w-0 " + (edit ? "input-inline" : "") + (errors.name ? " border-red-500" : "")}/>
+        <div className="flex flex-wrap gap-2 w-full">
+            <div className="flex-grow min-w-36">
+                <div className="flex align-center w-full">
+                    <label htmlFor="name">{t("name", "Name")}</label>:<br/>
+                    <input disabled={!edit} placeholder={t("name", "Name")} value={formData.name ?? ""} id="name" onChange={handleChange} className={"flex-grow ml-1 min-w-0 " + (edit ? "input-inline" : "") + (errors.name ? " border-red-500" : "")}/>
+                </div>
+                {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+            </div>
+            <div className="shrink-0">
+                <div className="flex align-center">
+                    <label htmlFor="type">{t("member_type", "Age Group")}</label>:<br/>
+                    <select disabled={!edit} value={formData.type ?? ""} id="type" onChange={handleChange} className={"ml-1 " + (edit ? "input-inline" : "appearance-none") + (errors.type ? " border-red-500" : "")}>
+                        <option disabled value="">{t("please_select", "Please select")}</option>
+                        <option value={FamilyMemberType.adult}>{t("adult", "Adult")}</option>
+                        <option value={FamilyMemberType.child}>{t("child", "Child")}</option>
+                        <option value={FamilyMemberType.infant}>{t("infant", "Infant")}</option>
+                    </select>
+                </div>
+                {errors.type && <p className="text-red-500 text-sm">{errors.type}</p>}
+            </div>
         </div>
-        {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
-        <div className="flex align-center w-full">
+        {!isNew && <>
+            <div className="mt-3 pt-3 border-t border-olive-200">
+                <div className="flex items-center gap-2">
+                    <label className="shrink-0">{t("attendance", "Attendance")}:</label>
+                    <AttendanceSlider
+                        value={formData.attendance}
+                        onChange={(v) => setFormData((prev) => ({ ...prev, attendance: v }))}
+                        disabled={!edit}
+                        error={!!errors.attendance}
+                    />
+                </div>
+                {errors.attendance && (
+                    <p className="text-red-500 text-sm mt-0.5">{errors.attendance}</p>
+                )}
+            </div>
+        </>}
+        <div className="flex align-center w-full mt-3 pt-3 border-t border-olive-200">
             <label htmlFor="diet">{t("diet", "Diet")}</label>:<br/>
             <input disabled={!edit} placeholder={t("diet_placeholder", "No allergies / preferences")} value={formData.diet ?? ""} id="diet" onChange={handleChange} className={"flex-grow ml-1 min-w-0 " + (edit ? "input-inline" : "")}/>
         </div>
-        <div className="flex align-center w-full">
-            <label htmlFor="type">{t("member_type", "Type")}</label>:<br/>
-            <select disabled={!edit} value={formData.type ?? ""} id="type" onChange={handleChange} className={"flex-grow ml-1 min-w-0 " + (edit ? "input-inline" : "appearance-none") + (errors.type ? " border-red-500" : "")}>
-                <option disabled value="">{t("please_select", "Please select")}</option>
-                <option value={FamilyMemberType.adult}>{t("adult", "Adult")}</option>
-                <option value={FamilyMemberType.child}>{t("child", "Child")}</option>
-                <option value={FamilyMemberType.infant}>{t("infant", "Infant")}</option>
-            </select>
-        </div>
-        {errors.type && <p className="text-red-500 text-sm">{errors.type}</p>}
-        {!isNew && <>
-            <div className="flex align-center w-full">
-                <label htmlFor="attendance">{t("attendance", "Attendance")}</label>:<br/>
-                <select disabled={!edit} value={formData.attendance ?? ""} id="attendance" onChange={handleChange} className={"flex-grow ml-1 min-w-0 " + (edit ? "input-inline" : "appearance-none") + (errors.attendance ? " border-red-500" : "")}>
-                    <option disabled value="">{t("not_set", "Not set")}</option>
-                    <option value={Attandance.undecided}>{t(Attandance.undecided, "Undecided")}</option>
-                    <option value={Attandance.will_join}>{t(Attandance.will_join, "I will join the wedding!")}</option>
-                    <option value={Attandance.will_not_join}>{t(Attandance.will_not_join, "I will not be able to join.")}</option>
-                </select>
-            </div>
-            {errors.attendance && <p className="text-red-500 text-sm">{errors.attendance}</p>}
-        </>}
         <div className="pt-3 flex flex-wrap items-center gap-2">
             {!edit && <button onClickCapture={() => setEdit(true)} className="btn btn-small">{t("edit", "Edit")}</button>}
             {edit && <button onClickCapture={handleSubmit} className="btn btn-green btn-small">{t("save", "Save")}</button>}

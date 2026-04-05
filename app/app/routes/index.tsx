@@ -106,7 +106,7 @@ export default function Overview() {
           </div>
         </ContentTile>
         <ContentTile header={t("agenda", "Programme")}><Agenda></Agenda></ContentTile>
-        <ContentTile header={t("rsvp", "Please fill out RSVP")} fullWidth><Rsvp></Rsvp></ContentTile>
+        <ContentTile header={t("rsvp", "Registration")} fullWidth><Rsvp></Rsvp></ContentTile>
       </div>
     </EmptyState>
     </>
