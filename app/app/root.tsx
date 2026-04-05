@@ -29,7 +29,8 @@ i18n
   .init({
     debug: false,
     backend: {
-      loadPath: 'translations/{{ns}}/{{lng}}.json'
+      loadPath: 'translations/{{ns}}/{{lng}}.json',
+      queryStringParams: { v: '2' },
     },
     ns: ['app'],
     defaultNS: 'app',
