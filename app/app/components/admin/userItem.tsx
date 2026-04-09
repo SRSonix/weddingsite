@@ -123,6 +123,7 @@ export function UserItem({user}: {user:User}){
                 <option value="" disabled>not set</option>
                 <option value={Language.de}>de</option>
                 <option value={Language.fr}>fr</option>
+                <option value={Language.en}>en</option>
             </select>
         </div>
 

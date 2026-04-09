@@ -71,6 +71,7 @@ class UserTest extends ApiIntegrationTestCase
             [["name" => "test-user", "role"=> "USER", "language"=> "fr", "invited_by"=> "groom"]],
             [["name" => "test-user1", "role"=> "USER", "language"=> "de", "invited_by"=> "bride"]],
             [["name" => "test-user2", "role"=> "ADMIN", "language"=> "de", "invited_by"=> "both"]],
+            [["name" => "test-user3", "role"=> "USER", "language"=> "en", "invited_by"=> "groom"]],
         ];
     }
 
@@ -228,6 +229,7 @@ class UserTest extends ApiIntegrationTestCase
             [["mail"=>"",           "language"=>"fr"]],
             [["mail"=>NULL,         "language"=>"fr"]],
             [["mail"=>"test.mail1", "language"=>"de"]],
+            [["mail"=>"test.mail2", "language"=>"en"]],
         ];
     }
 
@@ -368,6 +370,7 @@ class UserTest extends ApiIntegrationTestCase
             [["name"=>"user",  "role"=>"ADMIN", "invited_by"=>"groom", "mail"=>"a@b.com", "language"=>"fr"]],
             [["name"=>"user2", "role"=>"USER",  "invited_by"=>"bride", "mail"=>NULL,       "language"=>"de"]],
             [["name"=>"user3", "role"=>"USER",  "invited_by"=>"both",  "mail"=>"",         "language"=>"de"]],
+            [["name"=>"user4", "role"=>"USER",  "invited_by"=>"groom", "mail"=>"c@d.com",  "language"=>"en"]],
         ];
     }
 

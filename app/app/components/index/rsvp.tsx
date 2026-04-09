@@ -58,6 +58,7 @@ export function Rsvp() {
                         <option disabled value={""}>{t("not_set", "Not set")}</option>
                         <option value={Language.de}>{t(Language.de, "German")}</option>
                         <option value={Language.fr}>{t(Language.fr, "French")}</option>
+                        <option value={Language.en}>{t(Language.en, "English")}</option>
                     </select>
                 </div>
                 {errors.language && <p className="text-red-500 text-sm">{errors.language}</p>}

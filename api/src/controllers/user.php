@@ -10,7 +10,7 @@ function create_user(\Request $request){
     $request->validateAdminAccess();
     $request->validateBodyContainsKeys(["name", "role", "language", "invited_by"]);
     $request->validateBodyContainsKeys(["name"], TRUE);
-    $request->validateAcceptableValues(["role"=> ["ADMIN", "USER"], "language"=>["de", "fr"], "invited_by"=>["groom", "bride", "both"]]);
+    $request->validateAcceptableValues(["role"=> ["ADMIN", "USER"], "language"=>["de", "fr", "en"], "invited_by"=>["groom", "bride", "both"]]);
 
     $name = $request->body["name"];
     $role = $request->body["role"];
@@ -57,7 +57,7 @@ function get_all_users(\Request $request){
 function update_user_contact(\Request $request){
     $request->validatePathUserIsAuthorized();
     $request->validateBodyContainsKeys(["mail", "language"]);
-    $request->validateAcceptableValues(["language"=>["de", "fr"]]);
+    $request->validateAcceptableValues(["language"=>["de", "fr", "en"]]);
 
     $user_id = $request->path_params["user_id"];
 
@@ -78,7 +78,7 @@ function update_user(\Request $request){
     $request->validateAdminAccess();
     $request->validateBodyContainsKeys(["name", "role", "invited_by", "mail", "language"]);
     $request->validateBodyContainsKeys(["name"], TRUE);
-    $request->validateAcceptableValues(["role"=> ["ADMIN", "USER"], "invited_by"=>["groom", "bride", "both"], "language"=>["de", "fr"]]);
+    $request->validateAcceptableValues(["role"=> ["ADMIN", "USER"], "invited_by"=>["groom", "bride", "both"], "language"=>["de", "fr", "en"]]);
 
     $user_id = $request->path_params["user_id"];
 

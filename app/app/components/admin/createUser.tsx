@@ -69,6 +69,7 @@ export default function CreateUser(){
             <option disabled value={""}>Not set</option>
             <option value={Language.de}>{Language.de}</option>
             <option value={Language.fr}>{Language.fr}</option>
+            <option value={Language.en}>{Language.en}</option>
           </select>
         </div>
         <div className="px-3">

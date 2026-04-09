@@ -52,7 +52,7 @@ export default function Overview() {
             </div>
             <div>
               <h4>{t("dress_code", "Dress code")}</h4>
-              <p className="text-sm mt-1">{t("dress_text", "Elegant, but no strict dress code — wear what makes you feel good!")}</p>
+              <p className="text-sm mt-1">{t("dress_text", "Elegant, but no strict dress code - wear what feels comfortable!")}</p>
             </div>
             <div>
               <h4>{t("parking", "Parking")}</h4>
@@ -87,7 +87,7 @@ export default function Overview() {
             </div>
             <div>
               <h4>{t("gifts", "Gifts")}</h4>
-              <p className="text-sm mt-1">{t("gifts_intro", "We truly have everything we need — but if you'd like to contribute towards our wedding expenses, we'd be very grateful. Cash at the wedding or a bank transfer are both very welcome:")}</p>
+              <p className="text-sm mt-1">{t("gifts_intro", "Your presence is the best gift - if you'd still like to give us something, we'd appreciate a contribution towards our wedding expenses. Cash on the day of the wedding or a bank transfer are both equally welcome:")}</p>
               {paymentDetails && (
                 <div className="text-sm mt-1 leading-snug">
                   <p><span className="font-bold">Name:</span> {paymentDetails.bank.name}</p>

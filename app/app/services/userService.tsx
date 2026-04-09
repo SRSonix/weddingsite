@@ -18,6 +18,7 @@ export enum Role {
 export enum Language {
   de = "de",
   fr = "fr",
+  en = "en",
 }
 
 export enum FamilyMemberType {

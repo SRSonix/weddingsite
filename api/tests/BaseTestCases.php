@@ -16,7 +16,7 @@ class DatabaseTestCase extends TestCase
             role ENUM('USER', 'ADMIN') NOT NULL,
             name TEXT,
             mail TEXT,
-            language ENUM('fr', 'de'),
+            language ENUM('fr', 'de', 'en'),
             last_visit TIMESTAMP,
             invited_by ENUM('groom', 'bride', 'both') NOT NULL
             );
