@@ -24,21 +24,49 @@ export default function AllUsers(){
     const {allUsers} = useAllUsers();
 
     function exportAllUsersCsv() {
-        const fields: string[] = ["name", "mail", "language", "invited_by"];
-        let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent = csvContent + fields.join(",") + "\n";
-        csvContent = csvContent + allUsers.map(user => {
-            return fields.map(field => {
-                return (user as any)[field]?.replace(/(\r\n|\n|\r)/gm, "") ?? "";
-            }).join(",");
-        }).join("\n");
+        function escapeField(value: string | undefined | null): string {
+            const str = value ?? "";
+            if (str.includes(",") || str.includes('"') || str.includes("\n") || str.includes("\r")) {
+                return '"' + str.replace(/"/g, '""') + '"';
+            }
+            return str;
+        }
 
-        var encodedUri = encodeURI(csvContent);
-        var link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "users-" + new Date().toISOString().split('.')[0].replaceAll(":", "-") + "Z" + ".csv");
+        const headers = ["user_name", "user_mail", "user_language", "user_invited_by", "member_name", "member_type", "member_attendance", "member_diet"];
+        const rows: string[] = [headers.join(",")];
+        for (const user of filtered) {
+            for (const fm of user.familyMembers) {
+                rows.push([
+                    escapeField(user.name),
+                    escapeField(user.mail),
+                    escapeField(user.language),
+                    escapeField(user.invited_by),
+                    escapeField(fm.name),
+                    escapeField(fm.type),
+                    escapeField(fm.attendance),
+                    escapeField(fm.diet),
+                ].join(","));
+            }
+        }
+
+        const filterParts: string[] = [];
+        if (formData.name) filterParts.push("name=" + formData.name.replace(/[^a-zA-Z0-9]/g, "_"));
+        if (formData.role) filterParts.push("role=" + formData.role);
+        if (formData.attendance) filterParts.push("attendance=" + formData.attendance);
+        if (formData.has_visited) filterParts.push(formData.has_visited);
+        if (formData.mail_set) filterParts.push(formData.mail_set);
+        if (formData.invited_by) filterParts.push("invited_by=" + formData.invited_by);
+        const filterSuffix = filterParts.length > 0 ? "-" + filterParts.join("-") : "";
+
+        const blob = new Blob([rows.join("\n")], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "users" + filterSuffix + "-" + new Date().toISOString().split('.')[0].replaceAll(":", "-") + "Z" + ".csv");
         document.body.appendChild(link);
         link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
     }
 
     function handleChange(e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>){
@@ -136,7 +164,7 @@ export default function AllUsers(){
                     · {filtered.reduce((s, u) => s + countedMembers(u).filter(fm => fm.type === FamilyMemberType.child).length, 0)} children
                     · {filtered.reduce((s, u) => s + countedMembers(u).filter(fm => fm.type === FamilyMemberType.infant).length, 0)} infants
                 </span>
-                <button disabled onClick={exportAllUsersCsv} className="btn btn-small btn-gray opacity-50 cursor-not-allowed">export</button>
+                <button onClick={exportAllUsersCsv} className="btn btn-small btn-gray">export</button>
             </div>
             {filtered.map((item: User) => (
                 <UserItem key={item.id} user={item} />
