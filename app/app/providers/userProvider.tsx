@@ -64,7 +64,6 @@ export function UserProvider({ children }: {children: React.ReactNode}) {
     UserService.updateUserContact(user_id, body).then(
       (new_user) => {
         if (new_user) setUser(new_user);
-        else console.log("something went wrong setting new user!");
       }
     );
   }

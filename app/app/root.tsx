@@ -102,6 +102,10 @@ function LogoutBanner() {
   );
 }
 
+export function HydrateFallback() {
+  return null;
+}
+
 export default function App() {
   return (
     <UserProvider>

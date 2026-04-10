@@ -60,7 +60,6 @@ export default function AllUsersProvider({children}: {children: React.ReactNode}
 
 
     function addFamilyMember(user_id: number, data: FamilyMemberAdd){
-        console.log(data);
         UserService.addFamilyMember(user_id, data).then(
             (familyMember) => {
                 if (familyMember) {
@@ -93,7 +92,6 @@ export default function AllUsersProvider({children}: {children: React.ReactNode}
     function deleteFamilyMember(user_id: number, familyMemberId: number){
         UserService.deleteFamilyMember(user_id, familyMemberId).then(
             (success) => {
-                console.log(success);
                 if (success) {
                     setAllUsers(prev => prev.map((user) =>
                         user.id === user_id

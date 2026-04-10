@@ -101,7 +101,7 @@ export function FamilyMemberForm({id, defaultData, submitChanges, cancelCallback
                 </div>
                 {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
             </div>
-            <div className="shrink-0">
+            <div className="min-w-0 max-w-full">
                 <div className="flex align-center">
                     <label htmlFor="type">{t("member_type", "Age Group")}</label>:<br/>
                     <select disabled={!edit} value={formData.type ?? ""} id="type" onChange={handleChange} className={"ml-1 " + (edit ? "input-inline" : "appearance-none") + (errors.type ? " border-red-500" : "")}>
@@ -117,7 +117,7 @@ export function FamilyMemberForm({id, defaultData, submitChanges, cancelCallback
         </div>
         {!isNew && <>
             <div className="mt-3 pt-3 border-t border-olive-200">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                     <label className="shrink-0">{t("attendance", "Attendance")}:</label>
                     <AttendanceSlider
                         value={formData.attendance}
@@ -131,8 +131,8 @@ export function FamilyMemberForm({id, defaultData, submitChanges, cancelCallback
                 )}
             </div>
         </>}
-        <div className="flex align-center w-full mt-3 pt-3 border-t border-olive-200">
-            <label htmlFor="diet">{t("diet", "Diet")}</label>:<br/>
+        <div className="flex flex-wrap align-center w-full mt-3 pt-3 border-t border-olive-200">
+            <label htmlFor="diet" className="shrink-0">{t("diet", "Diet")}</label>:<br/>
             <input disabled={!edit} placeholder={t("diet_placeholder", "No allergies / preferences")} value={formData.diet ?? ""} id="diet" onChange={handleChange} className={"flex-grow ml-1 min-w-0 " + (edit ? "input-inline" : "")}/>
         </div>
         <div className="pt-3 flex flex-wrap items-center gap-2">

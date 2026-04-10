@@ -186,7 +186,6 @@ export class UserService{
       let users: Array<User> = []
       data["data"].forEach((row: any) =>
         {
-          console.log(row);
           users.push(User.fromData(row));
         }
       )
