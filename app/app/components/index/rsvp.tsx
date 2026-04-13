@@ -4,7 +4,7 @@ import { useUser } from "~/providers/userProvider";
 import { UserContactInformation, Language } from "~/services/userService";
 import { FamilyMembers } from "./familyMembers";
 
-export function Rsvp() {
+export function Rsvp({ rsvpDeadline }: { rsvpDeadline?: string }) {
     const {t} = useTranslation("app")
     const {user, updateUserContact, updateFamilyMember} = useUser();
     const [edit, setEdit] = useState(false);
@@ -47,6 +47,7 @@ export function Rsvp() {
             <div className="bg-olive-50 border border-olive-100 rounded-lg p-4 shadow-sm mb-4">
                 <div className="bg-olive-100 border border-olive-300 rounded-lg p-3 mb-3 text-sm">
                     {t("contact_note", "We will use your email address to contact you if needed.")}
+                    {rsvpDeadline && <p className="mt-1">{t("rsvp_deadline_text", "Please let us know by {{date}} whether you will be attending.", { date: rsvpDeadline })}</p>}
                 </div>
                 <div className="flex align-center w-full mb-2">
                     <label htmlFor="mail" className="whitespace-nowrap">{t("mail", "Email")}</label>:

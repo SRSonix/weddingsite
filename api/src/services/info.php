@@ -6,6 +6,7 @@ function get_overview(){
     $info = [
         "date" => "2026-10-31",
         "arrival_time" => "14:00",
+        "rsvp_deadline" => "2026-05-15",
         "location"=> "Reitpark Mergenthau, Mergenthau 2, 86438 Kissing",
         "location_maps_link" => "https://maps.app.goo.gl/7SRGo6cvHnD9aFqCA",
         "phone"=> [
@@ -18,10 +19,6 @@ function get_overview(){
                 "tel" => " +49 8233 9504",
                 "web" => "https://schlosserwirt.de/"
             ]
-        ],
-        "public_transport" => [
-            "de" => "Vom Bahnhof Kissing zu Fuß erreichbar",
-            "fr" => "Accessible à pied depuis la gare de Kissing"
         ]
     ];
 

@@ -8,6 +8,7 @@ export class OverviewInfo{
     constructor(
         public date: string,
         public arrival_time: string,
+        public rsvp_deadline: string,
         public location: string,
         public location_maps_link: string,
         public phone: Record<string, string>,

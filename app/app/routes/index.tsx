@@ -35,7 +35,7 @@ export default function Overview() {
       <div className="content-tile-wrap">
         <ContentTile fullWidth>
           <img
-            src={`${import.meta.env.VITE_API_URL}/image/couple.jpeg`}
+            src={`${import.meta.env.VITE_API_URL}/image/DSC02024.jpg`}
             alt={t("couple_photo_alt", "Photo of the couple")}
             className="w-full rounded-lg"
           />
@@ -85,6 +85,12 @@ export default function Overview() {
               <p className="text-sm mt-1">{t("companions_text", "Your group has been set up for you. Please confirm attendance and note any dietary requirements for each person. If someone is missing, please contact us directly.")}</p>
               <p className="text-sm mt-1">{t("companions_children", "Age groups: Infant (0-3), Child (4-12), Adult (13+).")}</p>
             </div>
+            {overviewInfo?.rsvp_deadline && (
+              <div>
+                <h4>{t("rsvp_deadline", "RSVP Deadline")}</h4>
+                <p className="text-sm mt-1">{t("rsvp_deadline_text", "Please let us know by {{date}} whether you will be attending.", { date: new Date(overviewInfo.rsvp_deadline).toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit', year: 'numeric'}) })}</p>
+              </div>
+            )}
             <div>
               <h4>{t("gifts", "Gifts")}</h4>
               <p className="text-sm mt-1">{t("gifts_intro", "Your presence is the best gift - if you'd still like to give us something, we'd appreciate a contribution towards our wedding expenses. Cash on the day of the wedding or a bank transfer are both equally welcome:")}</p>
@@ -99,7 +105,17 @@ export default function Overview() {
           </div>
         </ContentTile>
         <ContentTile header={t("agenda", "Programme")}><Agenda></Agenda></ContentTile>
-        <ContentTile header={t("rsvp", "Registration")} fullWidth><Rsvp></Rsvp></ContentTile>
+        <ContentTile header={t("rsvp", "Registration")} fullWidth><Rsvp rsvpDeadline={overviewInfo?.rsvp_deadline ? new Date(overviewInfo.rsvp_deadline).toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit', year: 'numeric'}) : undefined}></Rsvp></ContentTile>
+        <ContentTile fullWidth>
+          <div className="overflow-hidden rounded-lg">
+            <img
+              src={`${import.meta.env.VITE_API_URL}/image/DSC02550(1).jpg`}
+              alt={t("couple_photo_alt", "Photo of the couple")}
+              className="w-full block"
+              style={{ transform: 'translateY(-30%)', marginBottom: 'calc(-50%)' }}
+            />
+          </div>
+        </ContentTile>
       </div>
     </EmptyState>
     </>

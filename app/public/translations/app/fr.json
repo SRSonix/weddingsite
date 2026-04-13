@@ -21,6 +21,8 @@
   "agenda": "Programme",
   "agenda_placeholder": "Le programme définitif sera publié ici prochainement.",
   "rsvp": "Inscription",
+  "rsvp_deadline": "Date limite d'inscription",
+  "rsvp_deadline_text": "Merci de confirmer ta/votre présence avant le {{date}}.",
 
   "contact_note": "Nous utiliserons ton adresse e-mail pour te contacter si nécessaire.",
   "attendance": "Participation",
