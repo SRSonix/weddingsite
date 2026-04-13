@@ -3,7 +3,7 @@ import type { Route } from "./+types/index";
 import { useTranslation } from "react-i18next";
 import { useUser } from "~/providers/userProvider";
 import { EmptyState } from "~/components/common/empty_state";
-import { InfoService, OverviewInfo, type PaymentDetails } from "~/services/infoService";
+import { InfoService, formatEuropeanDate, OverviewInfo, type PaymentDetails } from "~/services/infoService";
 import { useEffect, useState } from "react";
 import { Agenda } from "~/components/index/agenda";
 import { Rsvp } from "~/components/index/rsvp";
@@ -88,7 +88,7 @@ export default function Overview() {
             {overviewInfo?.rsvp_deadline && (
               <div>
                 <h4>{t("rsvp_deadline", "RSVP Deadline")}</h4>
-                <p className="text-sm mt-1">{t("rsvp_deadline_text", "Please let us know by {{date}} whether you will be attending.", { date: new Date(overviewInfo.rsvp_deadline).toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit', year: 'numeric'}) })}</p>
+                <p className="text-sm mt-1">{t("rsvp_deadline_text", "Please let us know by {{date}} whether you will be attending.", { date: formatEuropeanDate(overviewInfo.rsvp_deadline, user?.language) })}</p>
               </div>
             )}
             <div>
@@ -105,14 +105,13 @@ export default function Overview() {
           </div>
         </ContentTile>
         <ContentTile header={t("agenda", "Programme")}><Agenda></Agenda></ContentTile>
-        <ContentTile header={t("rsvp", "Registration")} fullWidth><Rsvp rsvpDeadline={overviewInfo?.rsvp_deadline ? new Date(overviewInfo.rsvp_deadline).toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit', year: 'numeric'}) : undefined}></Rsvp></ContentTile>
+        <ContentTile header={t("rsvp", "Registration")} fullWidth><Rsvp rsvpDeadline={overviewInfo?.rsvp_deadline ? formatEuropeanDate(overviewInfo.rsvp_deadline, user?.language) : undefined}></Rsvp></ContentTile>
         <ContentTile fullWidth>
           <div className="overflow-hidden rounded-lg">
             <img
-              src={`${import.meta.env.VITE_API_URL}/image/DSC02550(1).jpg`}
+              src={`${import.meta.env.VITE_API_URL}/image/DSC02550.jpg`}
               alt={t("couple_photo_alt", "Photo of the couple")}
               className="w-full block"
-              style={{ transform: 'translateY(-30%)', marginBottom: 'calc(-50%)' }}
             />
           </div>
         </ContentTile>

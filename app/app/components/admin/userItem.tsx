@@ -4,12 +4,14 @@ import { useAllUsers } from "~/providers/allUserProvider";
 import { FamilyMemberType, InvitedBy, Language, Role, UserUpdateInfo, UserService, type User } from "~/services/userService";
 import { FamilyMembers } from "../index/familyMembers";
 import { useUser } from "~/providers/userProvider";
+import { InfoService } from "~/services/infoService";
+import { InviteTextService } from "~/services/inviteTextService";
 
 
 export function UserItem({user}: {user:User}){
     const {reloadUser} = useUser();
     const [infoMessage, setInfoMessage] = useState("");
-    const [userUrl, setUserUrl] = useState<string|undefined>(undefined);
+    const [inviteText, setInviteText] = useState<string|undefined>(undefined);
     const [edit, setEdit] = useState(false);
     const [showFamily, setShowFamily] = useState(false);
     const [formData, setFormData] = useState<UserUpdateInfo>(UserUpdateInfo.getEmpty());
@@ -19,37 +21,38 @@ export function UserItem({user}: {user:User}){
     const userAgent = window.navigator.userAgent;
     const isSafari = userAgent.includes("Safari") && !userAgent.includes("Chrome");
 
-    function resetUserToken(id: number){
+    async function resetUserToken(id: number){
       if(!window.confirm('Are you sure you want to update the user token? this will invalidate the past url given to the user!')) return;
 
-      UserService.resetUserToken(id).then(
-        (url) => {
-           if (url === undefined){
-            setInfoMessage("something went wrong copying the info message!");
-            return;
-          }
+      const [url, overviewInfo] = await Promise.all([
+        UserService.resetUserToken(id),
+        InfoService.getOverviewInfo(),
+      ]);
 
-          setUserUrl(url);
+      if (url === undefined) {
+        setInfoMessage("something went wrong resetting the token!");
+        return;
+      }
 
-          let msg = "The token is reset. Please sent the user the new url as the old one is no longer working."
+      const text = overviewInfo
+        ? await InviteTextService.generateInviteText(user, url, overviewInfo.date, overviewInfo.rsvp_deadline)
+        : url;
 
-          if (isSafari) {
-            msg = msg + "\nClick the other button to copy it."
-          }{
-            msg = msg + "\nThe new url is copied to your clipboard."
-            navigator.clipboard.writeText(url);
-          }
+      setInviteText(text);
 
-          setInfoMessage(msg);
-        }
-      )
+      if (!isSafari) {
+        navigator.clipboard.writeText(text);
+        setInfoMessage("Token reset. Invite text copied to clipboard.");
+      } else {
+        setInfoMessage("Token reset. Use the button below to copy the invite text.");
+      }
     }
 
-    function copyUrl() {
-      if (!userUrl) return;
+    function copyInviteText() {
+      if (!inviteText) return;
 
-      navigator.clipboard.writeText(userUrl);
-      setInfoMessage("user url is copied to your clipboard.");
+      navigator.clipboard.writeText(inviteText);
+      setInfoMessage("Invite text copied to clipboard.");
     }
 
     useEffect(() => {
@@ -160,10 +163,18 @@ export function UserItem({user}: {user:User}){
                 delete user
             </button>
             <button className="btn btn-small btn-red" onClick={() => resetUserToken(user.id)}>reset token</button>
-            {userUrl && <button className="btn btn-small btn-gray" onClick={copyUrl}>copy url</button>}
+            {inviteText && <button className="btn btn-small btn-gray" onClick={copyInviteText}>copy invite text</button>}
             <button className="btn btn-small btn-gray" onClick={loginAsUserHandle}>login as user</button>
         </div>
         {infoMessage && <p className="text-sm mt-1">{infoMessage}</p>}
+        {inviteText && (
+          <textarea
+            readOnly
+            className="mt-2 w-full text-sm font-mono border border-olive-100 rounded p-2 bg-white resize-none"
+            rows={10}
+            value={inviteText}
+          />
+        )}
       </div>
     )
 }

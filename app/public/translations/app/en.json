@@ -64,5 +64,8 @@
   "logout": "Log out",
   "privacy_policy": "Privacy Policy",
   "days_to_go_one": "{{count}} day to go",
-  "days_to_go_other": "{{count}} days to go"
+  "days_to_go_other": "{{count}} days to go",
+
+  "invite-text_one": "Hey there {{names}}\n\nWe warmly invite you to our wedding on {{weddingDate}}.\nHere is your personalized link to our wedding website, which will log you in.\nPlease confirm by {{rsvpDeadline}} whether you will attend and let us know about any intolerances or allergies you have.\n\nWe look forward to seeing you.\nAlexine & Michael\n\n{{url}}",
+  "invite-text_other": "Hey there {{names}}\n\nWe warmly invite you to our wedding on {{weddingDate}}.\nHere is your personalized link to our wedding website, which will log you in.\nPlease confirm by {{rsvpDeadline}} whether you will attend and let us know about any intolerances or allergies you have.\n\nWe look forward to seeing you.\nAlexine & Michael\n\n{{url}}"
 }

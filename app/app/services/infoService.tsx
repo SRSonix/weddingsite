@@ -1,3 +1,14 @@
+const languageToLocale: Record<string, string> = {
+  de: 'de-DE',
+  fr: 'fr-FR',
+  en: 'en-GB',
+};
+
+export function formatEuropeanDate(dateStr: string, language?: string | null): string {
+  const locale = (language && languageToLocale[language]) ?? 'de-DE';
+  return new Date(dateStr).toLocaleDateString(locale, { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
 export interface HotelInfo{
     name: string,
     tel: string,

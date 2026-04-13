@@ -64,5 +64,8 @@
   "logout": "Abmelden",
   "privacy_policy": "Datenschutzerklärung",
   "days_to_go_one": "Noch {{count}} Tag",
-  "days_to_go_other": "Noch {{count}} Tage"
+  "days_to_go_other": "Noch {{count}} Tage",
+
+  "invite-text_one": "Huhüchen {{names}}\n\nWir laden dich herzlich zu unserer Hochzeit am {{weddingDate}} ein.\nDas hier ist dein personalisierter Link für unsere Hochzeitsseite, der dich dort einloggt.\nBitte bestätige bis {{rsvpDeadline}} ob du teilnimmst und teile uns Unverträglichkeiten und Allergien mit die du hast.\n\nWir freuen uns auf dich.\nAlexine & Michael\n\n{{url}}",
+  "invite-text_other": "Huhüchen {{names}}\n\nWir laden euch herzlich zu unserer Hochzeit am {{weddingDate}} ein.\nDas hier ist euer personalisierter Link für unsere Hochzeitsseite, der euch dort einloggt.\nBitte bestätigt bis {{rsvpDeadline}} ob ihr teilnehmt und teilt uns Unverträglichkeiten und Allergien mit die ihr habt.\n\nWir freuen uns auf euch.\nAlexine & Michael\n\n{{url}}"
 }

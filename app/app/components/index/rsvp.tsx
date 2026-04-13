@@ -47,7 +47,6 @@ export function Rsvp({ rsvpDeadline }: { rsvpDeadline?: string }) {
             <div className="bg-olive-50 border border-olive-100 rounded-lg p-4 shadow-sm mb-4">
                 <div className="bg-olive-100 border border-olive-300 rounded-lg p-3 mb-3 text-sm">
                     {t("contact_note", "We will use your email address to contact you if needed.")}
-                    {rsvpDeadline && <p className="mt-1">{t("rsvp_deadline_text", "Please let us know by {{date}} whether you will be attending.", { date: rsvpDeadline })}</p>}
                 </div>
                 <div className="flex align-center w-full mb-2">
                     <label htmlFor="mail" className="whitespace-nowrap">{t("mail", "Email")}</label>:
@@ -79,6 +78,7 @@ export function Rsvp({ rsvpDeadline }: { rsvpDeadline?: string }) {
                 <p className="font-bold mb-2">{t("party", "Your Party")}</p>
                 <div className="bg-olive-100 border border-olive-300 rounded-lg p-3 mb-3 text-sm">
                   {t("party_text", "This list shows everyone in your group. Please set your attendance for each person, add any allergies or dietary preferences, and correct any mistakes in names or age group.")}
+                  {rsvpDeadline && <p className="mt-1">{t("rsvp_deadline_text", "Please let us know by {{date}} whether you will be attending.", { date: rsvpDeadline })}</p>}
                 </div>
                 <FamilyMembers
                     familyMembers={user.familyMembers}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next";
 import { useUser } from "~/providers/userProvider";
-import { InfoService, type OverviewInfo } from "~/services/infoService";
+import { InfoService, formatEuropeanDate, type OverviewInfo } from "~/services/infoService";
 
 export function Header() {
     const {user} = useUser();
@@ -27,7 +27,7 @@ export function Header() {
     return (
         <header className="text-center py-8 bg-white border-b border-olive-200">
             {user && overviewInfo?.date && (
-                <p className="text-olive-600 text-base mb-1">{new Date(overviewInfo.date).toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit', year: 'numeric'})}</p>
+                <p className="text-olive-600 text-base mb-1">{formatEuropeanDate(overviewInfo.date, user?.language)}</p>
             )}
             <p className="font-wedding text-7xl text-olive-700">Alexine & Michael</p>
             {user && daysToGo !== null && (

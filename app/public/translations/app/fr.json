@@ -64,5 +64,8 @@
   "logout": "Se déconnecter",
   "privacy_policy": "Politique de confidentialité",
   "days_to_go_one": "Plus que {{count}} jour",
-  "days_to_go_other": "Plus que {{count}} jours"
+  "days_to_go_other": "Plus que {{count}} jours",
+
+  "invite-text_one": "Coucou {{names}}\n\nNous t'invitons chaleureusement à notre mariage le {{weddingDate}}.\nVoici ton lien personnalisé pour notre site de mariage, qui te connecte directement.\nMerci de confirmer avant le {{rsvpDeadline}} si tu participeras et de nous faire part de tes intolérances et allergies.\n\nNous nous réjouissons de te voir.\nAlexine & Michael\n\n{{url}}",
+  "invite-text_other": "Coucou {{names}}\n\nNous vous invitons chaleureusement à notre mariage le {{weddingDate}}.\nVoici votre lien personnalisé pour notre site de mariage, qui vous connecte directement.\nMerci de confirmer avant le {{rsvpDeadline}} si vous participerez et de nous faire part de vos intolérances et allergies.\n\nNous nous réjouissons de vous voir.\nAlexine & Michael\n\n{{url}}"
 }

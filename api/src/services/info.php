@@ -43,9 +43,9 @@ function get_agenda() {
 function get_payment_details() {
     $info = [
         "bank" => [
-            "name" => "a-name",
-            "iban" => "a-iban",
-            "bic" => "a-bic"
+            "name" => "Alexine Zapf",
+            "iban" => "DE22 1203 0000 1204 9835 95",
+            "bic" => "BYLADEM1001"
         ]
     ];
 
