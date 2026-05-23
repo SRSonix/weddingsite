@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "deploy_app": "npx tsc && node deploy_app",
+    "deploy_app:beta": "npx tsc && node deploy_app --beta",
     "deploy_api": "npx tsc && node deploy_api"
   },
   "keywords": [],

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import CreateUser from "~/components/admin/createUser";
 import AllUsers from "~/components/admin/allUsers";
 import UserStatisticsPanel from "~/components/admin/userStatistics";
+import AllergyOverview from "~/components/admin/allergyOverview";
 import AllUsersProvider from "~/providers/allUserProvider";
 import { ContentTile } from "~/components/common/content_tile";
 
@@ -29,6 +30,9 @@ export default function Admin() {
             </ContentTile>
             <ContentTile header="Create User" fullWidth>
               <CreateUser />
+            </ContentTile>
+            <ContentTile header="Allergies &amp; Diet" fullWidth>
+              <AllergyOverview />
             </ContentTile>
             <ContentTile header="Users" fullWidth>
               <AllUsers />

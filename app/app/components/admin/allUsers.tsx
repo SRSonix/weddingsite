@@ -12,10 +12,11 @@ class SearchForm{
         public has_visited: "visited" | "not_visited" | "",
         public mail_set: "mail_set" | "no_mail_set" | "",
         public invited_by: InvitedBy | "",
+        public has_diet: "has_diet" | "",
     ){}
 
     static initialFormData(){
-        return new SearchForm("", "", "", "", "", "");
+        return new SearchForm("", "", "", "", "", "", "");
     }
 }
 
@@ -56,6 +57,7 @@ export default function AllUsers(){
         if (formData.has_visited) filterParts.push(formData.has_visited);
         if (formData.mail_set) filterParts.push(formData.mail_set);
         if (formData.invited_by) filterParts.push("invited_by=" + formData.invited_by);
+        if (formData.has_diet) filterParts.push(formData.has_diet);
         const filterSuffix = filterParts.length > 0 ? "-" + filterParts.join("-") : "";
 
         const blob = new Blob([rows.join("\n")], { type: "text/csv;charset=utf-8;" });
@@ -79,7 +81,7 @@ export default function AllUsers(){
     }
 
     function filterUser(user: User){
-        const {name, role, attendance, has_visited, mail_set, invited_by} = formData;
+        const {name, role, attendance, has_visited, mail_set, invited_by, has_diet} = formData;
 
         if (name && !user.name.toLowerCase().includes(name.toLocaleLowerCase())) return false;
         if (attendance === "not_set" && !user.familyMembers.some(fm => fm.attendance === undefined)) return false;
@@ -90,6 +92,7 @@ export default function AllUsers(){
         if (mail_set === "mail_set" && user.mail === null) return false;
         if (mail_set === "no_mail_set" && user.mail !== null) return false;
         if (invited_by && user.invited_by !== invited_by) return false;
+        if (has_diet === "has_diet" && !user.familyMembers.some(fm => fm.diet && fm.diet.trim() !== "")) return false;
 
         return true;
     }
@@ -152,6 +155,13 @@ export default function AllUsers(){
                             <option value="">any</option>
                             <option value="mail_set">set</option>
                             <option value="no_mail_set">not set</option>
+                        </select>
+                    </div>
+                    <div className="flex flex-col">
+                        <label htmlFor="has_diet" className="input-label">diet</label>
+                        <select id="has_diet" onChange={handleChange} className="input-inline py-1 px-2" value={formData.has_diet}>
+                            <option value="">any</option>
+                            <option value="has_diet">has diet set</option>
                         </select>
                     </div>
                     <button onClick={resetSearchField} className="btn btn-small btn-gray">reset</button>

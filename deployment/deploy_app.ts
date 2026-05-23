@@ -3,13 +3,23 @@ import { Client } from "basic-ftp"
 
 dotenv.config();
 
+const isBeta = process.argv.includes('--beta')
+
 const FTP_HOST = process.env.FTP_HOST
-const WEBSITE_ADMIN_USER = process.env.WEBSITE_ADMIN_USER
-const WEBSITE_ADMIN_PW = process.env.WEBSITE_ADMIN_PW
+const WEBSITE_ADMIN_USER = isBeta
+    ? process.env.WEBSITE_BETA_ADMIN_USER
+    : process.env.WEBSITE_ADMIN_USER
+const WEBSITE_ADMIN_PW = isBeta
+    ? process.env.WEBSITE_BETA_ADMIN_PW
+    : process.env.WEBSITE_ADMIN_PW
 
 const SRC_BASE_PATH = "../app/build/client/"
 
 async function upload_weddingsite() {
+    if (isBeta) {
+        console.log("Deploying to BETA")
+    }
+
     const client = new Client()
     try {
         await client.access({
