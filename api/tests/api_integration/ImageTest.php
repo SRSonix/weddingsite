@@ -62,4 +62,39 @@ class ImageTest extends ApiIntegrationTestCase
         #THEN
         $this->assertEquals(404, $response->status);
     }
+
+    public function testGetImageReturnsCacheHeaders(){
+        # GIVEN
+        parent::loginAsUser();
+        $request = $this->createRequest(path:"/image/test_image.png", method:GET);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(200, $response->status);
+        $this->assertArrayHasKey('ETag', $response->headers);
+        $this->assertArrayHasKey('Last-Modified', $response->headers);
+        $this->assertArrayHasKey('Cache-Control', $response->headers);
+    }
+
+    public function testGetImageWithMatchingETagReturns304(){
+        # GIVEN
+        parent::loginAsUser();
+        $firstRequest = $this->createRequest(path:"/image/test_image.png", method:GET);
+        $firstResponse = app($firstRequest);
+        $this->assertEquals(200, $firstResponse->status);
+        $etag = $firstResponse->headers['ETag'];
+
+        # WHEN
+        $cachedRequest = $this->createRequest(
+            path:"/image/test_image.png",
+            method:GET,
+            headers:['If-None-Match' => $etag]
+        );
+        $cachedResponse = app($cachedRequest);
+
+        # THEN
+        $this->assertEquals(304, $cachedResponse->status);
+    }
 }
