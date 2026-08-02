@@ -13,6 +13,7 @@ function family_member_from_row($row) {
         diet: $row["diet"],
         type: $row["type"],
         attendance: $row["attendance"],
+        brunch_attendance: $row["brunch_attendance"],
     );
 }
 
@@ -51,11 +52,11 @@ function get_family_member($user_id, $family_member_id){
     return family_member_from_row($result[0]);
 }
 
-function update_family_member($user_id, $family_member_id, $name, $diet, $type, $attendance){
+function update_family_member($user_id, $family_member_id, $name, $diet, $type, $attendance, $brunch_attendance){
     $session = create_db_session();
 
-    $stmt = $session->prepare("UPDATE family_member SET name = :name, diet = :diet, type = :type, attendance = :attendance WHERE id = :id AND user_id = :user_id;");
-    $stmt->execute(["user_id" => $user_id, "id"=>$family_member_id, "name"=> $name, "diet"=>$diet, "type"=>$type, "attendance"=>$attendance]);
+    $stmt = $session->prepare("UPDATE family_member SET name = :name, diet = :diet, type = :type, attendance = :attendance, brunch_attendance = :brunch_attendance WHERE id = :id AND user_id = :user_id;");
+    $stmt->execute(["user_id" => $user_id, "id"=>$family_member_id, "name"=> $name, "diet"=>$diet, "type"=>$type, "attendance"=>$attendance, "brunch_attendance"=>$brunch_attendance]);
     $affectedRows = $stmt->rowCount();
 
     $session = null;
@@ -81,6 +82,50 @@ function delete_family_member($user_id, $family_member_id){
     
     $stmt = $session->prepare("DELETE FROM family_member WHERE id = :id AND user_id = :user_id;");
     $stmt->execute(["id" => $family_member_id, "user_id"=> $user_id]);
+    $affectedRows = $stmt->rowCount();
+
+    $session = null;
+
+    return $affectedRows;
+}
+
+function set_brunch_attendance_join($user_id){
+    $session = create_db_session();
+
+    $stmt = $session->prepare("UPDATE family_member SET brunch_attendance = attendance WHERE user_id = :user_id;");
+    $stmt->execute(["user_id" => $user_id]);
+    $affectedRows = $stmt->rowCount();
+
+    $session = null;
+
+    return $affectedRows;
+}
+
+function count_brunch_responses($user_id){
+    $session = create_db_session();
+
+    $stmt = $session->prepare(
+        "SELECT
+            COUNT(CASE WHEN brunch_attendance = 'will_join' THEN 1 END) AS joining,
+            COUNT(CASE WHEN brunch_attendance = 'undecided' THEN 1 END) AS undecided
+            FROM family_member WHERE user_id = :user_id;"
+    );
+    $stmt->execute(["user_id" => $user_id]);
+    $result = $stmt->fetch();
+
+    $session = null;
+
+    return [
+        "joining" => (int) $result["joining"],
+        "undecided" => (int) $result["undecided"],
+    ];
+}
+
+function set_brunch_attendance_decline($user_id){
+    $session = create_db_session();
+
+    $stmt = $session->prepare("UPDATE family_member SET brunch_attendance = 'will_not_join' WHERE user_id = :user_id;");
+    $stmt->execute(["user_id" => $user_id]);
     $affectedRows = $stmt->rowCount();
 
     $session = null;

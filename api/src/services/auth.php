@@ -3,6 +3,7 @@ namespace AuthService;
 
 require_once "helper.php";
 require_once "repositories/user.php";
+require_once "exceptions.php";
 
 function base64url_encode($data)
 {
@@ -50,7 +51,14 @@ function generate_jwt_token($payload){
 function decode_jwt_token($token): null|array{
     $secret_key = get_secret();
 	
-	[$header_enc, $payload_enc, $signature_enc] = explode(".", $token);
+	$parts = is_string($token) ? explode(".", $token) : [];
+
+	if (count($parts) != 3) {
+		_log("invalid jwt token: expected 3 segments");
+		return NULL;
+	}
+
+	[$header_enc, $payload_enc, $signature_enc] = $parts;
 
     $signature_verify = hash_hmac("sha256", $header_enc . "." . $payload_enc, $secret_key, true);
 	
@@ -64,12 +72,17 @@ function decode_jwt_token($token): null|array{
         return NULL;
     }
 
-    if ($header["typ"] != "JWT") {
+    if (!is_array($header) or !is_array($payload)) {
+        _log("invalid jwt token: header or payload is not an object");
+        return NULL;
+    }
+
+    if (($header["typ"] ?? NULL) != "JWT") {
         _log("invalid jwt token: type header invalid");
         return NULL;
     }
-    if ($header["alg"] != "HS256") {
-        _log("jwt alg not supported: ". $header["alg"]);
+    if (($header["alg"] ?? NULL) != "HS256") {
+        _log("jwt alg not supported: ". ($header["alg"] ?? "none"));
         return NULL;
     }
 
@@ -148,4 +161,72 @@ function validate_user_token($token): int | null {
     }
 
     return $user_id;
+}
+
+const BRUNCH_PURPOSE = "brunch_rsvp";
+const BRUNCH_ANSWERS = ["will_join", "will_not_join"];
+
+function jti_reference($jti){
+    return hash("sha256", $jti);
+}
+
+function generate_brunch_token(int $user_id, $jti, $answer, $timeout_s = 60*60*24*90) {
+    if ($jti === NULL or !in_array($answer, BRUNCH_ANSWERS)) {
+        return NULL;
+    }
+
+    $now = time();
+
+    return generate_jwt_token([
+        "sub" => $user_id,
+        "purpose" => BRUNCH_PURPOSE,
+        "answer" => $answer,
+        "jti_ref" => jti_reference($jti),
+        "iat" => $now,
+        "exp" => $now + $timeout_s,
+    ]);
+}
+
+function reject_brunch_token($reason){
+    _log("brunch token rejected: $reason");
+    throw new \UnauthorizedException("unauthorized");
+}
+
+function validate_brunch_token($token): array {
+    $payload = decode_jwt_token($token);
+
+    if ($payload === NULL) {
+        reject_brunch_token("does not decode");
+    }
+
+    foreach (["sub", "purpose", "answer", "jti_ref", "exp"] as $claim) {
+        if (!array_key_exists($claim, $payload)) {
+            reject_brunch_token("missing $claim claim");
+        }
+    }
+
+    if ($payload["purpose"] !== BRUNCH_PURPOSE) {
+        reject_brunch_token("wrong purpose");
+    }
+
+    if ($payload["exp"] <= time()) {
+        reject_brunch_token("expired");
+    }
+
+    if (!in_array($payload["answer"], BRUNCH_ANSWERS)) {
+        reject_brunch_token("unknown answer");
+    }
+
+    $user_id = $payload["sub"];
+    $user_jti = \UserRepository\get_user_token_jti($user_id);
+
+    if ($user_jti === NULL) {
+        reject_brunch_token("no user with id $user_id");
+    }
+
+    if (!hash_equals(jti_reference($user_jti), $payload["jti_ref"])) {
+        reject_brunch_token("jti reference no longer matches");
+    }
+
+    return ["user_id" => $user_id, "answer" => $payload["answer"]];
 }

@@ -42,11 +42,12 @@ export default function Overview() {
         </ContentTile>
         <ContentTile header={t("need_to_know", "Need to Know")}>
           <div className="space-y-4">
-            <div>
-              <h4>{t("location", "Location")}</h4>
+            <div className="bg-olive-100 border border-olive-300 rounded-lg p-3">
+              <h4 className="mt-0">{t("venue", "Wedding Venue")}</h4>
               <div className="text-sm mt-1">
                 <p className="font-medium">{overviewInfo?.location?.split(",")[0]}</p>
                 <p>{overviewInfo?.location?.split(",").slice(1).join(",").trim()}</p>
+                {overviewInfo?.arrival_time && <p className="mt-1">{t("arrival_time", "Arrival from {{time}}", {time: overviewInfo.arrival_time})}</p>}
                 {overviewInfo?.location_maps_link && <a href={overviewInfo.location_maps_link} target="_blank" rel="noreferrer" className="underline text-olive-500 text-xs mt-0.5 inline-block">{t("maps", "Maps")}</a>}
               </div>
             </div>
@@ -60,7 +61,7 @@ export default function Overview() {
             </div>
             {overviewInfo?.hotels && overviewInfo.hotels.length > 0 && (
               <div>
-                <h4>{t("hotels", "Accommodation")}</h4>
+                <h4>{t("hotel_suggested", "Suggested Hotel")}</h4>
                 <div className="text-sm mt-1">
                   {overviewInfo.hotels.map((hotel) => (
                     <div key={hotel.name}>
@@ -80,17 +81,24 @@ export default function Overview() {
                 ))}
               </div>
             </div>
+            {overviewInfo?.brunch && (
+              <div>
+                <h4>{t("brunch", "Brunch")}</h4>
+                <div className="text-sm mt-1">
+                  <p>{t("brunch_info_text", "The day after the wedding we are winding things down together over a brunch. Please set below for each person whether they will join.")}</p>
+                  <div className="mt-1 leading-snug">
+                    <p><span className="font-bold">{t("when", "When")}:</span> {formatEuropeanDate(overviewInfo.brunch.date, user?.language)}, {overviewInfo.brunch.time}</p>
+                    <p><span className="font-bold">{t("where", "Where")}:</span> {overviewInfo.brunch.location}</p>
+                  </div>
+                  {overviewInfo.brunch.location_maps_link && <a href={overviewInfo.brunch.location_maps_link} target="_blank" rel="noreferrer" className="underline text-olive-500 text-xs mt-0.5 inline-block">{t("maps", "Maps")}</a>}
+                </div>
+              </div>
+            )}
             <div>
               <h4>{t("companions", "Partners & Children")}</h4>
               <p className="text-sm mt-1">{t("companions_text", "Your group has been set up for you. Please confirm attendance and note any dietary requirements for each person. If someone is missing, please contact us directly.")}</p>
               <p className="text-sm mt-1">{t("companions_children", "Age groups: Infant (0-3), Child (4-12), Adult (13+).")}</p>
             </div>
-            {overviewInfo?.rsvp_deadline && (
-              <div>
-                <h4>{t("rsvp_deadline", "RSVP Deadline")}</h4>
-                <p className="text-sm mt-1">{t("rsvp_deadline_text", "Please let us know by {{date}} whether you will be attending.", { date: formatEuropeanDate(overviewInfo.rsvp_deadline, user?.language) })}</p>
-              </div>
-            )}
             <div>
               <h4>{t("gifts", "Gifts")}</h4>
               <p className="text-sm mt-1">{t("gifts_intro", "Your presence is the best gift - if you'd still like to give us something, we'd appreciate a contribution towards our wedding expenses. Cash on the day of the wedding or a bank transfer are both equally welcome:")}</p>

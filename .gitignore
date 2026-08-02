@@ -12,3 +12,6 @@ local_credentials.txt
 *.png
 *.jpg
 *.jpeg
+
+# test fixture - ImageTest needs this checked in
+!api/src/images/test_image.png

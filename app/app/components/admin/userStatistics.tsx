@@ -18,23 +18,25 @@ const ATTENDANCE_ROWS = [
 
 type ColKey = typeof INVITED_BY_COLS[number]["key"];
 type RowKey = typeof ATTENDANCE_ROWS[number]["key"];
+type AttendanceField = "attendance" | "brunch_attendance";
 
 function matchesCol(user: User, col: ColKey): boolean {
     if (col === "total") return true;
     return user.invited_by === col;
 }
 
-function matchesRow(fm: FamilyMember, row: RowKey): boolean {
-    if (row === "total_excl_not_coming") return fm.attendance !== Attandance.will_not_join;
-    if (row === null) return fm.attendance == null;
-    return fm.attendance === row;
+function matchesRow(fm: FamilyMember, row: RowKey, field: AttendanceField): boolean {
+    const value = fm[field];
+    if (row === "total_excl_not_coming") return value !== Attandance.will_not_join;
+    if (row === null) return value == null;
+    return value === row;
 }
 
-function countFamilyMembers(users: User[], row: RowKey, col: ColKey, type?: FamilyMemberType): number {
+function countFamilyMembers(users: User[], row: RowKey, col: ColKey, field: AttendanceField, type?: FamilyMemberType): number {
     return users
         .filter(u => matchesCol(u, col))
         .flatMap(u => u.familyMembers.filter(fm => type === undefined || fm.type === type))
-        .filter(fm => matchesRow(fm, row))
+        .filter(fm => matchesRow(fm, row, field))
         .length;
 }
 
@@ -70,24 +72,34 @@ function StatsTable({ title, getValue }: { title: string; getValue: (row: RowKey
     );
 }
 
+const MEMBER_TYPE_TABLES = [
+    { type: FamilyMemberType.adult,  label: "Adults" },
+    { type: FamilyMemberType.child,  label: "Children" },
+    { type: FamilyMemberType.infant, label: "Infants" },
+] as const;
+
 export default function UserStatisticsPanel() {
     const { allUsers } = useAllUsers();
 
     return (
         <div>
             <div className="mt-4">
-                <StatsTable
-                    title="Adults Statistic"
-                    getValue={(row, col) => countFamilyMembers(allUsers, row, col, FamilyMemberType.adult)}
-                />
-                <StatsTable
-                    title="Children Statistic"
-                    getValue={(row, col) => countFamilyMembers(allUsers, row, col, FamilyMemberType.child)}
-                />
-                <StatsTable
-                    title="Infants Statistic"
-                    getValue={(row, col) => countFamilyMembers(allUsers, row, col, FamilyMemberType.infant)}
-                />
+                <h3 className="text-lg font-semibold mb-3">Wedding</h3>
+                {MEMBER_TYPE_TABLES.map(({type, label}) => (
+                    <StatsTable
+                        key={`wedding-${type}`}
+                        title={`${label} Statistic`}
+                        getValue={(row, col) => countFamilyMembers(allUsers, row, col, "attendance", type)}
+                    />
+                ))}
+                <h3 className="text-lg font-semibold mb-3 mt-8">Brunch</h3>
+                {MEMBER_TYPE_TABLES.map(({type, label}) => (
+                    <StatsTable
+                        key={`brunch-${type}`}
+                        title={`${label} Statistic`}
+                        getValue={(row, col) => countFamilyMembers(allUsers, row, col, "brunch_attendance", type)}
+                    />
+                ))}
             </div>
         </div>
     );

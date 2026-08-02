@@ -19,7 +19,7 @@ function login(\Request $request){
 
 	_log("token is valid. generating session.");
 
-	$timeout_s =  60*60*24*7;
+	$timeout_s =  60*60*24*30;
 
 	$session_token = \AuthService\generate_session_token($user_id, $timeout_s);
 	

@@ -110,3 +110,7 @@ Supported languages: **German (de)** and **French (fr)**. English and Spanish ar
 **Rule: TSX files must only contain English text.** All user-visible strings must use `t("key", "English fallback text")`. The English fallback string is the source of truth for what the English text should say, and makes missing translations immediately visible when browsing without a language set.
 
 Translation files are served as static JSON and cached by the browser. After adding or changing translations, bump the `v` query param in `app/app/root.tsx` (`queryStringParams: { v: 'N' }`) to force clients to re-fetch.
+
+
+WORKFLOW RESTRICTIONS
+- try to avoid running custom python or bash scripts

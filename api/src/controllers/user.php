@@ -156,9 +156,9 @@ function add_family_member(\Request $request){
 
 function update_family_member(\Request $request){
     $request->validatePathUserIsAuthorized();
-    $request->validateBodyContainsKeys(["name", "diet", "type", "attendance"]);
+    $request->validateBodyContainsKeys(["name", "diet", "type", "attendance", "brunch_attendance"]);
     $request->validateBodyContainsKeys(["name"], TRUE);
-    $request->validateAcceptableValues(["type"=>VALID_MEMBER_TYPES, "attendance"=>VALID_ATTENDANCE]);
+    $request->validateAcceptableValues(["type"=>VALID_MEMBER_TYPES, "attendance"=>VALID_ATTENDANCE, "brunch_attendance"=>VALID_ATTENDANCE]);
 
     $user_id = $request->path_params["user_id"];
     $family_member_id = $request->path_params["family_member_id"];
@@ -167,6 +167,7 @@ function update_family_member(\Request $request){
     $diet = $request->body["diet"];
     $type = $request->body["type"];
     $attendance = $request->body["attendance"];
+    $brunch_attendance = $request->body["brunch_attendance"];
 
     return new \Response(
         body:\UserService\update_family_member(
@@ -176,7 +177,36 @@ function update_family_member(\Request $request){
             $diet,
             $type,
             $attendance,
+            $brunch_attendance,
         )
+    );
+}
+
+function get_login_token(\Request $request){
+    $request->validateAdminAccess();
+
+    $user_id = (int) $request->path_params["user_id"];
+
+    return new \Response(
+        body: ["token" => \UserService\get_login_token($user_id)]
+    );
+}
+
+function get_brunch_tokens(\Request $request){
+    $request->validateAdminAccess();
+
+    $user_id = (int) $request->path_params["user_id"];
+
+    return new \Response(
+        body: \UserService\get_brunch_tokens($user_id)
+    );
+}
+
+function submit_brunch_rsvp(\Request $request){
+    $request->validateBodyContainsKeys(["token"], TRUE);
+
+    return new \Response(
+        body: \UserService\submit_brunch_rsvp($request->body["token"])
     );
 }
 

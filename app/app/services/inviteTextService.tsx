@@ -1,9 +1,8 @@
 import i18n from "i18next";
 import type { User } from "./userService";
-import { formatEuropeanDate } from "./infoService";
 
 export class InviteTextService {
-  static async generateInviteText(user: User, url: string, weddingDate: string, rsvpDeadline: string): Promise<string> {
+  static async generateInviteText(user: User, url: string): Promise<string> {
     const nameList = user.familyMembers.map(fm => fm.name).filter(Boolean) as string[];
     const allNames = nameList.length > 1
       ? nameList.slice(0, -1).join(", ") + " & " + nameList[nameList.length - 1]
@@ -20,8 +19,6 @@ export class InviteTextService {
       lng,
       count,
       names: allNames,
-      weddingDate: formatEuropeanDate(weddingDate, lng),
-      rsvpDeadline: formatEuropeanDate(rsvpDeadline, lng),
       url,
     });
   }

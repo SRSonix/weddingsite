@@ -39,13 +39,15 @@ class FamilyMember{
     public $diet;
     public $type;
     public $attendance;
+    public $brunch_attendance;
 
-    public function __construct($id, $user_id, $name, $diet, $type, $attendance){
+    public function __construct($id, $user_id, $name, $diet, $type, $attendance, $brunch_attendance = NULL){
         $this->id = $id;
         $this->user_id = $user_id;
         $this->name = $name;
         $this->diet = $diet;
         $this->type = $type;
         $this->attendance = $attendance;
+        $this->brunch_attendance = $brunch_attendance;
     }
 }

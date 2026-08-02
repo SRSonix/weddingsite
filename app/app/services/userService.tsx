@@ -44,12 +44,13 @@ export class FamilyMemberUpdate extends FamilyMemberAdd
     diet: string | undefined,
     type: FamilyMemberType | undefined,
     public attendance: Attandance | undefined,
+    public brunch_attendance: Attandance | undefined,
   ){
     super(name, diet, type);
   }
 
   static getEmpty(){
-    return new FamilyMemberUpdate(undefined, "", undefined, undefined);
+    return new FamilyMemberUpdate(undefined, "", undefined, undefined, undefined);
   }
 }
 
@@ -61,17 +62,25 @@ export class FamilyMember extends FamilyMemberUpdate {
     diet: string | undefined,
     type: FamilyMemberType | undefined,
     attendance: Attandance | undefined,
+    brunch_attendance: Attandance | undefined,
   ){
-    super(name, diet, type, attendance);
+    super(name, diet, type, attendance, brunch_attendance);
   }
 
   public getFamilyMemberUpdate() {
-    return new FamilyMemberUpdate(this.name, this.diet, this.type, this.attendance);
+    return new FamilyMemberUpdate(this.name, this.diet, this.type, this.attendance, this.brunch_attendance);
   }
 
   static fromData (data: any){
-    return new FamilyMember(data.id, data.user_id, data.name, data.diet, data.type, data.attendance ?? undefined);
+    return new FamilyMember(data.id, data.user_id, data.name, data.diet, data.type, data.attendance ?? undefined, data.brunch_attendance ?? undefined);
   }
+}
+
+export interface BrunchRsvpResult{
+  name: string,
+  brunch_attendance: Attandance,
+  joining: number,
+  undecided: number,
 }
 
 export class UserContactInformation{
@@ -262,6 +271,22 @@ export class UserService{
     }
   }
 
+  static async getUserLoginToken(user_id: number){
+   try{
+      const response = await fetch(
+        `${UserService.BASE_URL}/${user_id}/login-token`,
+        {method: "get", credentials: 'include'},
+      )
+
+      const data = await response.json();
+      const token = data.token;
+
+      return `${import.meta.env.VITE_WEBSITE_URL}?token=${token}`;
+    }catch (error) {
+      return undefined
+    }
+  }
+
   static async addFamilyMember(userId: number, body: FamilyMemberAdd): Promise<FamilyMember | undefined>{
 
     try {
@@ -283,6 +308,20 @@ export class UserService{
 
       const data = await response.json()
       return FamilyMember.fromData(data);
+    } catch(error){
+      return undefined;
+    }
+  }
+
+  static async submitBrunchRsvp(token: string): Promise<BrunchRsvpResult | undefined>{
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/brunch-rsvp`,
+        {method: "put", body: JSON.stringify({token})},
+      );
+      if (!response.ok) return undefined;
+
+      return await response.json() as BrunchRsvpResult;
     } catch(error){
       return undefined;
     }

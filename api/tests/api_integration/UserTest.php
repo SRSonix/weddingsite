@@ -639,7 +639,7 @@ class UserTest extends ApiIntegrationTestCase
             ["/user/2",                   PUT,    ["name"=>"n", "role"=>"USER", "invited_by"=>"both", "mail"=>NULL, "language"=>"de"], false],
             ["/user/2/reset-token",       PUT,    NULL,                                                                                false],
             ["/user/2/family-member",     POST,   ["name"=>"n", "diet"=>NULL, "type"=>"adult"],                                        false],
-            ["/user/2/family-member/1",   PUT,    ["name"=>"n", "diet"=>NULL, "type"=>"adult", "attendance"=>"will_join"],             true],
+            ["/user/2/family-member/1",   PUT,    ["name"=>"n", "diet"=>NULL, "type"=>"adult", "attendance"=>"will_join", "brunch_attendance"=>"will_join"], true],
         ];
     }
 
@@ -849,7 +849,7 @@ class UserTest extends ApiIntegrationTestCase
     {
         # GIVEN
         parent::loginAsUser();
-        $request = $this->createRequest(path:"/user/2/family-member/1", method:PUT, body:["name"=>"test-name", "diet"=>"vegan", "type"=>"child", "attendance"=>"will_join"]);
+        $request = $this->createRequest(path:"/user/2/family-member/1", method:PUT, body:["name"=>"test-name", "diet"=>"vegan", "type"=>"child", "attendance"=>"will_join", "brunch_attendance"=>"will_join"]);
 
         #WHEN
         $response = app($request);
@@ -881,7 +881,7 @@ class UserTest extends ApiIntegrationTestCase
 
         if ($login_user == "user") parent::loginAsUser();
         else parent::loginAsAdmin();
-        $request = $this->createRequest(path:"/user/$target_user_id/family-member/1", method:PUT, body:["name"=>"test-name2", "diet"=>"meat", "type"=>"adult", "attendance"=>"will_not_join"]);
+        $request = $this->createRequest(path:"/user/$target_user_id/family-member/1", method:PUT, body:["name"=>"test-name2", "diet"=>"meat", "type"=>"adult", "attendance"=>"will_not_join", "brunch_attendance"=>"undecided"]);
 
         #WHEN
         $response = app($request);
@@ -898,6 +898,7 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals("meat", $response->body->family_members[0]->diet);
         $this->assertEquals("adult", $response->body->family_members[0]->type);
         $this->assertEquals("will_not_join", $response->body->family_members[0]->attendance);
+        $this->assertEquals("undecided", $response->body->family_members[0]->brunch_attendance);
     }
 
     public function testUpdateFamilymemberWithSameValuesReturns200(): void
@@ -909,7 +910,7 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals(201, $response->status);
 
         # Set attendance to will_join so the following update is truly "same values"
-        $body = ["name"=>"test-name", "diet"=>"vegan", "type"=>"child", "attendance"=>"will_join"];
+        $body = ["name"=>"test-name", "diet"=>"vegan", "type"=>"child", "attendance"=>"will_join", "brunch_attendance"=>"will_join"];
         $request = $this->createRequest(path:"/user/2/family-member/1", method:PUT, body:$body);
         $response = app($request);
         $this->assertEquals(200, $response->status);
@@ -925,6 +926,7 @@ class UserTest extends ApiIntegrationTestCase
         $this->assertEquals("vegan", $response->body->diet);
         $this->assertEquals("child", $response->body->type);
         $this->assertEquals("will_join", $response->body->attendance);
+        $this->assertEquals("will_join", $response->body->brunch_attendance);
     }
 
     public function testUpdateFamilymemberNoBodyReturns400(): void
@@ -943,15 +945,18 @@ class UserTest extends ApiIntegrationTestCase
     public static function familyMemberUpdatePartialBodies(): array
     {
         return [
-            [["diet"=>"vegan", "type"=>"adult", "attendance"=>"will_join"]],
-            [["name"=>"test-name", "type"=>"adult", "attendance"=>"will_join"]],
-            [["name"=>"test-name", "diet"=>"vegan", "attendance"=>"will_join"]],
-            [["name"=>"test-name", "diet"=>"vegan", "type"=>"adult"]],
-            [["name"=>NULL, "diet"=>"vegan", "type"=>"adult", "attendance"=>"will_join"]],
-            [["name"=>"test-name", "diet"=>"vegan", "type"=>NULL, "attendance"=>"will_join"]],
-            [["name"=>"test-name", "diet"=>"vegan", "type"=>"adult", "attendance"=>NULL]],
-            [["name"=>"test-name", "diet"=>"vegan", "type"=>"bogus", "attendance"=>"will_join"]],
-            [["name"=>"test-name", "diet"=>"vegan", "type"=>"adult", "attendance"=>"bogus"]],
+            [["diet"=>"vegan", "type"=>"adult", "attendance"=>"will_join", "brunch_attendance"=>"will_join"]],
+            [["name"=>"test-name", "type"=>"adult", "attendance"=>"will_join", "brunch_attendance"=>"will_join"]],
+            [["name"=>"test-name", "diet"=>"vegan", "attendance"=>"will_join", "brunch_attendance"=>"will_join"]],
+            [["name"=>"test-name", "diet"=>"vegan", "type"=>"adult", "brunch_attendance"=>"will_join"]],
+            [["name"=>"test-name", "diet"=>"vegan", "type"=>"adult", "attendance"=>"will_join"]],
+            [["name"=>NULL, "diet"=>"vegan", "type"=>"adult", "attendance"=>"will_join", "brunch_attendance"=>"will_join"]],
+            [["name"=>"test-name", "diet"=>"vegan", "type"=>NULL, "attendance"=>"will_join", "brunch_attendance"=>"will_join"]],
+            [["name"=>"test-name", "diet"=>"vegan", "type"=>"adult", "attendance"=>NULL, "brunch_attendance"=>"will_join"]],
+            [["name"=>"test-name", "diet"=>"vegan", "type"=>"adult", "attendance"=>"will_join", "brunch_attendance"=>NULL]],
+            [["name"=>"test-name", "diet"=>"vegan", "type"=>"bogus", "attendance"=>"will_join", "brunch_attendance"=>"will_join"]],
+            [["name"=>"test-name", "diet"=>"vegan", "type"=>"adult", "attendance"=>"bogus", "brunch_attendance"=>"will_join"]],
+            [["name"=>"test-name", "diet"=>"vegan", "type"=>"adult", "attendance"=>"will_join", "brunch_attendance"=>"bogus"]],
         ];
     }
 
@@ -1062,5 +1067,283 @@ class UserTest extends ApiIntegrationTestCase
         $request = $this->createRequest(path:"/user", method:GET);
         $response = app($request);
         $this->assertCount(0, $response->body->family_members);
+    }
+
+    const USER_JTI = "b4801afabd2ee11a411b1c1ad9de8058e835650b";
+
+    private function getBrunchTokens(int $user_id = 2): array {
+        parent::loginAsAdmin();
+        $response = app($this->createRequest(path:"/user/$user_id/brunch-tokens", method:GET));
+        $this->assertEquals(200, $response->status);
+        return $response->body;
+    }
+
+    private function seedMixedParty(int $user_id = 2): void {
+        $session = create_db_session();
+        $session->exec(
+            "INSERT INTO family_member (user_id, name, diet, type, attendance) VALUES
+                ($user_id, 'joining', NULL, 'adult', 'will_join'),
+                ($user_id, 'declined', NULL, 'adult', 'will_not_join'),
+                ($user_id, 'unsure',   NULL, 'adult', 'undecided')"
+        );
+        $session = NULL;
+    }
+
+    private function getBrunchAttendances(int $user_id = 2): array {
+        $session = create_db_session();
+        $stmt = $session->prepare("SELECT name, brunch_attendance FROM family_member WHERE user_id = :id ORDER BY id;");
+        $stmt->execute(["id" => $user_id]);
+        $rows = $stmt->fetchAll();
+        $session = NULL;
+
+        $result = [];
+        foreach ($rows as $row) {
+            $result[$row["name"]] = $row["brunch_attendance"];
+        }
+        return $result;
+    }
+
+    public function testGetBrunchTokensNoCredentialsReturns401(): void
+    {
+        # GIVEN
+        $request = $this->createRequest(path:"/user/2/brunch-tokens", method:GET);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(401, $response->status);
+    }
+
+    public function testGetBrunchTokensUserCredentialsReturns403(): void
+    {
+        # GIVEN
+        parent::loginAsUser();
+
+        #WHEN
+        $request = $this->createRequest(path:"/user/2/brunch-tokens", method:GET);
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(403, $response->status);
+    }
+
+    public function testGetBrunchTokensReturnsTwoDistinctTokens(): void
+    {
+        # GIVEN
+        parent::loginAsAdmin();
+
+        #WHEN
+        $request = $this->createRequest(path:"/user/2/brunch-tokens", method:GET);
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(200, $response->status);
+        $this->assertArrayHasKey("will_join", $response->body);
+        $this->assertArrayHasKey("will_not_join", $response->body);
+        $this->assertNotEquals($response->body["will_join"], $response->body["will_not_join"]);
+    }
+
+    public function testBrunchTokensDoNotLeakTheUserJti(): void
+    {
+        # GIVEN
+        $tokens = $this->getBrunchTokens();
+
+        #WHEN / THEN
+        foreach ($tokens as $token) {
+            $this->assertStringNotContainsString(self::USER_JTI, $token);
+
+            $payload = AuthService\decode_jwt_token($token);
+            $this->assertArrayNotHasKey("jti", $payload);
+            $this->assertNotContains(self::USER_JTI, $payload);
+        }
+    }
+
+    public function testGetLoginTokenNoCredentialsReturns401(): void
+    {
+        # GIVEN
+        $request = $this->createRequest(path:"/user/2/login-token", method:GET);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(401, $response->status);
+    }
+
+    public function testGetLoginTokenUserCredentialsReturns403(): void
+    {
+        # GIVEN
+        parent::loginAsUser();
+
+        #WHEN
+        $request = $this->createRequest(path:"/user/2/login-token", method:GET);
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(403, $response->status);
+    }
+
+    public function testGetLoginTokenReturnsAWorkingLoginToken(): void
+    {
+        # GIVEN
+        parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user/2/login-token", method:GET);
+        $response = app($request);
+        $this->assertEquals(200, $response->status);
+        $token = $response->body["token"];
+        $this->logout();
+
+        #WHEN
+        $request = $this->createRequest(path:"/auth/login", method:POST, body:["token"=>$token]);
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(200, $response->status);
+    }
+
+    public function testGetLoginTokenDoesNotResetTheJti(): void
+    {
+        # GIVEN
+        parent::loginAsAdmin();
+        $request = $this->createRequest(path:"/user/2/login-token", method:GET);
+        $response = app($request);
+        $this->assertEquals(200, $response->status);
+
+        #WHEN / THEN
+        $this->assertEquals(self::USER_JTI, \UserRepository\get_user_token_jti(2));
+    }
+
+    public function testBrunchRsvpJoinMirrorsTheWeddingAnswer(): void
+    {
+        # GIVEN
+        $tokens = $this->getBrunchTokens();
+        $this->seedMixedParty();
+        $this->logout();
+
+        #WHEN
+        $request = $this->createRequest(path:"/brunch-rsvp", method:PUT, body:["token"=>$tokens["will_join"]]);
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(200, $response->status);
+        $this->assertEquals("will_join", $response->body["brunch_attendance"]);
+        $this->assertEquals(1, $response->body["joining"]);
+        $this->assertEquals(1, $response->body["undecided"]);
+        $this->assertEquals(
+            ["joining"=>"will_join", "declined"=>"will_not_join", "unsure"=>"undecided"],
+            $this->getBrunchAttendances()
+        );
+    }
+
+    public function testBrunchRsvpDeclineSetsWholeParty(): void
+    {
+        # GIVEN
+        $tokens = $this->getBrunchTokens();
+        $this->seedMixedParty();
+        $this->logout();
+
+        #WHEN
+        $request = $this->createRequest(path:"/brunch-rsvp", method:PUT, body:["token"=>$tokens["will_not_join"]]);
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(200, $response->status);
+        $this->assertEquals("will_not_join", $response->body["brunch_attendance"]);
+        $this->assertEquals(0, $response->body["joining"]);
+        $this->assertEquals(0, $response->body["undecided"]);
+        $this->assertEquals(
+            ["joining"=>"will_not_join", "declined"=>"will_not_join", "unsure"=>"will_not_join"],
+            $this->getBrunchAttendances()
+        );
+    }
+
+    public function testBrunchRsvpIsIdempotent(): void
+    {
+        # GIVEN
+        $tokens = $this->getBrunchTokens();
+        $this->seedMixedParty();
+        $this->logout();
+        $request = $this->createRequest(path:"/brunch-rsvp", method:PUT, body:["token"=>$tokens["will_join"]]);
+        $this->assertEquals(200, app($request)->status);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(200, $response->status);
+        $this->assertEquals(
+            ["joining"=>"will_join", "declined"=>"will_not_join", "unsure"=>"undecided"],
+            $this->getBrunchAttendances()
+        );
+    }
+
+    public function testBrunchRsvpNoBodyReturns400(): void
+    {
+        # GIVEN
+        $request = $this->createRequest(path:"/brunch-rsvp", method:PUT);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(400, $response->status);
+    }
+
+    public static function invalidBrunchTokens(): array
+    {
+        return [
+            "garbage" => ["not-a-token"],
+            "empty" => [""],
+            "login token replayed" => [self::USER_TOKEN],
+            "admin login token replayed" => [self::ADMIN_TOKEN],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidBrunchTokens
+     */
+    public function testBrunchRsvpInvalidTokenReturns401($token): void
+    {
+        # GIVEN
+        $request = $this->createRequest(path:"/brunch-rsvp", method:PUT, body:["token"=>$token]);
+
+        #WHEN
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(401, $response->status);
+    }
+
+    public function testBrunchTokenIsRevokedByTokenReset(): void
+    {
+        # GIVEN
+        $tokens = $this->getBrunchTokens();
+
+        parent::loginAsAdmin();
+        $reset = $this->createRequest(path:"/user/2/reset-token", method:PUT);
+        $this->assertEquals(200, app($reset)->status);
+        $this->logout();
+
+        #WHEN
+        $request = $this->createRequest(path:"/brunch-rsvp", method:PUT, body:["token"=>$tokens["will_join"]]);
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(401, $response->status);
+    }
+
+    public function testBrunchTokenCannotBeUsedToLogIn(): void
+    {
+        # GIVEN
+        $tokens = $this->getBrunchTokens();
+        $this->logout();
+
+        #WHEN
+        $request = $this->createRequest(path:"/auth/login", method:POST, body:["token"=>$tokens["will_join"]]);
+        $response = app($request);
+
+        #THEN
+        $this->assertEquals(401, $response->status);
     }
 }

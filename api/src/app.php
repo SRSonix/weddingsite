@@ -21,8 +21,12 @@ function app($request): Response{
 	$router->add_route(pattern: "^/user\/(\d+)$", method: DELETE, parameter_names: ["user_id"], callback:"UserController\\delete_user");
 	$router->add_route(pattern: "^/user\/(\d+)\/contact$", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user_contact");
 	$router->add_route(pattern: "^/user\/(\d+)$", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user");
-	$router->add_route(pattern: "^/user\/(\d+)\/reset-token$", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user_token");
 	$router->add_route(pattern: "^/users$", method: GET, parameter_names: [], callback:"UserController\\get_all_users");
+	$router->add_route(pattern: "^/brunch-rsvp$", method: PUT, parameter_names: [], callback:"UserController\\submit_brunch_rsvp");
+
+	$router->add_route(pattern: "^/user\/(\d+)\/reset-token$", method: PUT, parameter_names: ["user_id"], callback:"UserController\\update_user_token");
+	$router->add_route(pattern: "^/user\/(\d+)\/login-token$", method: GET, parameter_names: ["user_id"], callback:"UserController\\get_login_token");
+	$router->add_route(pattern: "^/user\/(\d+)\/brunch-tokens$", method: GET, parameter_names: ["user_id"], callback:"UserController\\get_brunch_tokens");
 
 	$router->add_route(pattern: "^/user\/(\d+)\/family-member$", method: POST, parameter_names: ["user_id"], callback:"UserController\\add_family_member");
 	$router->add_route(pattern: "^/user\/(\d+)\/family-member\/(\d+)$", method: PUT, parameter_names: ["user_id", "family_member_id"], callback:"UserController\\update_family_member");

@@ -15,6 +15,13 @@ export interface HotelInfo{
     web: string
 }
 
+export interface BrunchInfo{
+    date: string,
+    time: string,
+    location: string,
+    location_maps_link?: string | null
+}
+
 export class OverviewInfo{
     constructor(
         public date: string,
@@ -24,7 +31,8 @@ export class OverviewInfo{
         public location_maps_link: string,
         public phone: Record<string, string>,
         public hotels: HotelInfo[],
-        public public_transport: Record<string, string>
+        public public_transport: Record<string, string>,
+        public brunch?: BrunchInfo
     ){};
 }
 

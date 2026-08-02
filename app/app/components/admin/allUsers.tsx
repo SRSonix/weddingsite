@@ -9,6 +9,7 @@ class SearchForm{
         public name: string,
         public role: Role | "",
         public attendance: Attandance | "not_set" | "",
+        public brunch_attendance: Attandance | "not_set" | "",
         public has_visited: "visited" | "not_visited" | "",
         public mail_set: "mail_set" | "no_mail_set" | "",
         public invited_by: InvitedBy | "",
@@ -16,7 +17,7 @@ class SearchForm{
     ){}
 
     static initialFormData(){
-        return new SearchForm("", "", "", "", "", "", "");
+        return new SearchForm("", "", "", "", "", "", "", "");
     }
 }
 
@@ -33,7 +34,7 @@ export default function AllUsers(){
             return str;
         }
 
-        const headers = ["user_name", "user_mail", "user_language", "user_invited_by", "member_name", "member_type", "member_attendance", "member_diet"];
+        const headers = ["user_name", "user_mail", "user_language", "user_invited_by", "member_name", "member_type", "member_attendance", "member_brunch_attendance", "member_diet"];
         const rows: string[] = [headers.join(",")];
         for (const user of filtered) {
             for (const fm of user.familyMembers) {
@@ -45,6 +46,7 @@ export default function AllUsers(){
                     escapeField(fm.name),
                     escapeField(fm.type),
                     escapeField(fm.attendance),
+                    escapeField(fm.brunch_attendance),
                     escapeField(fm.diet),
                 ].join(","));
             }
@@ -54,6 +56,7 @@ export default function AllUsers(){
         if (formData.name) filterParts.push("name=" + formData.name.replace(/[^a-zA-Z0-9]/g, "_"));
         if (formData.role) filterParts.push("role=" + formData.role);
         if (formData.attendance) filterParts.push("attendance=" + formData.attendance);
+        if (formData.brunch_attendance) filterParts.push("brunch=" + formData.brunch_attendance);
         if (formData.has_visited) filterParts.push(formData.has_visited);
         if (formData.mail_set) filterParts.push(formData.mail_set);
         if (formData.invited_by) filterParts.push("invited_by=" + formData.invited_by);
@@ -81,11 +84,13 @@ export default function AllUsers(){
     }
 
     function filterUser(user: User){
-        const {name, role, attendance, has_visited, mail_set, invited_by, has_diet} = formData;
+        const {name, role, attendance, brunch_attendance, has_visited, mail_set, invited_by, has_diet} = formData;
 
         if (name && !user.name.toLowerCase().includes(name.toLocaleLowerCase())) return false;
         if (attendance === "not_set" && !user.familyMembers.some(fm => fm.attendance === undefined)) return false;
         if (attendance && attendance !== "not_set" && !user.familyMembers.some(fm => fm.attendance === attendance)) return false;
+        if (brunch_attendance === "not_set" && !user.familyMembers.some(fm => fm.brunch_attendance === undefined)) return false;
+        if (brunch_attendance && brunch_attendance !== "not_set" && !user.familyMembers.some(fm => fm.brunch_attendance === brunch_attendance)) return false;
         if (role && user.role !==  role) return false;
         if (has_visited === "visited" && user.last_visit === null) return false;
         if (has_visited === "not_visited" && user.last_visit !== null) return false;
@@ -117,6 +122,16 @@ export default function AllUsers(){
                     <div className="flex flex-col">
                         <label htmlFor="attendance" className="input-label">attendance</label>
                         <select id="attendance" value={formData.attendance} onChange={handleChange} className="input-inline py-1 px-2">
+                            <option value="">any</option>
+                            <option value="not_set">not set</option>
+                            <option value={Attandance.undecided}>undecided</option>
+                            <option value={Attandance.will_join}>coming</option>
+                            <option value={Attandance.will_not_join}>not coming</option>
+                        </select>
+                    </div>
+                    <div className="flex flex-col">
+                        <label htmlFor="brunch_attendance" className="input-label">brunch</label>
+                        <select id="brunch_attendance" value={formData.brunch_attendance} onChange={handleChange} className="input-inline py-1 px-2">
                             <option value="">any</option>
                             <option value="not_set">not set</option>
                             <option value={Attandance.undecided}>undecided</option>

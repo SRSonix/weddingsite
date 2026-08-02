@@ -4,7 +4,6 @@ import { useAllUsers } from "~/providers/allUserProvider";
 import { FamilyMemberType, InvitedBy, Language, Role, UserUpdateInfo, UserService, type User } from "~/services/userService";
 import { FamilyMembers } from "../index/familyMembers";
 import { useUser } from "~/providers/userProvider";
-import { InfoService } from "~/services/infoService";
 import { InviteTextService } from "~/services/inviteTextService";
 
 
@@ -21,31 +20,34 @@ export function UserItem({user}: {user:User}){
     const userAgent = window.navigator.userAgent;
     const isSafari = userAgent.includes("Safari") && !userAgent.includes("Chrome");
 
-    async function resetUserToken(id: number){
-      if(!window.confirm('Are you sure you want to update the user token? this will invalidate the past url given to the user!')) return;
-
-      const [url, overviewInfo] = await Promise.all([
-        UserService.resetUserToken(id),
-        InfoService.getOverviewInfo(),
-      ]);
-
+    async function applyInviteUrl(url: string | undefined, failureMessage: string, successMessage: string){
       if (url === undefined) {
-        setInfoMessage("something went wrong resetting the token!");
+        setInfoMessage(failureMessage);
         return;
       }
 
-      const text = overviewInfo
-        ? await InviteTextService.generateInviteText(user, url, overviewInfo.date, overviewInfo.rsvp_deadline)
-        : url;
+      const text = await InviteTextService.generateInviteText(user, url);
 
       setInviteText(text);
 
       if (!isSafari) {
         navigator.clipboard.writeText(text);
-        setInfoMessage("Token reset. Invite text copied to clipboard.");
+        setInfoMessage(`${successMessage} Invite text copied to clipboard.`);
       } else {
-        setInfoMessage("Token reset. Use the button below to copy the invite text.");
+        setInfoMessage(`${successMessage} Use the button below to copy the invite text.`);
       }
+    }
+
+    async function regenerateUserToken(id: number){
+      const url = await UserService.getUserLoginToken(id);
+      await applyInviteUrl(url, "something went wrong fetching the invite link!", "Invite link fetched.");
+    }
+
+    async function resetUserToken(id: number){
+      if(!window.confirm('Are you sure you want to update the user token? this will invalidate the past url given to the user!')) return;
+
+      const url = await UserService.resetUserToken(id);
+      await applyInviteUrl(url, "something went wrong resetting the token!", "Token reset.");
     }
 
     function copyInviteText() {
@@ -162,6 +164,7 @@ export function UserItem({user}: {user:User}){
             <button onClickCapture={deleteUserHandle} className="btn btn-red btn-small">
                 delete user
             </button>
+            <button className="btn btn-small btn-gray" onClick={() => regenerateUserToken(user.id)}>get invite link</button>
             <button className="btn btn-small btn-red" onClick={() => resetUserToken(user.id)}>reset token</button>
             {inviteText && <button className="btn btn-small btn-gray" onClick={copyInviteText}>copy invite text</button>}
             <button className="btn btn-small btn-gray" onClick={loginAsUserHandle}>login as user</button>

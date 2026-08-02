@@ -82,6 +82,7 @@ export function FamilyMemberForm({id, defaultData, submitChanges, cancelCallback
         if (!formData.name?.trim()) newErrors.name = t("error_name_required", "Name is required");
         if (!formData.type) newErrors.type = t("error_please_select", "Please select");
         if (!isNew && !formData.attendance) newErrors.attendance = t("error_please_select", "Please select");
+        if (!isNew && !formData.brunch_attendance) newErrors.brunch_attendance = t("error_please_select", "Please select");
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     }
@@ -116,19 +117,35 @@ export function FamilyMemberForm({id, defaultData, submitChanges, cancelCallback
             </div>
         </div>
         {!isNew && <>
-            <div className="mt-3 pt-3 border-t border-olive-200">
-                <div className="flex flex-wrap items-center gap-2">
-                    <label className="shrink-0">{t("attendance", "Attendance")}:</label>
-                    <AttendanceSlider
-                        value={formData.attendance}
-                        onChange={(v) => setFormData((prev) => ({ ...prev, attendance: v }))}
-                        disabled={!edit}
-                        error={!!errors.attendance}
-                    />
+            <div className="mt-3 pt-3 border-t border-olive-200 space-y-2">
+                <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                        <label className="shrink-0 w-32">{t("attendance_wedding", "Wedding")}:</label>
+                        <AttendanceSlider
+                            value={formData.attendance}
+                            onChange={(v) => setFormData((prev) => ({ ...prev, attendance: v }))}
+                            disabled={!edit}
+                            error={!!errors.attendance}
+                        />
+                    </div>
+                    {errors.attendance && (
+                        <p className="text-red-500 text-sm mt-0.5">{errors.attendance}</p>
+                    )}
                 </div>
-                {errors.attendance && (
-                    <p className="text-red-500 text-sm mt-0.5">{errors.attendance}</p>
-                )}
+                <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                        <label className="shrink-0 w-32">{t("attendance_brunch", "Brunch (next day)")}:</label>
+                        <AttendanceSlider
+                            value={formData.brunch_attendance}
+                            onChange={(v) => setFormData((prev) => ({ ...prev, brunch_attendance: v }))}
+                            disabled={!edit}
+                            error={!!errors.brunch_attendance}
+                        />
+                    </div>
+                    {errors.brunch_attendance && (
+                        <p className="text-red-500 text-sm mt-0.5">{errors.brunch_attendance}</p>
+                    )}
+                </div>
             </div>
         </>}
         <div className="flex flex-wrap align-center w-full mt-3 pt-3 border-t border-olive-200">

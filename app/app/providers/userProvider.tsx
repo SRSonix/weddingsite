@@ -21,10 +21,14 @@ export function UserProvider({ children }: {children: React.ReactNode}) {
 
   useEffect(() => {
     const token = searchParams.get("token");
-    setSearchParams({});
 
-    if (token) login_and_fetch_user(token);
-    else fetch_user();
+    if (token) {
+      searchParams.delete("token");
+      setSearchParams(searchParams, { replace: true });
+      login_and_fetch_user(token);
+    } else {
+      fetch_user();
+    }
   }, []);
 
   useEffect(() => {

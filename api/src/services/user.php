@@ -120,15 +120,63 @@ function update_family_member(
         $diet,
         $type,
         $attendance,
+        $brunch_attendance,
     ){
     if (\FamilyMemberRepository\get_family_member($user_id, $family_member_id) === NULL) {
         throw new \NotFoundException("");
     }
 
-    \FamilyMemberRepository\update_family_member($user_id, $family_member_id, $name, $diet, $type, $attendance);
+    \FamilyMemberRepository\update_family_member($user_id, $family_member_id, $name, $diet, $type, $attendance, $brunch_attendance);
 
     http_response_code(response_code: 200);
     return \FamilyMemberRepository\get_family_member($user_id, $family_member_id);
+}
+
+function submit_brunch_rsvp($token){
+    $payload = \AuthService\validate_brunch_token($token);
+
+    $user_id = $payload["user_id"];
+    $answer = $payload["answer"];
+
+    if ($answer === "will_join") {
+        \FamilyMemberRepository\set_brunch_attendance_join($user_id);
+    } else {
+        \FamilyMemberRepository\set_brunch_attendance_decline($user_id);
+    }
+
+    $user = \UserRepository\get_user_by_id($user_id);
+
+    $counts = \FamilyMemberRepository\count_brunch_responses($user_id);
+
+    return [
+        "name" => $user->name,
+        "brunch_attendance" => $answer,
+        "joining" => $counts["joining"],
+        "undecided" => $counts["undecided"],
+    ];
+}
+
+function get_login_token($user_id){
+    $jti = \UserRepository\get_user_token_jti($user_id);
+
+    if ($jti === NULL) {
+        throw new \NotFoundException("user not found");
+    }
+
+    return \AuthService\generate_user_token($user_id, $jti);
+}
+
+function get_brunch_tokens($user_id){
+    $jti = \UserRepository\get_user_token_jti($user_id);
+
+    if ($jti === NULL) {
+        throw new \NotFoundException("user not found");
+    }
+
+    return [
+        "will_join" => \AuthService\generate_brunch_token($user_id, $jti, "will_join"),
+        "will_not_join" => \AuthService\generate_brunch_token($user_id, $jti, "will_not_join"),
+    ];
 }
 
 function remove_family_member($user_id, $family_member_id){
