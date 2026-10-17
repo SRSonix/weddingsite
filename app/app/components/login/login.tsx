@@ -9,6 +9,7 @@ export function UserLogin(){
   const navigate = useNavigate();
   const [userToken, setuserToken] = useState('');
   const [errorMessage, setErrorMessage] = useState("");
+  const [showTokenForm, setShowTokenForm] = useState(false);
 
     const handleFormSubmit = (e: FormEvent) => {
         setErrorMessage("");
@@ -30,10 +31,20 @@ export function UserLogin(){
     return (
         <div>
           <h3>{t("login", "Login")}</h3>
-          <p>{t("please_log_in", "Please log in to see the content of this website.")}</p>
+          <p>{t("please_log_in", "Please use your personal invite link to access this page.")}</p>
             { errorMessage &&  <div>
                 <p className="text-red-700">{errorMessage}</p>
             </div>}
+            { !showTokenForm && (
+              <button
+                type="button"
+                className="text-sm text-olive-700 underline mt-2"
+                onClick={() => setShowTokenForm(true)}
+              >
+                {t("use_token_instead", "Use a token instead")}
+              </button>
+            )}
+            { showTokenForm && (
             <form onSubmit={handleFormSubmit} className="w-full max-w-lg flex flex-wrap">
               <div>
                 <label htmlFor="userToken" className="input-label">Token:</label>
@@ -50,6 +61,7 @@ export function UserLogin(){
                 <button type="submit" className="btn">{t("login", "Login")}</button>
               </div>
             </form>
+            )}
         </div>
     );
 }

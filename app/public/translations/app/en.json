@@ -73,7 +73,8 @@
   "error_please_select": "Please select",
 
   "login": "Log in",
-  "please_log_in": "Please log in to see the content of this page.",
+  "please_log_in": "Please use your personal invite link to access this page.",
+  "use_token_instead": "Use a token instead",
   "page_personalized_for": "This page is personalised for {{name}} using a session token.",
   "logout": "Log out",
   "privacy_policy": "Privacy Policy",

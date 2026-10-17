@@ -23,8 +23,8 @@ function get_overview(){
         "brunch" => [
             "date" => "2026-11-01",
             "time" => "10:30",
-            "location" => "Augsburg",
-            "location_maps_link" => NULL
+            "location" => "Nunó Restaurant, Provinostr. 46, 86153 Augsburg",
+            "location_maps_link" => "https://maps.app.goo.gl/nKpfw1cJMeyYmzVNA"
         ]
     ];
 
@@ -33,10 +33,10 @@ function get_overview(){
 
 function get_agenda() {
     $info = [
-        "14:30" => [
-            "de" => "Ankunft & Willkommensgetränke",
-            "fr" => "Arrivée & Cocktail de bienvenue",
-            "en" => "Arrival & Welcome Drinks"
+        "14:15" => [
+            "de" => "Ankunft",
+            "fr" => "Arrivée",
+            "en" => "Arrival"
         ],
         "15:00" => [
             "de" => "Trauung",
@@ -76,7 +76,7 @@ function get_agenda() {
 function get_payment_details() {
     $info = [
         "bank" => [
-            "name" => "Alexine Zapf",
+            "name" => "Michael Meißner-Zapf",
             "iban" => "DE22 1203 0000 1204 9835 95",
             "bic" => "BYLADEM1001"
         ]

@@ -73,7 +73,8 @@
   "error_please_select": "Merci de sélectionner",
 
   "login": "Se connecter",
-  "please_log_in": "Connecte toi pour voir le contenu de ce site.",
+  "please_log_in": "Merci d'utiliser ton lien d'invitation personnel pour accéder à cette page.",
+  "use_token_instead": "Utiliser un jeton à la place",
   "page_personalized_for": "Cette page est personnalisée pour {{name}} avec un jeton de session.",
   "logout": "Se déconnecter",
   "privacy_policy": "Politique de confidentialité",

@@ -73,7 +73,8 @@
   "error_please_select": "Bitte wählen",
 
   "login": "Anmelden",
-  "please_log_in": "Bitte melde dich an, um den Inhalt dieser Webseite zu sehen.",
+  "please_log_in": "Bitte benutze deinen persönlichen Einladungslink, um diese Seite zu öffnen.",
+  "use_token_instead": "Stattdessen mit einem Token anmelden",
   "page_personalized_for": "Diese Seite ist mit einem Session-Token für {{name}} personalisiert.",
   "logout": "Abmelden",
   "privacy_policy": "Datenschutzerklärung",
