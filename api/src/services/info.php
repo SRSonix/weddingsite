@@ -5,7 +5,7 @@ namespace InfoService;
 function get_overview(){
     $info = [
         "date" => "2026-10-31",
-        "arrival_time" => "14:30",
+        "arrival_time" => "14:15",
         "rsvp_deadline" => "2026-05-15",
         "location"=> "Reitpark Mergenthau, Mergenthau 2, 86438 Kissing",
         "location_maps_link" => "https://maps.app.goo.gl/7SRGo6cvHnD9aFqCA",
